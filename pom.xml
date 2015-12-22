@@ -35,6 +35,7 @@
 								<delete file="target/classes/META-INF/classes/log4j.properties" /-->
 
 								<copy file="config/localhost/web.xml" tofile="target/gsc-datacatalogue/WEB-INF/web.xml" />
+								<copy file="WebContent/testService.html" tofile="target/gsc-datacatalogue/testService.html" />
 								<!--copy file="config/localhost/persistence.xml" tofile="target/classes/META-INF/persistence.xml" />
 								<copy file="config/localhost/mapwork.xml" tofile="target/mapwork/WEB-INF/classes/mapwork.xml" />
 								<copy file="config/localhost/mapconfiguration.xml"

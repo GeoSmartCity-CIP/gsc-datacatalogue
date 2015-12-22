@@ -1,0 +1,145 @@
+<html lang="it">
+<head>
+	<title>Datacatalogue Test Services</title>
+	<script language="JavaScript">
+			/*------------------------------------------------------*/
+			  function reqServiceForm() {
+			/*------------------------------------------------------*/
+				return false;
+			  }
+
+
+			/*------------------------------------------------------*/
+			  function sendRequest() {
+			/*------------------------------------------------------*/
+				document.form.action = "./datacatalogservlet?"; //actionName=" + document.form.serviceName.value;
+				//document.form.actionName.value = document.form.serviceName.value;
+                
+				document.form.submit();
+
+				return false;
+			  }
+
+
+			/*------------------------------------------------------*/
+			  function cleanThisForm() {
+			/*------------------------------------------------------*/
+				document.form.serviceName.value = document.form.serviceName.options[0].value;				
+				document.form.jsonRequest.value = '';
+
+				return false;
+			  }
+		</script>
+</head>
+<body>
+	<!-- form name="form"-->
+	<form name="form" method="GET" enctype="multipart/form-data">
+		<center>
+			<table>
+				
+				<tr>
+					<td>
+						<p class="titolo2">Services</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td>
+                                    <select name="actionName">
+                                    	<option value="createapp">Application - Create</option>
+                                    	<option value="assigntoapp">Application - Assign layer/group</option>
+                                    	<option value="deleteapp">Application - Delete</option>
+                                    	<option value="listapp">Application - Search/List</option>
+                                    	<option value="pubongeoserver">Application - Publish on geoserver</option>
+                                    	<option value="getconfiguration">Application - Get configuration</option>
+                                    	
+                                    	<option value="createdataset">Dataset - Create</option>
+                                        <option value="updatedataset">Dataset - Update</option>
+                                        <option value="deletedataset">Dataset - Delete</option>
+                                        <option value="listdataset">Dataset - Search/List</option>
+                                        <option value="listcols">Dataset - Column list</option>
+                                        <option value="updcolsmetadata">Dataset - Update columns metadata</option>
+                                        <option value="createcron">Dataset - Create/update Cron download service</option>
+                                        
+                                        <option value="createdatasrc">Datasource - Create</option>
+                                        <option value="updatedatasrc">Datasource - Update</option>
+                                        <option value="deletedatasrc">Datasource - Delete</option>
+                                        <option value="listdatasrc">Datasource - Search/List</option>
+                                        <option value="uploadfile">Datasource - Upload</option>
+                                        <option value="pubtockan">Datasource - Publish to CKAN</option>
+                                        <option value="listdataorigin">Datasource - List data origin</option>
+                                        
+										<option value="createfunc">Function - Create</option>
+                                        <option value="updatefunc">Function - Update</option>
+                                        <option value="deletefunc">Function - Delete</option>
+                                        <option value="listfunc">Function - Search/List</option>
+                                        
+                                        <option value="creategrp">Grouplayer - Create</option>
+                                        <option value="assignlyr">Grouplayer - Assign layer</option>
+                                        <option value="deletegrp">Grouplayer - Delete</option>
+                                        <option value="listgrp">Grouplayer - Search/List</option>
+                                        
+                                        <option value="createlyr">Layer - Create</option>
+                                        <option value="updatelyr">Layer - Update</option>
+                                        <option value="deletelyr">Layer - Delete</option>
+                                        <option value="listlyr">Layer - Saarch/List</option>
+                                                                              
+										<option value="createorg">Organization - Create</option>
+                                        <option value="updateorg">Organization - Update</option>
+                                        <option value="deleteorg">Organization - Delete</option>
+                                        <option value="listorg">Organization - List/Search</option>
+                                        
+                                        <option value="assignperm">Permission - Assign/remove</option>
+                                        <option value="listperm">Permission - List permission for user/role</option>
+                                                                                
+                                        <option value="createrole">Role - Create</option>
+                                        <option value="deleterole">Role - Delete</option>
+                                        <option value="listrole">Role - Search/List</option>
+                                        <option value="assignrole">Role - Assign</option>
+                                        
+                                        <option value="login">User - Login</option>
+										<option value="reguser">User - Register</option>
+										<option value="remindpwd">User - Remind password</option>
+										<option value="changepwd">User - Change password</option>
+										<option value="updateuser">User - Update profile</option>
+										<option value="lockuser">User - Lock/Unlock</option>
+                                        <option value="unreguser">User - Unregister/Delete</option>
+                                                                                                                                                                                                      
+									</select>
+									
+								</td>								
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						<p class="titolo2">Request (JSON)</p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<textarea name="request" cols="70" rows="15"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr align="center">
+					<td align="center">
+						<!-- input type="hidden" name="format" value="json" /-->
+						<!-- input type="hidden" name="actionName" value="login" /-->
+						<input type="button" value="Invia" onclick="javascript:sendRequest(); void(null);" />
+						<input type="button" value="Pulisci" onclick="javascript:cleanThisForm(); void(null);" />
+					</td>
+				</tr>
+			</table>
+		</center>
+	</form>
+</body>
+</html>
