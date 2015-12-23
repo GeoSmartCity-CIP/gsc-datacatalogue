@@ -46,6 +46,8 @@ public class Gsc001OrganizationEntity implements Serializable {
     //----------------------------------------------------------------------
     @Id
     @Column(name="id", nullable=false)
+    @SequenceGenerator(name = "gsc_001_organization_id_seq", sequenceName = "gsc_001_organization_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gsc_001_organization_id_seq")
     private Long       id           ;
 
 

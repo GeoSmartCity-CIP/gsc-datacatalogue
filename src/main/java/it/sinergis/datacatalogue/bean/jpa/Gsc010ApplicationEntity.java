@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 
 
+
 import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
@@ -44,6 +45,8 @@ public class Gsc010ApplicationEntity implements Serializable {
     //----------------------------------------------------------------------
     @Id
     @Column(name="id", nullable=false)
+    @SequenceGenerator(name = "gsc_010_application_id_seq", sequenceName = "gsc_010_application_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gsc_010_application_id_seq")
     private Long       id           ;
 
 
