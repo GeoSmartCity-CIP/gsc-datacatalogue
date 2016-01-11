@@ -45,8 +45,6 @@ public class OrganizationsService extends ServiceCommons{
 		try{
 			checkJsonWellFormed(req);
 			
-			//NON FUNZIONA IL METODO DI RICERCA DELLE ORGANIZZAZIONI getOrganizationObject
-			
 			//check if there's another organization already saved with the same name
 			Gsc001OrganizationEntity organization = getOrganizationObject(req);
 							
@@ -61,7 +59,7 @@ public class OrganizationsService extends ServiceCommons{
 				logger.info(req);
 				return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully created\"}";
 				
-			//otherwise update current record
+			//otherwise an error message will be return
 			} else {
 				DCException rpe = new DCException("ER08");
 				return rpe.returnErrorString();				
@@ -187,8 +185,8 @@ public class OrganizationsService extends ServiceCommons{
 	 */
 	private String getOrgNameFromJsonText(String json) throws DCException {
 		try {
-			JsonNode rootNode = om.readTree(json);
-			JsonNode orgName = rootNode.findValue(ORG_NAME_FIELD);
+			JsonNode rootNode = om.readTree(keyToLowerCase(json));
+			JsonNode orgName = rootNode.findValue(ORG_NAME_FIELD.toLowerCase());
 			if(orgName == null) {
 				logger.error(ORG_NAME_FIELD + " parameter is mandatory within the json string.");
 				throw new DCException("ER04");

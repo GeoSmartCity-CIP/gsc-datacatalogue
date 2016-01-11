@@ -1,5 +1,8 @@
 package it.sinergis.datacatalogue.services;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,6 +22,7 @@ public class ServiceCommons {
 	public ServiceCommons(){
 		logger = Logger.getLogger(this.getClass());
 		om = new ObjectMapper();
+		//om.setPropertyNamingStrategy(new UpperCaseStrategy());
 	}
 	
 	protected void checkJsonWellFormed(String jsonText) throws DCException {
@@ -84,5 +88,25 @@ public class ServiceCommons {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * JSON keys to lowercase. Useful to search key without a specific case of chars
+	 * 
+	 * @param text
+	 * @return
+	 */
+	protected String keyToLowerCase(String json) {
+		json = json.replaceAll("\\s","");
+        Matcher m = Pattern.compile("\"\\b\\w{1,}\\b\"\\s*:").matcher(json);
+        StringBuilder sanitizedJSON = new StringBuilder();
+        int last = 0;
+        while (m.find()) {
+            sanitizedJSON.append(json.substring(last, m.start()));
+            sanitizedJSON.append(m.group(0).toLowerCase());
+            last = m.end();
+        }
+        sanitizedJSON.append(json.substring(last));
+
+        return sanitizedJSON.toString();
+	}
 }
