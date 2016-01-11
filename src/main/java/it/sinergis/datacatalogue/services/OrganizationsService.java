@@ -113,7 +113,36 @@ public class OrganizationsService extends ServiceCommons{
 	}
 	
 	public String deleteOrganization(String req){
-		return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully created\"}";
+		try{
+			checkJsonWellFormed(req);
+			
+			//check if there's another organization already saved with the same name
+			Gsc001OrganizationEntity organization = getOrganizationObject(req);
+							
+			//if results found -> delete record
+			if(organization != null) {
+				organizationPersistence.delete(organization);
+				
+				logger.info("Organization succesfully deleted");
+				logger.info(req);
+				return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully deleted\"}";
+				
+			//otherwise error
+			} else {
+				DCException rpe = new DCException("ER10");
+				return rpe.returnErrorString();				
+			}
+			
+		}
+		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(Exception e) {
+			logger.error("delete organization service error",e);
+			DCException rpe = new DCException("ER01");
+			logger.error("deleteOrganization service: unhandled error "+ rpe.returnErrorString());
+			
+			return rpe.returnErrorString();
+		}
 	}
 	
 	public String listOrganization(String req){

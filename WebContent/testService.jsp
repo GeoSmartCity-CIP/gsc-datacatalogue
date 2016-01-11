@@ -81,7 +81,7 @@ if (servizio==null) {
 			<option value="ChooseService" >Choose service...</option>
 			<option value="createorg" <%= servizio.equals("createorg") ? "selected=\"selected\"" : ""%>>Organization - Create</option>
 			<option value="updateorg" <%= servizio.equals("updateorg") ? "selected=\"selected\"" : ""%>>Organization - Update</option>
-            <option value="deleteorg <%= servizio.equals("deleteorg") ? "selected=\"selected\"" : ""%>">Organization - Delete</option>
+            <option value="deleteorg" <%= servizio.equals("deleteorg") ? "selected=\"selected\"" : ""%>">Organization - Delete</option>
             <option value="listorg" <%= servizio.equals("listorg") ? "selected=\"selected\"" : ""%>>Organization - List/Search</option>
             			
 			<option value=""></option>
