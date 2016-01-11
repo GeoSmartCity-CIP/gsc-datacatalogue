@@ -33,7 +33,7 @@ public class Gsc001OrganizationEntityMock {
 	public Gsc001OrganizationEntity createInstance( Long id ) {
 		Gsc001OrganizationEntity entity = new Gsc001OrganizationEntity();
 		// Init Primary Key fields
-		entity.setId( id) ;
+		//entity.setId( id) ;
 		// Init Data fields
 		entity.setJson( "{}" ) ; // java.lang.String 
 		// Init Link fields (if any)

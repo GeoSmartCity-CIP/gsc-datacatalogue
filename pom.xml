@@ -36,6 +36,7 @@
 
 								<copy file="config/localhost/web.xml" tofile="target/gsc-datacatalogue/WEB-INF/web.xml" />
 								<copy file="WebContent/testService.html" tofile="target/gsc-datacatalogue/testService.html" />
+								<copy file="WebContent/testService.jsp" tofile="target/gsc-datacatalogue/testService.jsp" />
 								<!--copy file="config/localhost/persistence.xml" tofile="target/classes/META-INF/persistence.xml" />
 								<copy file="config/localhost/mapwork.xml" tofile="target/mapwork/WEB-INF/classes/mapwork.xml" />
 								<copy file="config/localhost/mapconfiguration.xml"
@@ -53,6 +54,23 @@
 		
 	</profiles>
 	<dependencies>
+	
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.8</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.vividsolutions</groupId>

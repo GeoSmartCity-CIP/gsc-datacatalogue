@@ -1,5 +1,6 @@
 package it.sinergis.datacatalogue.servlet;
 
+import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.services.ApplicationsService;
 import it.sinergis.datacatalogue.services.DatasetsService;
 import it.sinergis.datacatalogue.services.DatasourcesService;
@@ -15,11 +16,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 /**
  * Servlet implementation class DataCatalogServlet
@@ -28,13 +32,20 @@ import javax.servlet.http.HttpServletResponse;
 public class DataCatalogServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
+	private static Logger logger;
+	
+	/**
      * Default constructor. 
      */
-    public DataCatalogServlet() {
-        // TODO Auto-generated constructor stub
-    }
+    public DataCatalogServlet() {}
+    
+    
+	public void init(ServletConfig config) throws ServletException {
+		// Inizializzazione
+		logger = Logger.getLogger(this.getClass());		
+	}
 
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -46,15 +57,17 @@ public class DataCatalogServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter writer = null;
+		PrintWriter writer = response.getWriter();
 		
 		try {
+			request.setCharacterEncoding("UTF-8");
 			
             String action = request.getParameter("actionName");
+            String requestJson = request.getParameter("request");
+                        
             if (action != null && !action.equals("")) {
             	response.setContentType("application/json");
             	
-            	String requestJson = request.getParameter("request"); 
             	String serviceResp = null;
             	/* ******************************* USERS ******************************* */
             	if(action.equalsIgnoreCase("login")){
@@ -263,16 +276,19 @@ public class DataCatalogServlet extends HttpServlet {
             		ApplicationsService service = new ApplicationsService();
             		serviceResp = service.getConfiguration(requestJson);
             	}
-            	
-            	writer =  response.getWriter();
+            	            	
         		writer.write(serviceResp);
-        		
-        		
+        		        		
             }
 		}
 		catch (Exception e){	
-			throw new ServletException(e);
-		} finally {
+			logger.error("Generic error while executing datacatalogue service",e);
+			
+			DCException rpe = new DCException("ER01");
+			writer.write(rpe.returnErrorString());
+			
+		} 
+		finally {
             if (writer != null) {
             	writer.flush();
         		writer.close();

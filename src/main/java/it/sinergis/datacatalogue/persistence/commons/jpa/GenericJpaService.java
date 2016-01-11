@@ -157,6 +157,22 @@ public abstract class GenericJpaService<T, PK extends java.io.Serializable> {
 		return (List<T>) execute(operation) ;
 	}
 
+
+	public List<T> loadByNativeQuery(final String query){
+		//JPA operation definition
+		JpaOperation operation = new JpaOperation(){
+			@Override
+			public Object exectue(EntityManager em) throws PersistenceException {
+				Query nativeQuery = em.createNativeQuery(query, persistentClass);					
+				return nativeQuery.getResultList();
+
+			}
+		};
+		// JPA operation execution 
+		return (List<T>) execute(operation) ;
+	}
+
+	
 	/**
 	 * Insert entity ( TRANSACTIONAL )
 	 * @param <T>

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
+import it.sinergis.datacatalogue.exception.DCException;
 
 /**
  * Basic persistence operations for entity "Gsc001Organization"
@@ -90,5 +91,17 @@ public interface Gsc001OrganizationPersistence {
 	 * @return
 	 */
 	public long countAll();
+	
+	
+	
+	/** NO-SQL METODS **/
+	
+	/**
+	 * Load organizations using native query
+	 * @param query native query
+	 * @return list of organizations
+	 */
+	public  List<Gsc001OrganizationEntity> getOrganizations(String query);
+	
 	
 }

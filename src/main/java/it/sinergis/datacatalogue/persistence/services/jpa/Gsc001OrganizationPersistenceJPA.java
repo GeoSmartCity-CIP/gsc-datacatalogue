@@ -6,11 +6,14 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
+import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
@@ -61,5 +64,14 @@ public class Gsc001OrganizationPersistenceJPA extends GenericJpaService<Gsc001Or
 		// JPA operation execution 
 		return (Long) execute(operation);
 	}
+	
+	
+	@Override
+	public List<Gsc001OrganizationEntity> getOrganizations(String query) {
+		
+		return super.loadByNativeQuery(query);			
+
+	}
+			
 
 }
