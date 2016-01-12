@@ -33,7 +33,7 @@
 		    } else if(selected === 'listorg'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").title = "Insert a JSON organization.";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateOrgExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListOrgExample").value;
 		    	
 		    }
 	    	document.getElementById("submitButton").style.display = "table-row";
@@ -62,6 +62,7 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputCreateOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUpdateOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">

@@ -69,8 +69,8 @@ public class Gsc001OrganizationPersistenceJPA extends GenericJpaService<Gsc001Or
 	@Override
 	public List<Gsc001OrganizationEntity> getOrganizations(String query) {
 		
-		return super.loadByNativeQuery(query);			
-
+		return super.loadByNativeQuery(query);
+		
 	}
 			
 
