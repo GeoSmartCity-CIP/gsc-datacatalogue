@@ -53,7 +53,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 				logger.info("Organization succesfully created");
 				logger.info(req);
-				return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully created\"}";
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_CREATED);
 				
 			//otherwise an error message will be return
 			} else {
@@ -86,7 +86,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 				logger.info("Organization succesfully updated");
 				logger.info(req);
-				return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully updated\"}";
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_UPDATED);
 				
 			//otherwise update current record
 			} else {
@@ -119,7 +119,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 				logger.info("Organization succesfully deleted");
 				logger.info(req);
-				return "{\"Status\":\"Done\",\"Description\":\"Organization succesfully deleted\"}";
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_DELETED);
 				
 			//otherwise error
 			} else {
@@ -194,12 +194,9 @@ public class OrganizationsService extends ServiceCommons{
 						orgsJson.append("}");
 						if(j < users.size() -1) 
 							orgsJson.append(",");
-						
-						
 					}
 					orgsJson.append("]");
 				}
-				
 				
 				orgsJson.append("}");
 				

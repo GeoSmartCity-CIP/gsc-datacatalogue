@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.common.PropertyReader;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.services.GenericPersistence;
 
@@ -222,5 +223,18 @@ public class ServiceCommons {
 			logger.error("unhandled error: ",e);
 			throw new DCException(Constants.ER01);
 		}
-	}		
+	}	
+	
+	/**
+	 * Create JSON status message.
+	 * 
+	 * @param status
+	 * @param description 
+	 * @return String
+	 */	
+	protected String createJsonStatus(String status,String descriptionCode)
+	{
+		PropertyReader pr = new PropertyReader("messages.properties");
+		return "{\"Status\":\""+status+"\",\"Description\":\""+pr.getValue(descriptionCode)+"\"}";
+	}
 }

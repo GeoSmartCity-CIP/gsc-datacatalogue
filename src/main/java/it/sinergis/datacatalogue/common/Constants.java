@@ -2,6 +2,10 @@ package it.sinergis.datacatalogue.common;
 
 public final class Constants {
 
+	/** GENERIC PARAMETERS*/
+	public static final String STATUS_DONE = "Done";
+	public static final String STATUS_ERROR = "Error";
+	
 	/** TABLES PARAMETERS*/
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
 	public static final String USER_TABLE_NAME = "gsc_002_user";
@@ -30,4 +34,10 @@ public final class Constants {
 	public static final String ER09 = "ER09";	
 	public static final String ER10 = "ER10";	
 	public static final String ER11 = "ER11";	
+	
+	/** STATUS MESSAGES*/
+	public static final String ROLE_CREATED = "ROLE_CREATED";;
+	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";;
+	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";;
+	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";;
 }

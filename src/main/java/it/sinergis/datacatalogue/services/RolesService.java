@@ -50,7 +50,7 @@ public class RolesService extends ServiceCommons{
 				
 				logger.info("Role succesfully created");
 				logger.info(req);
-				return "{\"Status\":\"Done\",\"Description\":\"Role succesfully created\"}";
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_CREATED);
 				
 			//otherwise an error message will be return
 			} else {
