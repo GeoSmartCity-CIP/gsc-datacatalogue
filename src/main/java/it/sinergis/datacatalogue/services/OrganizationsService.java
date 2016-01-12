@@ -285,7 +285,7 @@ public class OrganizationsService extends ServiceCommons{
 	private String getOrgNameFromJsonText(String json) throws DCException {
 		try {
 			JsonNode rootNode = om.readTree(keyToLowerCase(json));
-			JsonNode orgName = rootNode.findValue(ORG_NAME_FIELD.toLowerCase());
+			JsonNode orgName = rootNode.findValue(Constants.ORG_NAME_FIELD.toLowerCase());
 			if(orgName == null) {
 				logger.error(Constants.ORG_NAME_FIELD + " parameter is mandatory within the json string.");
 				throw new DCException("ER04");

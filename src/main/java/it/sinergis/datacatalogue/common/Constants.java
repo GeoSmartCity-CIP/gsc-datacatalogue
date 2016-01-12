@@ -7,9 +7,9 @@ public final class Constants {
 	
 	public static final String JSON_COLUMN_NAME = "json";
 	
-	public static final String ORG_NAME_FIELD = "OrganizationName";
-	public static final String NEW_ORG_NAME_FIELD = "NewOrganizationName";
-	public static final String DESCRIPTION_FIELD = "Description";
-	public static final String USERNAME_FIELD = "Username";
-	public static final String ORGANIZATION_FIELD = "Organization";
+	public static final String ORG_NAME_FIELD = "organizationname";
+	public static final String NEW_ORG_NAME_FIELD = "neworganizationName";
+	public static final String DESCRIPTION_FIELD = "description";
+	public static final String USERNAME_FIELD = "username";
+	public static final String ORGANIZATION_FIELD = "organization";
 }
