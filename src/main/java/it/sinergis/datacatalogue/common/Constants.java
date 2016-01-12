@@ -13,6 +13,10 @@ public final class Constants {
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String USERNAME_FIELD = "username";
 	public static final String ORGANIZATION_FIELD = "organization";
+
+	public static final String ROLE_TABLE_NAME = "gsc_003_role";
+	public static final String ROLE_NAME_FIELD = "rolename";
+	public static final String ORG_FIELD = "organization";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";

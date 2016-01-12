@@ -6,10 +6,13 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
@@ -61,5 +64,4 @@ public class Gsc003RolePersistenceJPA extends GenericJpaService<Gsc003RoleEntity
 		// JPA operation execution 
 		return (Long) execute(operation);
 	}
-
 }

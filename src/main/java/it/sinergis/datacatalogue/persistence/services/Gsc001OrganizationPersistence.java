@@ -18,7 +18,7 @@ import it.sinergis.datacatalogue.exception.DCException;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc001OrganizationPersistence {
+public interface Gsc001OrganizationPersistence extends GenericPersistence{
 
 	/**
 	 * Deletes the given entity <br>

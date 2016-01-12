@@ -1,5 +1,6 @@
 package it.sinergis.datacatalogue.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
@@ -8,12 +9,9 @@ import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc002UserPersistenceJPA;
-
 import it.sinergis.datacatalogue.common.Constants;
 
 import org.apache.log4j.Logger;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class OrganizationsService extends ServiceCommons{
 	
@@ -148,8 +146,8 @@ public class OrganizationsService extends ServiceCommons{
 			
 			if(!req.equals("{}")){
 				checkJsonWellFormed(req);
-			
-				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '"+getOrgNameFromJsonText(req)+"%'";
+				
+				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 				query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 				
 				orgs = organizationPersistence.getOrganizations(query);
@@ -181,7 +179,7 @@ public class OrganizationsService extends ServiceCommons{
 				}
 				
 				//Select user of current organization								
-				String queryText = "'" + Constants.ORGANIZATION_FIELD + "' = '"+getOrgNameFromJsonText(org.getJson())+"'";
+				String queryText = "'" + Constants.ORGANIZATION_FIELD + "' = '"+getKeyFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD)+"'";
 				query = createQuery(queryText, Constants.USER_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 				List<Gsc002UserEntity> users = userJpa.loadByNativeQuery(query);
 				if (users.size()> 0) {
@@ -233,49 +231,8 @@ public class OrganizationsService extends ServiceCommons{
 	 * @throws RPException
 	 */
 	private Gsc001OrganizationEntity getOrganizationObject(String json) throws DCException {
-		
-		try {
-			String queryText = "'" + Constants.ORG_NAME_FIELD + "' = '"+getOrgNameFromJsonText(json)+"'";
-			String query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
-			List<Gsc001OrganizationEntity> organizations = organizationPersistence.getOrganizations(query);
-			
-			if(organizations.isEmpty()) {
-				return null;
-			}
-			//research query can only find 1 record at most
-			return organizations.get(0);
-		} catch(DCException rpe) {
-			throw rpe;
-		} catch(Exception e) {
-			logger.error("unhandled error: ",e);
-			throw new DCException(Constants.ER01);
-		}
-	}
-	
-	/**
-	 * Returns organization name within the input json text parameter.
-	 * 
-	 * @param json
-	 * @return
-	 * @throws RPException
-	 */
-	private String getOrgNameFromJsonText(String json) throws DCException {
-		try {
-			JsonNode rootNode = om.readTree(json);
-			JsonNode orgName = rootNode.findValue(Constants.ORG_NAME_FIELD);
-			if(orgName == null) {
-				logger.error(Constants.ORG_NAME_FIELD + " parameter is mandatory within the json string.");
-				throw new DCException(Constants.ER04);
-			}
-						
-			//delete quote from value else where clausole doesn't work
-			return orgName.toString().replace("\"", "");
-		} catch(DCException rpe) {
-			throw rpe;
-		} catch(Exception e) {
-			logger.error("unhandled error: ",e);
-			throw new DCException(Constants.ER01);
-		}
-	}
-		
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(Constants.ORG_NAME_FIELD);
+		return (Gsc001OrganizationEntity) getRowObject(json, Constants.ORGANIZATION_TABLE_NAME, params, organizationPersistence);
+	}	
 }

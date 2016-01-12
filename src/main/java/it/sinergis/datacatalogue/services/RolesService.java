@@ -1,24 +1,85 @@
 package it.sinergis.datacatalogue.services;
 
-public class RolesService {
+import java.util.ArrayList;
+import java.util.List;
 
-	public static String RESPONSE_JSON_STATUS_DONE = "{Status:'Done',Description:'Operation ok'}";
-	public static String RESPONSE_JSON_LIST_ROLE = " {roles:[{name:'Role1',description:'Admin role',users:[{username:'Admin'},{username:'Administrator'}]},{name:'Guest',description:'Generic user',users:[]},{name:'Role2',description:'Second role',users:[{username:'user1'}]}]}";
+import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
+import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.exception.DCException;
+import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
+
+import org.apache.log4j.Logger;
+
+public class RolesService extends ServiceCommons{
+
+	/** Logger. */
+	private static Logger logger;
 	
-	
+	/** Gsc003RolePersistence  DAO. */
+	Gsc003RolePersistence rolePersistence;
+		
+	/**
+	 * Constructor
+	 */	
+	public RolesService() {
+		logger = Logger.getLogger(this.getClass());		
+		rolePersistence = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
+	}
+
+	/**
+	 * Create a new role into database	
+	 * @param req new role's data (JSON format)
+	 * @return role's result (JSON format)
+	 */	
 	public String createRole(String req){
-		return RESPONSE_JSON_STATUS_DONE;
+		try{
+			checkJsonWellFormed(req);
+			ArrayList<String> params = new ArrayList<String>();
+			params.add(Constants.ORG_FIELD);
+			params.add(Constants.ROLE_NAME_FIELD);
+			
+			//check if there's another role already saved with the same name
+			Gsc003RoleEntity role = (Gsc003RoleEntity) getRowObject(req, Constants.ROLE_TABLE_NAME, params, rolePersistence);
+							
+			//if no results found -> add new record
+			if(role == null) {
+				Gsc003RoleEntity newRole = new Gsc003RoleEntity();
+				newRole.setJson(req);
+				
+				rolePersistence.insert(newRole);
+				
+				logger.info("Role succesfully created");
+				logger.info(req);
+				return "{\"Status\":\"Done\",\"Description\":\"Role succesfully created\"}";
+				
+			//otherwise an error message will be return
+			} else {
+				DCException rpe = new DCException(Constants.ER08);
+				return rpe.returnErrorString();				
+			}
+			
+		}
+		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(Exception e) {
+			logger.error("create role service error",e);
+			DCException rpe = new DCException(Constants.ER01);
+			logger.error("createRole service: unhandled error "+ rpe.returnErrorString());
+			
+			return rpe.returnErrorString();
+		}	
 	}
 	
 	public String deleteRole(String req){
-		return RESPONSE_JSON_STATUS_DONE;
+		return "";
 	}
 	
 	public String listRole(String req){
-		return RESPONSE_JSON_LIST_ROLE;
+		return "";
 	}
 	
 	public String assignRole(String req){
-		return RESPONSE_JSON_STATUS_DONE;
+		return "";
 	}
 }

@@ -1,5 +1,6 @@
 package it.sinergis.datacatalogue.services;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +11,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
+import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.services.GenericPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
 
 public class ServiceCommons {
 
@@ -156,4 +161,69 @@ public class ServiceCommons {
 			throw new DCException(Constants.ER01);
 		}
 	}
+	
+	/**
+	 * Returns key within the input json text parameter.
+	 * 
+	 * @param json
+	 * @return
+	 * @throws RPException
+	 */
+	protected String getKeyFromJsonText(String json,String keyField) throws DCException {
+		try {
+			JsonNode rootNode = om.readTree(json);
+			JsonNode key = rootNode.findValue(keyField);
+			if(key == null) {
+				logger.error(keyField + " parameter is mandatory within the json string.");
+				throw new DCException(Constants.ER04);
+			}
+						
+			//delete quote from value else where clausole doesn't work
+			return key.toString().replace("\"", "");
+		} catch(DCException rpe) {
+			throw rpe;
+		} catch(Exception e) {
+			logger.error("unhandled error: ",e);
+			throw new DCException(Constants.ER01);
+		}
+	}		
+	
+	/**
+	 * Retrieves the row given params.
+	 * 
+	 * @param json
+	 * @return
+	 * @throws RPException
+	 */
+	protected Object getRowObject(String json, String tablename, List<String> params, GenericPersistence persistenceClass) throws DCException {
+		
+		try {
+			if (params.size() > 0)
+			{
+				String queryText = "'" + params.get(0) + "' = '"+ getKeyFromJsonText(json,params.get(0)) +"'";
+				for (int i=1; i< params.size(); i++)
+				{
+					queryText += " AND '" + params.get(i) + "' = '" + getKeyFromJsonText(json,params.get(i)) + "'";
+				}
+				
+				String query = createQuery(queryText, tablename, Constants.JSON_COLUMN_NAME,"select");
+				List<Object> roles = persistenceClass.loadByNativeQueryGenericObject(query);
+				
+				if(roles.isEmpty()) {
+					return null;
+				}
+				//research query can only find 1 record at most
+				return roles.get(0);
+			}
+			else
+			{
+				return null;
+			}
+		} catch(DCException rpe) {
+			throw rpe;
+		} catch(Exception e) {
+			logger.error("unhandled error: ",e);
+			throw new DCException(Constants.ER01);
+		}
+	}		
 }

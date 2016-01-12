@@ -17,7 +17,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc003RolePersistence {
+public interface Gsc003RolePersistence extends GenericPersistence {
 
 	/**
 	 * Deletes the given entity <br>
@@ -90,5 +90,4 @@ public interface Gsc003RolePersistence {
 	 * @return
 	 */
 	public long countAll();
-	
 }
