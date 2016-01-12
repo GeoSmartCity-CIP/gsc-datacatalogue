@@ -59,7 +59,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise an error message will be return
 			} else {
-				DCException rpe = new DCException("ER08");
+				DCException rpe = new DCException(Constants.ER08);
 				return rpe.returnErrorString();				
 			}
 			
@@ -68,7 +68,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("create organization service error",e);
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			logger.error("createOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -92,7 +92,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise update current record
 			} else {
-				DCException rpe = new DCException("ER09");
+				DCException rpe = new DCException(Constants.ER09);
 				return rpe.returnErrorString();				
 			}
 			
@@ -101,7 +101,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("update organization service error",e);
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			logger.error("updateOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -125,7 +125,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException("ER10");
+				DCException rpe = new DCException(Constants.ER10);
 				return rpe.returnErrorString();				
 			}
 			
@@ -134,7 +134,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("delete organization service error",e);
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			logger.error("deleteOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -218,35 +218,12 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("list organization service error",e);
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			logger.error("listOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
 		}
-		/*
-		return "{organizations:[
-								{
-									name:'Org1',
-									description:'First organization',
-									users:[
-											{username:'user1'},
-											{username:'user2'}
-										  ]
-								},
-                      			{
-                      				name:'Org2',
-                      				description:'Second organization',
-                      				users:[
-                      						{username:'user3'},
-                      						{username:'user4'}
-                      					  ]
-                      			}
-                      		   ]
-                }";
-		*/
 	}
-	
-	
 	
 	/**
 	 * Retrieves the organization given an organization name.
@@ -271,7 +248,7 @@ public class OrganizationsService extends ServiceCommons{
 			throw rpe;
 		} catch(Exception e) {
 			logger.error("unhandled error: ",e);
-			throw new DCException("ER01");
+			throw new DCException(Constants.ER01);
 		}
 	}
 	
@@ -288,7 +265,7 @@ public class OrganizationsService extends ServiceCommons{
 			JsonNode orgName = rootNode.findValue(Constants.ORG_NAME_FIELD);
 			if(orgName == null) {
 				logger.error(Constants.ORG_NAME_FIELD + " parameter is mandatory within the json string.");
-				throw new DCException("ER04");
+				throw new DCException(Constants.ER04);
 			}
 						
 			//delete quote from value else where clausole doesn't work
@@ -297,7 +274,7 @@ public class OrganizationsService extends ServiceCommons{
 			throw rpe;
 		} catch(Exception e) {
 			logger.error("unhandled error: ",e);
-			throw new DCException("ER01");
+			throw new DCException(Constants.ER01);
 		}
 	}
 		

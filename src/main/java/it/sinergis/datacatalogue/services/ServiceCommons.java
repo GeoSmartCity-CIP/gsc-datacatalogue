@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 
 public class ServiceCommons {
@@ -23,23 +24,22 @@ public class ServiceCommons {
 	public ServiceCommons(){
 		logger = Logger.getLogger(this.getClass());
 		om = new ObjectMapper();
-		//om.setPropertyNamingStrategy(new UpperCaseStrategy());
 	}
 	
 	protected void checkJsonWellFormed(String jsonText) throws DCException {
 		if (!isAllKeyLowercase(jsonText))
 		{
 			logger.error("Error: Json keys are not all lowercase");
-			throw new DCException("ER11");
+			throw new DCException(Constants.ER11);
 		}
 		try {
 			om.readTree(jsonText);
 		} catch (JsonProcessingException e) {
 			logger.error("Error: Json string is not well formed",e);
-			throw new DCException("ER07");
+			throw new DCException(Constants.ER07);
 		} catch (Exception e) {
 			logger.error("Error checking if json is valid",e);
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			logger.error("Datacatalog service: unhandled error "+rpe.returnErrorString());
 			throw rpe;
 		}
@@ -153,7 +153,7 @@ public class ServiceCommons {
 				return value.toString();
 		} catch(Exception e) {
 			logger.error("unhandled error: ",e);
-			throw new DCException("ER01");
+			throw new DCException(Constants.ER01);
 		}
 	}
 }

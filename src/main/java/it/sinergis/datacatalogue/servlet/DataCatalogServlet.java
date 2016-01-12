@@ -1,5 +1,6 @@
 package it.sinergis.datacatalogue.servlet;
 
+import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.services.ApplicationsService;
 import it.sinergis.datacatalogue.services.DatasetsService;
@@ -284,7 +285,7 @@ public class DataCatalogServlet extends HttpServlet {
 		catch (Exception e){	
 			logger.error("Generic error while executing datacatalogue service",e);
 			
-			DCException rpe = new DCException("ER01");
+			DCException rpe = new DCException(Constants.ER01);
 			writer.write(rpe.returnErrorString());
 			
 		} 
