@@ -36,8 +36,9 @@ public final class Constants {
 	public static final String ER11 = "ER11";	
 	
 	/** STATUS MESSAGES*/
-	public static final String ROLE_CREATED = "ROLE_CREATED";;
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";;
 	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";;
 	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";;
+	public static final String ROLE_CREATED = "ROLE_CREATED";;
+	public static final String ROLE_DELETED = "ROLE_DELETED";;
 }

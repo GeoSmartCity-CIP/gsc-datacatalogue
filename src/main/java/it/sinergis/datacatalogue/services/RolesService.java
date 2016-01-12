@@ -2,6 +2,7 @@ package it.sinergis.datacatalogue.services;
 
 import java.util.ArrayList;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
@@ -39,7 +40,7 @@ public class RolesService extends ServiceCommons{
 			params.add(Constants.ROLE_NAME_FIELD);
 			
 			//check if there's another role already saved with the same name
-			Gsc003RoleEntity role = (Gsc003RoleEntity) getRowObject(req, Constants.ROLE_TABLE_NAME, params, rolePersistence);
+			Gsc003RoleEntity role = getRoleObject(req);
 							
 			//if no results found -> add new record
 			if(role == null) {
@@ -71,7 +72,36 @@ public class RolesService extends ServiceCommons{
 	}
 	
 	public String deleteRole(String req){
-		return "";
+		try{
+			checkJsonWellFormed(req);
+			
+			//check if there's another organization already saved with the same name
+			Gsc003RoleEntity role = getRoleObject(req);
+							
+			//if results found -> delete record
+			if(role != null) {
+				rolePersistence.delete(role);
+				
+				logger.info("Role succesfully deleted");
+				logger.info(req);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_DELETED);
+				
+			//otherwise error
+			} else {
+				DCException rpe = new DCException(Constants.ER10);
+				return rpe.returnErrorString();				
+			}
+			
+		}
+		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(Exception e) {
+			logger.error("delete role service error",e);
+			DCException rpe = new DCException(Constants.ER01);
+			logger.error("deleteRole service: unhandled error "+ rpe.returnErrorString());
+			
+			return rpe.returnErrorString();
+		}
 	}
 	
 	public String listRole(String req){
@@ -81,4 +111,20 @@ public class RolesService extends ServiceCommons{
 	public String assignRole(String req){
 		return "";
 	}
+	
+	/**
+	 * Retrieves the role given an organization and role name.
+	 * 
+	 * @param json
+	 * @return
+	 * @throws DCException
+	 */
+	private Gsc003RoleEntity getRoleObject(String json) throws DCException {
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(Constants.ORG_FIELD);
+		params.add(Constants.ROLE_NAME_FIELD);
+		
+		//check if there's another role already saved with the same name
+		return (Gsc003RoleEntity) getRowObject(json, Constants.ROLE_TABLE_NAME, params, rolePersistence);
+	}		
 }
