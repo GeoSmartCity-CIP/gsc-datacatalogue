@@ -27,6 +27,11 @@ public class ServiceCommons {
 	}
 	
 	protected void checkJsonWellFormed(String jsonText) throws DCException {
+		if (!isAllKeyLowercase(jsonText))
+		{
+			logger.error("Error: Json keys are not all lowercase");
+			throw new DCException("ER11");
+		}
 		try {
 			om.readTree(jsonText);
 		} catch (JsonProcessingException e) {
@@ -96,7 +101,7 @@ public class ServiceCommons {
 	 * @param text
 	 * @return
 	 */
-	protected String keyToLowerCase(String json) {
+	/*protected String keyToLowerCase(String json) {
 		json = json.replaceAll("\\s","");
         Matcher m = Pattern.compile("\"\\b\\w{1,}\\b\"\\s*:").matcher(json);
         StringBuilder sanitizedJSON = new StringBuilder();
@@ -109,7 +114,25 @@ public class ServiceCommons {
         sanitizedJSON.append(json.substring(last));
 
         return sanitizedJSON.toString();
-	}
+	}*/
+	
+	/**
+	 * Verifiy if all JSON keys are in lowercase
+	 * 
+	 * @param text
+	 * @return boolean
+	 */	
+	protected boolean isAllKeyLowercase(String json) {
+		json = json.replaceAll("\\s","");
+        Matcher m = Pattern.compile("\"\\b\\w{1,}\\b\"\\s*:").matcher(json);
+        while (m.find()) {
+            if (!m.group(0).toLowerCase().equals(m.group(0)))
+            {
+            	return false;
+            }
+        }
+        return true;
+	}	
 	
 	/**
 	 * Returns value of a specific field
