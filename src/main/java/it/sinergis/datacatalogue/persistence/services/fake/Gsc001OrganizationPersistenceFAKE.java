@@ -82,7 +82,11 @@ public class Gsc001OrganizationPersistenceFAKE extends GenericFakeService<Gsc001
 
 	@Override
 	public List<Gsc001OrganizationEntity> getOrganizations(String query) {
-		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Object> loadByNativeQueryGenericObject(String query) {
 		return null;
 	}
 
