@@ -1,7 +1,6 @@
 package it.sinergis.datacatalogue.services;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.common.Constants;

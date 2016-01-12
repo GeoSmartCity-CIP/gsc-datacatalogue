@@ -11,12 +11,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
-import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.GenericPersistence;
-import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
 
 public class ServiceCommons {
 
