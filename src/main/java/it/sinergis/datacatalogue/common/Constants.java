@@ -21,6 +21,9 @@ public final class Constants {
 	public static final String ROLE_NAME_FIELD = "rolename";
 	public static final String ORG_FIELD = "organization";
 	public static final String STATUS_FIELD = "status";
+	public static final String ORGANIZATIONS_FIELD = "organizations";
+	public static final String NAME_FIELD = "name";
+	public static final String USERS_FIELD = "users";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";

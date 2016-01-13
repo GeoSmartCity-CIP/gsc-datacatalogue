@@ -1,7 +1,10 @@
 package it.sinergis.datacatalogue.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
@@ -14,6 +17,7 @@ import it.sinergis.datacatalogue.common.Constants;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OrganizationsService extends ServiceCommons{
@@ -76,6 +80,11 @@ public class OrganizationsService extends ServiceCommons{
 		}		
 	}
 	
+	/**
+	 * Update organization
+	 * @param req json of organization to upadate
+	 * @return status on json form
+	 */
 	public String updateOrganization(String req){
 		try{
 			checkJsonWellFormed(req);
@@ -110,6 +119,11 @@ public class OrganizationsService extends ServiceCommons{
 		}
 	}
 	
+	/**
+	 * Delete existing organization
+	 * @param req organization to delete on json form
+	 * @return status on json form
+	 */
 	public String deleteOrganization(String req){
 		try{
 			checkJsonWellFormed(req);
@@ -143,6 +157,11 @@ public class OrganizationsService extends ServiceCommons{
 		}
 	}
 	
+	/**
+	 * Get a list of organizations 
+	 * @param req search criteria on json fomr
+	 * @return list of organizations or error message in json form
+	 */
 	public String listOrganization(String req){
 		try{
 			String query = null;
@@ -165,52 +184,56 @@ public class OrganizationsService extends ServiceCommons{
 			
 			Gsc002UserPersistenceJPA userJpa = new Gsc002UserPersistenceJPA();
 			
-			StringBuilder orgsJson = new StringBuilder();
-			orgsJson.append("{\"organizations\":[");
+			Map<String,Object> orgsMap = new HashMap<String,Object>();
+			
+			List<Object> orgsArray = new ArrayList<Object>();
 			//select users for each organization
 			for (int i =0; i< orgs.size();i++) {
 				Gsc001OrganizationEntity org = orgs.get(i);
 				
-				orgsJson.append("{");
+				Map<String,Object> orgMap = new HashMap<String,Object>();				
+				String orgName = getFieldValueFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD);
 				
-				String orgName = getFieldValueFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD);				
-				orgsJson.append("\"name\":" + orgName);
+				orgMap.put(Constants.NAME_FIELD, orgName);
+				
 				
 				String description = getFieldValueFromJsonText(org.getJson(),Constants.DESCRIPTION_FIELD);
 				if(description != null) {
-					orgsJson.append(",");
-					orgsJson.append("\"description\":" + description);
+					orgMap.put(Constants.DESCRIPTION_FIELD, description);
 				}
 				
 				//Select user of current organization								
 				String queryText = "'" + Constants.ORGANIZATION_FIELD + "' = '"+getKeyFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD)+"'";
 				query = createQuery(queryText, Constants.USER_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 				List<Gsc002UserEntity> users = userJpa.loadByNativeQuery(query);
-				if (users.size()> 0) {
-					orgsJson.append(",");
-					orgsJson.append("\"users\": [");
+				if (users.size()> 0) {					
+
+					List<Object> usersArray = new ArrayList<Object>();
 					for(int j = 0; j< users.size();j++) {
+						Map<String, Object> userInfo = new HashMap<String, Object>();
 						Gsc002UserEntity user = users.get(j);
 						
-						orgsJson.append("{");
-						orgsJson.append("\"username\":"+ getFieldValueFromJsonText(user.getJson(),Constants.USERNAME_FIELD));
+						userInfo.put(Constants.USERNAME_FIELD, getFieldValueFromJsonText(user.getJson(),Constants.USERNAME_FIELD));
+
+						usersArray.add(userInfo);
 						
-						orgsJson.append("}");
-						if(j < users.size() -1) 
-							orgsJson.append(",");
 					}
-					orgsJson.append("]");
+					orgMap.put(Constants.USERS_FIELD, usersArray);				
 				}
-				
-				orgsJson.append("}");
-				
-				if(i < orgs.size() - 1)
-					orgsJson.append(",");			
-				
+				orgsArray.add(orgMap);			
 			}
-			orgsJson.append("]}");
 			
-			return orgsJson.toString();
+			orgsMap.put(Constants.ORGANIZATIONS_FIELD, orgsArray);
+			
+			ObjectMapper mapper = new ObjectMapper();
+		    String jsonString;
+		    try {
+		        jsonString = mapper.writeValueAsString(orgsMap);
+		    } catch (IOException e) {
+		        jsonString = "fail"; 
+		    }
+		    
+			return jsonString;
 			
 		}
 		catch(DCException rpe) {
@@ -237,7 +260,12 @@ public class OrganizationsService extends ServiceCommons{
 		return (Gsc001OrganizationEntity) getRowObject(json, Constants.ORGANIZATION_TABLE_NAME, params, organizationPersistence);
 	}	
 	
-	
+	/**
+	 * Update organization json
+	 * @param newJson new json
+	 * @return json updated
+	 * @throws DCException
+	 */
 	private String updateOrganizationJson(String newJson) throws DCException {
 		try {
 			JsonNode newRootNode = om.readTree(newJson);
