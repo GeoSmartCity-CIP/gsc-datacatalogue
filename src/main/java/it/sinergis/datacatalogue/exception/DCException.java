@@ -1,5 +1,6 @@
 package it.sinergis.datacatalogue.exception;
 
+import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.common.PropertyReader;
 
 public class DCException extends Exception {
@@ -21,12 +22,12 @@ public class DCException extends Exception {
 	}
 	
 	/**
-	 * Returns an error as json in the following format: {"Status":"Error","Description": ????}
+	 * Returns an error as json in the following format: {"status":"Error","description": ????}
 	 * 
 	 * @return
 	 */
 	public String returnErrorString() {
-		return "{\"Status\":\"Error\",\"Description\":\""+this.getErrorMessage()+"\"}";
+		return "{\""+Constants.STATUS_FIELD+"\":\""+Constants.STATUS_ERROR+"\",\""+Constants.DESCRIPTION_FIELD+"\":\""+this.getErrorMessage()+"\"}";		
 	}
 
 	public String getErrorCode() {
