@@ -1,6 +1,9 @@
 package it.sinergis.datacatalogue.services;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -235,6 +238,19 @@ public class ServiceCommons {
 	protected String createJsonStatus(String status,String descriptionCode)
 	{
 		PropertyReader pr = new PropertyReader("messages.properties");
-		return "{\"Status\":\""+status+"\",\"Description\":\""+pr.getValue(descriptionCode)+"\"}";
-	}
+		Map<String, Object> fieldsMap = new HashMap<String,Object>();
+		fieldsMap.put(Constants.STATUS_FIELD,status);
+		fieldsMap.put(Constants.DESCRIPTION_FIELD,pr.getValue(descriptionCode));
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    String jsonString;
+	    try {
+	        jsonString = mapper.writeValueAsString(fieldsMap);
+	    } catch (IOException e) {
+	        jsonString = "fail"; 
+	    }
+		
+		return jsonString;
+	}			
+	
 }

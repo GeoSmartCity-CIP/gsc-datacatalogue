@@ -13,6 +13,9 @@ import it.sinergis.datacatalogue.common.Constants;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class OrganizationsService extends ServiceCommons{
 	
 	
@@ -82,6 +85,7 @@ public class OrganizationsService extends ServiceCommons{
 							
 			//if results found -> update record
 			if(organization != null) {
+				organization.setJson(updateOrganizationJson(req));
 				organizationPersistence.save(organization);
 				
 				logger.info("Organization succesfully updated");
@@ -231,5 +235,30 @@ public class OrganizationsService extends ServiceCommons{
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.ORG_NAME_FIELD);
 		return (Gsc001OrganizationEntity) getRowObject(json, Constants.ORGANIZATION_TABLE_NAME, params, organizationPersistence);
+	}	
+	
+	
+	private String updateOrganizationJson(String newJson) throws DCException {
+		try {
+			JsonNode newRootNode = om.readTree(newJson);
+			
+			JsonNode newOrgName = newRootNode.findValue(Constants.NEW_ORG_NAME_FIELD);
+			if(newOrgName == null) {
+				logger.error(Constants.NEW_ORG_NAME_FIELD + " parameter is mandatory within the json string.");
+				throw new DCException(Constants.ER04);
+			}
+			
+			((ObjectNode) newRootNode).put(Constants.ORG_NAME_FIELD, newOrgName.toString().replace("\"", ""));
+			
+			((ObjectNode) newRootNode).remove(Constants.NEW_ORG_NAME_FIELD);
+								
+			return newRootNode.toString();
+		} catch(DCException rpe) {
+			throw rpe;
+		} catch(Exception e) {
+			logger.error("unhandled error: ",e);
+			throw new DCException(Constants.ER01);
+		}			
+	
 	}	
 }
