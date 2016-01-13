@@ -85,4 +85,9 @@ public class Gsc003RolePersistenceFAKE extends GenericFakeService<Gsc003RoleEnti
 		return null;
 	}
 
+	@Override
+	public List<Gsc003RoleEntity> loadByNativeQuery(String query) {
+		return null;
+	}
+
 }
