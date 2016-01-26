@@ -1,0 +1,9 @@
+{
+    "templates": {
+        "default": {
+            "useLongnameInNav": true,
+            "includeDate": false,
+            "outputSourceFiles": false
+        }
+    }
+}
