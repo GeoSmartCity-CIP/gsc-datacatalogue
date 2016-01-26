@@ -45,6 +45,15 @@ angular.module('gscDatacat', [
                                 }
                             }
                         })
+                        .state('app.createDataSource', {
+                            url: '/createDataSource',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createDataSource/createDataSource.html',
+                                    controller: 'createDataSourceCtrl'
+                                }
+                            }
+                        })
                         .state('app.loginForm', {
                             url: '/loginForm',
                             views: {
@@ -54,15 +63,6 @@ angular.module('gscDatacat', [
                                 }
                             }
                         });
-                //                        .state('app.testState', {
-                //                            url: '/testState',
-                //                            views: {
-                //                                'content': {
-                //                                    templateUrl: 'templates/testState/testState.html',
-                //                                    controller: 'testStateCtrl'
-                //                                }
-                //                            }
-                //                        });
 
                 // if none of the above states are matched, use this as the fallback
                 $urlRouterProvider.otherwise('/app/loginForm');

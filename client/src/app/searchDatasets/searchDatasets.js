@@ -14,4 +14,6 @@ angular.module('gscDatacat.controllers')
 
                 console.log($stateParams);
 
+                $scope.query = $stateParams.query;
+
             }]);
