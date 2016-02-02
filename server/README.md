@@ -1,5 +1,5 @@
 # gsc-datacatalogue
-GeoSmartCity Data Catalogue
+GeoSmartCity Data Catalogue backend services
 
 Url test Service
 
