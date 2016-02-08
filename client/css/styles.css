@@ -1,0 +1,138 @@
+/* Sidebar */
+/* body { padding-top: 70px; } */
+
+.list-group.panel > .list-group-item {
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px
+}
+.list-group-submenu {
+    margin-left:20px;
+}
+
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    background-image: linear-gradient(to bottom, #A52A2A 0%, #A52A2A 100%);
+    background-repeat: repeat-x;
+    border-color: #a52a2a;
+    text-shadow: 0 -1px 0 #286090;
+}
+
+.admBoard-subFormPanel {
+    border-top: none !important;
+    background: #F7F0E4;
+}
+
+.admBoard-siteTitle {
+
+    float: right;
+}
+
+.admBoard-menuBar {
+    background-color: #4b4b4b;
+    color: #ffffff;
+    text-decoration:  none;
+    height: 32px;
+}
+.admBoard-subMenuBar {
+    background-color: #ffffff;
+    background-image: url('../images/pattern-repeat-horizontal.gif');
+    background-position: top left;
+    background-repeat: repeat-x;
+    min-height: 20px;
+    margin-bottom: 18px;
+}
+
+.navbar-brand.home {
+    padding: 5px;
+    color: white;
+}
+
+.navbar-brand.home:hover {
+    color: yellow;
+}
+
+.navbar-brand.username {
+    padding: 5px;
+    float: right;
+}
+
+.nav-tabs {
+    font-size: 15px;
+}
+
+.nav-tabs > li > div {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+}
+
+.nav-tabs > li > div:hover {
+    border-color: #eee #eee #ddd;
+}
+
+.nav-tabs > li.active > div, .nav-tabs > li.active > div:hover {
+    color: #555;
+    cursor: default;
+    background-color: #F7F0E4;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+
+.nav > li > div {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+
+.nav > li > div:hover {
+    background-color: #F7F0E4;
+}
+
+.uib-tab > div {
+    color: #A52A2A;
+    cursor: pointer;
+}
+
+.adm-danger.uib-tab > div {
+    background-color: #ebb8b8;
+}
+
+.nav-tabs > li.disabled > div {
+    color: #999;
+}
+
+.nav-tabs>li.disabled>div:hover, .nav-tabs>li.disabled>div:focus {
+    color: #999;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
+.accordion-toggle {
+    cursor: pointer;
+}
+
+.form-group.required .control-label:after {
+    content:"*";
+    color:red;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}

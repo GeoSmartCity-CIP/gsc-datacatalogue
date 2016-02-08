@@ -1,0 +1,33 @@
+{
+    "curly": true,
+    "eqeqeq": false,
+    "immed": true,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "boss": true,
+    "eqnull": true,
+    "predef": ["exports"],
+    "globalstrict": true,
+    "globals": {
+        "jQuery": false,
+        "$": false,
+        "Pages": false,
+        "Page": false,
+        "angular": false,
+        "describe": false,
+        "it": false,
+        "expect": false,
+        "beforeEach": false,
+        "afterEach": false,
+        "module": false,
+        "inject": false,
+        "admBoard": true,
+        "console": false,
+        "crossfilter": false,
+        "d3": false,
+        "dc": false
+    }
+}

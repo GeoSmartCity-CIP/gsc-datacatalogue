@@ -1,0 +1,85 @@
+<script type="text/ng-template" id="group-template.html">
+    <div class="list-group">
+    <a href tabindex="0" class="list-group-item active accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading">
+    <span ng-class="{'text-muted': isDisabled}">
+    {{heading}}
+    <span class='caret'></span>
+    </span>
+    </a>
+    <div uib-collapse="!isOpen">
+    <div ng-transclude>
+    </div>
+    </div>
+    </div>
+</script>
+
+<div class="container">
+    <img src="images/gsc-logo.png" height="75" align="right"/>
+    <div class="page-header">
+        <h1>Data Catalogue <small>cloud manager</small></h1>
+    </div>    
+</div>
+
+<nav class="admBoard-menuBar">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#admboard-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand home" href="#/app/dbrdOverallStatistics/">Home</a>
+        </div>
+
+        <div ng-if="$root.data.authUser !== null">
+            <span class="navbar-brand username">Logged in as {{$root.data.authUser}} |
+                <a ng-click="$root.doLogout()">Logout</a>
+            </span>
+        </div>
+    </div><!-- /.container-fluid -->
+</nav>
+<br/>
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3" ng-if="$root.data.authUser !== null">
+            <form class="form" role="search">
+                <label for=''>Search</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder='dataset name or id' ng-model="$root.data.query">
+                    <span class="input-group-btn">
+                        <button class='btn btn-primary' ui-sref='app.searchDatasets({query: $root.data.query})'>
+                            <span class='glyphicon glyphicon-search'></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+            <hr>
+            <label>Menu</label>
+            <uib-accordion close-others="true"> 
+                <uib-accordion-group heading="Data management" is-open="true" template-url="group-template.html">
+                    <a ui-sref="app.createDataSource" class="list-group-item">
+                        <span class='glyphicon glyphicon-plus-sign'></span>
+                        Create data source...
+                    </a>
+                </uib-accordion-group>
+                <uib-accordion-group heading="Administration" template-url="group-template.html">
+                    <a href="" class="list-group-item">Manage users</a>
+                    <a href="" class="list-group-item">Permissions</a>
+                </uib-accordion-group>
+            </uib-accordion>
+        </div>
+        <div class="col-md-9">
+            <div ui-view="content" class="adm-form-bg"></div>
+        </div>
+    </div>
+    <hr>
+    <footer>
+        <p>&copy; 2015 SINERGIS and AVINET on behalf of GeoSmartCity Partners. Project co-funded by the European Commission</p>
+    </footer>
+</div
