@@ -56,11 +56,11 @@ public class OrganizationsService extends ServiceCommons{
 				Gsc001OrganizationEntity org = new Gsc001OrganizationEntity();
 				org.setJson(req);
 				
-				organizationPersistence.insert(org);
+				org = organizationPersistence.save(org);
 				
 				logger.info("Organization succesfully created");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_CREATED);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_CREATED,org.getId(),req);
 				
 			//otherwise an error message will be return
 			} else {
@@ -89,8 +89,8 @@ public class OrganizationsService extends ServiceCommons{
 		try{
 			checkJsonWellFormed(req);
 			
-			//check if there's another organization already saved with the same name
-			Gsc001OrganizationEntity organization = getOrganizationObject(req);
+			//check if there's another organization already saved with the same ID
+			Gsc001OrganizationEntity organization = getOrganizationObjectById(req);
 							
 			//if results found -> update record
 			if(organization != null) {
@@ -99,9 +99,9 @@ public class OrganizationsService extends ServiceCommons{
 				
 				logger.info("Organization succesfully updated");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_UPDATED);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_UPDATED,null,req);
 				
-			//otherwise update current record
+			//otherwise throw exception
 			} else {
 				DCException rpe = new DCException(Constants.ER09);
 				return rpe.returnErrorString();				
@@ -129,15 +129,20 @@ public class OrganizationsService extends ServiceCommons{
 			checkJsonWellFormed(req);
 			
 			//check if there's another organization already saved with the same name
-			Gsc001OrganizationEntity organization = getOrganizationObject(req);
+			Gsc001OrganizationEntity organization = getOrganizationObjectById(req);
 							
 			//if results found -> delete record
 			if(organization != null) {
 				organizationPersistence.delete(organization);
 				
+				//TODO
+				//we need to explicitly handle deletion of tables that rely on this entity
+				//by calling delete methods of the following:
+				//datasource, application, grouplayer, function, role, user
+				
 				logger.info("Organization succesfully deleted");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_DELETED);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_DELETED,null,req);
 				
 			//otherwise error
 			} else {
@@ -191,7 +196,10 @@ public class OrganizationsService extends ServiceCommons{
 			for (int i =0; i< orgs.size();i++) {
 				Gsc001OrganizationEntity org = orgs.get(i);
 				
-				Map<String,Object> orgMap = new HashMap<String,Object>();				
+				Map<String,Object> orgMap = new HashMap<String,Object>();	
+				
+				orgMap.put(Constants.ID_FIELD, org.getId());
+				
 				String orgName = getFieldValueFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD);
 				
 				orgMap.put(Constants.NAME_FIELD, orgName);
@@ -201,6 +209,8 @@ public class OrganizationsService extends ServiceCommons{
 				if(description != null) {
 					orgMap.put(Constants.DESCRIPTION_FIELD, description);
 				}
+				
+				
 				
 				//Select user of current organization								
 				String queryText = "'" + Constants.ORGANIZATION_FIELD + "' = '"+getKeyFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD)+"'";
@@ -257,6 +267,19 @@ public class OrganizationsService extends ServiceCommons{
 	private Gsc001OrganizationEntity getOrganizationObject(String json) throws DCException {
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.ORG_NAME_FIELD);
+		return (Gsc001OrganizationEntity) getRowObject(json, Constants.ORGANIZATION_TABLE_NAME, params, organizationPersistence);
+	}	
+	
+	/**
+	 * Retrieves the organization given an organization Id.
+	 * 
+	 * @param json
+	 * @return
+	 * @throws RPException
+	 */
+	private Gsc001OrganizationEntity getOrganizationObjectById(String json) throws DCException {
+		ArrayList<String> params = new ArrayList<String>();
+		params.add(Constants.ORG_ID_FIELD);
 		return (Gsc001OrganizationEntity) getRowObject(json, Constants.ORGANIZATION_TABLE_NAME, params, organizationPersistence);
 	}	
 	

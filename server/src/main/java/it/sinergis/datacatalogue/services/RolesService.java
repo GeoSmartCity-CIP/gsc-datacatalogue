@@ -54,7 +54,7 @@ public class RolesService extends ServiceCommons{
 				
 				logger.info("Role succesfully created");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_CREATED);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_CREATED,null,req);
 				
 			//otherwise an error message will be return
 			} else {
@@ -92,7 +92,7 @@ public class RolesService extends ServiceCommons{
 				
 				logger.info("Role succesfully deleted");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_DELETED);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_DELETED,null,req);
 				
 			//otherwise error
 			} else {
