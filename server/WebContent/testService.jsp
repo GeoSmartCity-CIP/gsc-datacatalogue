@@ -10,12 +10,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script>
 	
-	function showFields() {
+	function showFields(keepRequest) {
 	    var select = document.getElementById("servizioSelect");
-	    if(select) {
+	    
+	    if(select && !keepRequest) {
+	    	document.getElementById("responseJSONId").value = "";
+	    	
 		    var selected = select.options[select.selectedIndex].value;
 		    
-		    if(selected === 'createorg'){
+		    if(selected === 'createorg' ){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").title = "Insert a JSON organization.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateOrgExample").value;
@@ -36,8 +39,8 @@
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListOrgExample").value;
 		    	
 		    }
-	    	document.getElementById("submitButton").style.display = "table-row";
-	    	document.getElementById("response").style.display = "table-row";
+	    	//document.getElementById("submitButton").style.display = "table-row";
+	    	//document.getElementById("response").style.display = "table-row";
 	    	
 	    	//document.getElementById('responseJSONId').value = JSON.stringify(JSON.parse(document.getElementById('responseJSONId').value), null, 2);
 	    }
@@ -67,22 +70,23 @@ body,tr,td {
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
 <%
-String servizio=(String)request.getAttribute("servizio");
+String servizio=(String)request.getAttribute("actionName");
 if (servizio==null) {
 	servizio="";
 } else {
-	{ %> <script type="text/javascript"> showFields(); </script> <% }
+	{ %> <script type="text/javascript"> showFields(true); </script> <% }
 }
 
 %>
+
 <table>
 	<tr>
 		<td>Service</td>
-		<td><select name="actionName" id="servizioSelect" onchange="showFields()">
+		<td><select name="actionName" id="servizioSelect" onchange="showFields(false)">
 			<option value="ChooseService" >Choose service...</option>
 			<option value="createorg" <%= servizio.equals("createorg") ? "selected=\"selected\"" : ""%>>Organization - Create</option>
 			<option value="updateorg" <%= servizio.equals("updateorg") ? "selected=\"selected\"" : ""%>>Organization - Update</option>
-            <option value="deleteorg" <%= servizio.equals("deleteorg") ? "selected=\"selected\"" : ""%>">Organization - Delete</option>
+            <option value="deleteorg" <%= servizio.equals("deleteorg") ? "selected=\"selected\"" : ""%>>Organization - Delete</option>
             <option value="listorg" <%= servizio.equals("listorg") ? "selected=\"selected\"" : ""%>>Organization - List/Search</option>
             			
 			<option value=""></option>
@@ -93,13 +97,13 @@ if (servizio==null) {
 		<td><textarea id="textArea" name="request" cols="120" rows="30"><%if (request.getAttribute("text") != null)
 				out.print(request.getAttribute("text"));%></textarea></td>
 	</tr>	
-	<tr style="display:none" id="submitButton">
+	<tr id="submitButton">
 		<td></td>
 		<td>
 		<INPUT type="submit" value="Submit">
 		</td>
 	</tr>
-  	<tr style="display:table-row" id="response">
+  	<tr id="response">
 		<td>Response</td>
 		<td><pre><textarea name="responseJSON" id="responseJSONId" cols="120" rows="15"><%
 			if (request.getAttribute("responseJSON") != null)
@@ -109,7 +113,7 @@ if (servizio==null) {
 <%
 servizio=(String)request.getAttribute("actionName");
 if (servizio != "") {
-	{ %> <script type="text/javascript"> showFields(); </script> <% }
+	{ %> <script type="text/javascript"> showFields(true); </script> <% }
 }
 
 %>

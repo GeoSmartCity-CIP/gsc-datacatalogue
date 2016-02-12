@@ -1,5 +1,16 @@
 package it.sinergis.datacatalogue.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.services.ApplicationsService;
@@ -12,19 +23,6 @@ import it.sinergis.datacatalogue.services.OrganizationsService;
 import it.sinergis.datacatalogue.services.PermissionsService;
 import it.sinergis.datacatalogue.services.RolesService;
 import it.sinergis.datacatalogue.services.UsersService;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
 
 /**
  * Servlet implementation class DataCatalogServlet
@@ -277,8 +275,13 @@ public class DataCatalogServlet extends HttpServlet {
             		ApplicationsService service = new ApplicationsService();
             		serviceResp = service.getConfiguration(requestJson);
             	}
-            	            	
-        		writer.write(serviceResp);
+            	
+            	//request.setAttribute("actionName", action);
+            	//request.setAttribute("text", requestJson);
+        		//request.setAttribute("responseJSON", serviceResp);
+        		//request.getRequestDispatcher("testService.jsp")
+        		//		.forward(request, response);
+            	writer.write(serviceResp);
         		        		
             }
 		}

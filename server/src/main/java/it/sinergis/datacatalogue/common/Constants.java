@@ -5,6 +5,8 @@ public final class Constants {
 	/** GENERIC PARAMETERS*/
 	public static final String STATUS_DONE = "Done";
 	public static final String STATUS_ERROR = "Error";
+	public static final String REQUEST = "Request";
+	public static final String ID = "Id";
 	
 	/** TABLES PARAMETERS*/
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
@@ -13,6 +15,7 @@ public final class Constants {
 	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
+	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String NEW_ORG_NAME_FIELD = "neworganizationname";
 	public static final String DESCRIPTION_FIELD = "description";
@@ -24,6 +27,7 @@ public final class Constants {
 	public static final String ORGANIZATIONS_FIELD = "organizations";
 	public static final String NAME_FIELD = "name";
 	public static final String USERS_FIELD = "users";
+	public static final String ID_FIELD = "id";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";

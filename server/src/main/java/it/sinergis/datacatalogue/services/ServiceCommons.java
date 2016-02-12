@@ -1,18 +1,18 @@
 package it.sinergis.datacatalogue.services;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.common.PropertyReader;
@@ -235,22 +235,37 @@ public class ServiceCommons {
 	 * @param description 
 	 * @return String
 	 */	
-	protected String createJsonStatus(String status,String descriptionCode)
+	protected String createJsonStatus(String status,String descriptionCode,Long id,String request)
 	{
 		PropertyReader pr = new PropertyReader("messages.properties");
-		Map<String, Object> fieldsMap = new HashMap<String,Object>();
-		fieldsMap.put(Constants.STATUS_FIELD,status);
-		fieldsMap.put(Constants.DESCRIPTION_FIELD,pr.getValue(descriptionCode));
+//		Map<String, Object> fieldsMap = new HashMap<String,Object>();
+//		
+//		fieldsMap.put(Constants.STATUS_FIELD,status);
+//		fieldsMap.put(Constants.DESCRIPTION_FIELD,pr.getValue(descriptionCode));
+//		if(id != null) {
+//			fieldsMap.put(Constants.ID,id);
+//		}
+		//fieldsMap.put(Constants.REQUEST, request);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    String jsonString;
 	    try {
-	        jsonString = mapper.writeValueAsString(fieldsMap);
+//	        jsonString = mapper.writeValueAsString(fieldsMap);
+
+	        JsonNode reqNode = mapper.readTree(request);
+	        ObjectNode root = JsonNodeFactory.instance.objectNode();
+	        root.put("request", reqNode);
+	        root.put(Constants.STATUS_FIELD,status);
+	        root.put(Constants.DESCRIPTION_FIELD,pr.getValue(descriptionCode));
+	        if(id != null) {
+	        	root.put(Constants.STATUS_FIELD,status);
+	        }
+	        jsonString = mapper.writeValueAsString(root);
 	    } catch (IOException e) {
 	        jsonString = "fail"; 
 	    }
 		
 		return jsonString;
-	}			
+	}						
 	
 }
