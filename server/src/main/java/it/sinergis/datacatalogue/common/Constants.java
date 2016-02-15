@@ -37,6 +37,7 @@ public final class Constants {
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
 	
+	
 	/** ERRORS */
 	public static final String ER01 = "ER01";
 	public static final String ER02 = "ER02";
@@ -46,8 +47,11 @@ public final class Constants {
 	public static final String ER06 = "ER06";	
 	public static final String ER07 = "ER07";	
 	public static final String ER11 = "ER11";
+	
+	//Dataset Errors
 	public static final String ER700 = "ER700";
 	public static final String ER701 = "ER701";
+	public static final String ER702 = "ER702";
 	//Organization Errors
 	public static final String ER101 = "ER101";	
 	public static final String ER102 = "ER102";	
