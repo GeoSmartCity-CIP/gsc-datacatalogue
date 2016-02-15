@@ -18,7 +18,7 @@ public final class Constants {
 	/** JSON FIELDS NAMES */
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
-	public static final String NEW_ORG_NAME_FIELD = "neworganizationname";
+	//public static final String NEW_ORG_NAME_FIELD = "neworganizationname";
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String USERNAME_FIELD = "username";
 	public static final String ORGANIZATION_FIELD = "organization";
@@ -45,12 +45,14 @@ public final class Constants {
 	public static final String ER05 = "ER05";	
 	public static final String ER06 = "ER06";	
 	public static final String ER07 = "ER07";	
-	public static final String ER08 = "ER08";	
-	public static final String ER09 = "ER09";	
-	public static final String ER10 = "ER10";	
 	public static final String ER11 = "ER11";
 	public static final String ER700 = "ER700";
 	public static final String ER701 = "ER701";
+	//Organization Errors
+	public static final String ER101 = "ER101";	
+	public static final String ER102 = "ER102";	
+	public static final String ER103 = "ER103";	
+	public static final String ER104 = "ER104";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";

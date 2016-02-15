@@ -58,7 +58,7 @@ public class RolesService extends ServiceCommons{
 				
 			//otherwise an error message will be return
 			} else {
-				DCException rpe = new DCException(Constants.ER08);
+				DCException rpe = new DCException(Constants.ER101);
 				return rpe.returnErrorString();				
 			}
 			
@@ -96,7 +96,7 @@ public class RolesService extends ServiceCommons{
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER10);
+				DCException rpe = new DCException(Constants.ER103);
 				return rpe.returnErrorString();				
 			}
 			

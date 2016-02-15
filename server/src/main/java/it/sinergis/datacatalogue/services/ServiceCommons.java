@@ -256,11 +256,11 @@ public class ServiceCommons {
 
 	        JsonNode reqNode = mapper.readTree(request);
 	        ObjectNode root = JsonNodeFactory.instance.objectNode();
-	        root.put("request", reqNode);
+	        root.put(Constants.REQUEST, reqNode);
 	        root.put(Constants.STATUS_FIELD,status);
 	        root.put(Constants.DESCRIPTION_FIELD,pr.getValue(descriptionCode));
 	        if(id != null) {
-	        	root.put(Constants.STATUS_FIELD,status);
+	        	root.put(Constants.ID,id);
 	        }
 	        jsonString = mapper.writeValueAsString(root);
 	    } catch (IOException e) {
