@@ -3,15 +3,16 @@ package it.sinergis.datacatalogue.common;
 public final class Constants {
 
 	/** GENERIC PARAMETERS*/
-	public static final String STATUS_DONE = "Done";
-	public static final String STATUS_ERROR = "Error";
-	public static final String REQUEST = "Request";
-	public static final String ID = "Id";
+	public static final String STATUS_DONE = "done";
+	public static final String STATUS_ERROR = "error";
+	public static final String REQUEST = "request";
+	public static final String ID = "id";
 	
 	/** TABLES PARAMETERS*/
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
 	public static final String USER_TABLE_NAME = "gsc_002_user";
 	public static final String ROLE_TABLE_NAME = "gsc_003_role";	
+	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
 	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
@@ -28,6 +29,13 @@ public final class Constants {
 	public static final String NAME_FIELD = "name";
 	public static final String USERS_FIELD = "users";
 	public static final String ID_FIELD = "id";
+	public static final String DSET_ID_FIELD = "iddataset";
+	public static final String DSET_NAME_FIELD = "datasetname";
+	public static final String DSOURCE_ID_FIELD = "iddatasource";
+	public static final String DSET_REALNAME_FIELD = "realname";
+	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
+	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
+	public static final String DSET_RESULT = "dataset";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";
@@ -40,12 +48,17 @@ public final class Constants {
 	public static final String ER08 = "ER08";	
 	public static final String ER09 = "ER09";	
 	public static final String ER10 = "ER10";	
-	public static final String ER11 = "ER11";	
+	public static final String ER11 = "ER11";
+	public static final String ER700 = "ER700";
+	public static final String ER701 = "ER701";
 	
 	/** STATUS MESSAGES*/
-	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";;
-	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";;
-	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";;
-	public static final String ROLE_CREATED = "ROLE_CREATED";;
-	public static final String ROLE_DELETED = "ROLE_DELETED";;
+	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
+	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";
+	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";
+	public static final String ROLE_CREATED = "ROLE_CREATED";
+	public static final String ROLE_DELETED = "ROLE_DELETED";
+	public static final String DATASETS_CREATED = "DATASETS_CREATED";
+	public static final String DATASETS_DELETED = "DATASETS_DELETED";
+	public static final String DATASETS_UPDATED = "DATASETS_UPDATED";
 }

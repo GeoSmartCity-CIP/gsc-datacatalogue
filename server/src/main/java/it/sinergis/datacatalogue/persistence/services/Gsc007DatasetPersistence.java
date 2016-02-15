@@ -91,4 +91,11 @@ public interface Gsc007DatasetPersistence {
 	 */
 	public long countAll();
 	
+	/**
+	 * Executes the native query.
+	 * @param query
+	 * @return
+	 */
+	public List<Gsc007DatasetEntity> getDatasets(final String query);
+	
 }

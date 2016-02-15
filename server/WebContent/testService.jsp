@@ -38,6 +38,16 @@
 		    	document.getElementById("textArea").title = "Insert a JSON organization.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListOrgExample").value;
 		    	
+		    } else if(selected === 'createdataset'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDatasetExample").value;
+		    	
+		    } else if(selected === 'listdataset'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDatasetExample").value;
+		    	
 		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
@@ -66,6 +76,8 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
@@ -88,6 +100,8 @@ if (servizio==null) {
 			<option value="updateorg" <%= servizio.equals("updateorg") ? "selected=\"selected\"" : ""%>>Organization - Update</option>
             <option value="deleteorg" <%= servizio.equals("deleteorg") ? "selected=\"selected\"" : ""%>>Organization - Delete</option>
             <option value="listorg" <%= servizio.equals("listorg") ? "selected=\"selected\"" : ""%>>Organization - List/Search</option>
+            <option value="createdataset" <%= servizio.equals("createdataset") ? "selected=\"selected\"" : ""%>>Dataset - Create</option>
+            <option value="listdataset" <%= servizio.equals("listdataset") ? "selected=\"selected\"" : ""%>>Dataset - List/Search</option>
             			
 			<option value=""></option>
 		</select></td>

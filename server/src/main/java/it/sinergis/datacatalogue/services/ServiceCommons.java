@@ -153,10 +153,12 @@ public class ServiceCommons {
 			JsonNode rootNode = om.readTree(json);
 			JsonNode value = rootNode.findValue(fieldName);			
 					
-			if(value == null)
+			if(value == null) {
 				return null;
-			else
-				return value.toString();
+			}
+			else {
+				return value.asText();
+			}
 		} catch(Exception e) {
 			logger.error("unhandled error: ",e);
 			throw new DCException(Constants.ER01);
