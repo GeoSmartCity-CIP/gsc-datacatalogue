@@ -6,6 +6,8 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -60,6 +62,11 @@ public class Gsc007DatasetPersistenceJPA extends GenericJpaService<Gsc007Dataset
 		} ;
 		// JPA operation execution 
 		return (Long) execute(operation);
+	}
+	
+	@Override
+	public List<Gsc007DatasetEntity> getDatasets(final String query) {
+		return super.loadByNativeQuery(query);
 	}
 
 }
