@@ -33,7 +33,6 @@ public final class Constants {
 	public static final String ID_FIELD = "id";
 	public static final String DSET_ID_FIELD = "iddataset";
 	public static final String DSET_NAME_FIELD = "datasetname";
-	public static final String DSOURCE_ID_FIELD = "iddatasource";
 	public static final String DSET_REALNAME_FIELD = "realname";
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
@@ -60,6 +59,9 @@ public final class Constants {
 	public static final String ER702 = "ER702";
 	public static final String ER703 = "ER703";
 	public static final String ER704 = "ER704";
+	public static final String ER705 = "ER705";
+	public static final String ER706 = "ER706";
+	public static final String ER707 = "ER707";
 
 	/** Organization Errors. */
 	public static final String ER101 = "ER101";	

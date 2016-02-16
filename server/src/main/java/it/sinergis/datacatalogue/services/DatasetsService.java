@@ -13,10 +13,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 
 public class DatasetsService extends ServiceCommons {
@@ -29,6 +31,9 @@ public class DatasetsService extends ServiceCommons {
 	/** Logger. */
 	private static Logger logger;
 
+	/** Dao datasource. */
+	private Gsc006DatasourcePersistence gsc006Dao;
+
 	/** Dao dataset. */
 	private Gsc007DatasetPersistence gsc007Dao;
 
@@ -36,6 +41,7 @@ public class DatasetsService extends ServiceCommons {
 	public DatasetsService() {
 		logger = Logger.getLogger(this.getClass());
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
+		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 	}
 
 	public String createDataset(String req) {
@@ -50,20 +56,34 @@ public class DatasetsService extends ServiceCommons {
 
 			// if no results found -> add new record
 			if (datasetEntity == null) {
-				Gsc007DatasetEntity dset = new Gsc007DatasetEntity();
-				dset.setJson(req);
+				// check if datasource with the given id exists
+				String idDatasource = getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD);
 
-				// TODO check if datasource with the given id in the creation
-				// request exists
+				if (StringUtils.isNumeric(idDatasource)) {
+					Gsc006DatasourceEntity datasourceEntity = gsc006Dao.load(Long.parseLong(idDatasource));
 
-				dset = gsc007Dao.save(dset);
+					if (datasourceEntity != null) {
+						Gsc007DatasetEntity dset = new Gsc007DatasetEntity();
+						dset.setJson(req);
 
-				logger.info("Dataset succesfully created");
-				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_CREATED, dset.getId(), req);
+						// request exists
 
-				// otherwise an error message will be returned
+						dset = gsc007Dao.save(dset);
+
+						logger.info("Dataset succesfully created");
+						logger.info(req);
+						return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_CREATED, dset.getId(), req);
+					} else {
+						// Datasource doesn't exist
+						throw new DCException(Constants.ER705, req);
+					}
+				} else {
+					// Datasource id has to be numeric
+					throw new DCException(Constants.ER706, req);
+				}
+
 			} else {
+				// dataset with the same name already exists
 				throw new DCException(Constants.ER700, req);
 			}
 
@@ -100,18 +120,33 @@ public class DatasetsService extends ServiceCommons {
 				// if no results found or the result is-> update record
 				if (datasetEntity == null || (datasetEntity.getId().longValue() == entityFound.getId().longValue())) {
 
-					// TODO check that the datasource with the given id exists
-					JsonNode node = om.readTree(req);
-					((ObjectNode) node).remove(Constants.DSET_ID_FIELD);
-					
-					entityFound.setJson(node.toString());
-					gsc007Dao.save(entityFound);
+					// check that the datasource with the given id exists
+					String idDatasource = getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD);
+					if (StringUtils.isNumeric(idDatasource)) {
 
-					logger.info("Dataset succesfully updated");
-					logger.info(req);
-					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED, entityFound.getId(),
-							req);
+						Gsc006DatasourceEntity datasourceEntity = gsc006Dao.load(Long.parseLong(idDatasource));
+
+						if (datasourceEntity != null) {
+							JsonNode node = om.readTree(req);
+							((ObjectNode) node).remove(Constants.DSET_ID_FIELD);
+
+							entityFound.setJson(node.toString());
+							gsc007Dao.save(entityFound);
+
+							logger.info("Dataset succesfully updated");
+							logger.info(req);
+							return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED,
+									entityFound.getId(), req);
+						} else {
+							// Datasource doesn't exist
+							throw new DCException(Constants.ER705, req);
+						}
+					} else {
+						// Datasource id has to be numeric
+						throw new DCException(Constants.ER706, req);
+					}
 				} else {
+					// Update failed, dataset with the same name already exists
 					throw new DCException(Constants.ER704, req);
 				}
 			}
@@ -142,6 +177,7 @@ public class DatasetsService extends ServiceCommons {
 			if (deleted) {
 				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
 			} else {
+				// Dataset to delete doesn't exist.
 				throw new DCException(Constants.ER702, req);
 			}
 
@@ -166,7 +202,7 @@ public class DatasetsService extends ServiceCommons {
 			// Retrieving input parameters
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 			String datasetName = getFieldValueFromJsonText(req, Constants.DSET_NAME_FIELD);
-			String idDatasource = getFieldValueFromJsonText(req, Constants.DSOURCE_ID_FIELD);
+			String idDatasource = getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD);
 
 			// idDataset has priority in the research
 			if (StringUtils.isNotEmpty(idDataset)) {
@@ -174,6 +210,7 @@ public class DatasetsService extends ServiceCommons {
 
 				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
 				if (entityFound == null) {
+					// No dataset found with given parameters.
 					throw new DCException(Constants.ER701, req);
 				}
 				dsets.add(entityFound);
@@ -182,11 +219,17 @@ public class DatasetsService extends ServiceCommons {
 				StringBuilder builderQuery = new StringBuilder();
 
 				if (StringUtils.isNotEmpty(idDatasource)) {
-					builderQuery.append("'");
-					builderQuery.append(Constants.DSOURCE_ID_FIELD);
-					builderQuery.append("' = '");
-					builderQuery.append(idDatasource);
-					builderQuery.append("'");
+
+					if (StringUtils.isNumeric(idDatasource)) {
+						builderQuery.append("'");
+						builderQuery.append(Constants.DATASOURCE_ID_FIELD);
+						builderQuery.append("' = '");
+						builderQuery.append(idDatasource);
+						builderQuery.append("'");
+					} else {
+						// Datasource id has to be numeric
+						throw new DCException(Constants.ER706, req);
+					}
 				}
 
 				if (StringUtils.isNotEmpty(idDatasource) && StringUtils.isNotEmpty(datasetName)) {
@@ -235,9 +278,12 @@ public class DatasetsService extends ServiceCommons {
 				String realName = getFieldValueFromJsonText(entity.getJson(), Constants.DSET_REALNAME_FIELD);
 				dsetsMap.put(Constants.DSET_REALNAME_FIELD, realName);
 
-				String idDataSource = getFieldValueFromJsonText(entity.getJson(), Constants.DSOURCE_ID_FIELD);
-				dsetsMap.put(Constants.DSOURCE_ID_FIELD, idDataSource);
-				// TODO inserire datasourcename
+				String idDataSource = getFieldValueFromJsonText(entity.getJson(), Constants.DATASOURCE_ID_FIELD);
+				dsetsMap.put(Constants.DATASOURCE_ID_FIELD, idDataSource);
+
+				Gsc006DatasourceEntity datasource = gsc006Dao.load(Long.parseLong(idDataSource));
+				dsetsMap.put(Constants.DATASOURCE_NAME_FIELD,
+						getFieldValueFromJsonText(datasource.getJson(), Constants.DATASOURCE_NAME_FIELD));
 
 				// description
 				String description = getFieldValueFromJsonText(entity.getJson(), Constants.DESCRIPTION_FIELD);
