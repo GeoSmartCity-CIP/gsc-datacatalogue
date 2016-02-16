@@ -17,7 +17,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc006DatasourcePersistence {
+public interface Gsc006DatasourcePersistence extends GenericPersistence{
 
 	/**
 	 * Deletes the given entity <br>
@@ -90,5 +90,14 @@ public interface Gsc006DatasourcePersistence {
 	 * @return
 	 */
 	public long countAll();
+	
+	/** NO-SQL METODS **/
+	
+	/**
+	 * Load datasources using native query
+	 * @param query native query
+	 * @return list of organizations
+	 */
+	public  List<Gsc006DatasourceEntity> getDatasources(String query);
 	
 }

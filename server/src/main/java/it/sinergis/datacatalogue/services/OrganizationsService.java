@@ -66,7 +66,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise an error message will be return
 			} else {
-				DCException rpe = new DCException(Constants.ER101);
+				DCException rpe = new DCException(Constants.ER101,req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -75,7 +75,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("create organization service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01,req);
 			logger.error("createOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -107,13 +107,13 @@ public class OrganizationsService extends ServiceCommons{
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE,Constants.ORGANIZATION_UPDATED,null,req);
 				} else {
-					DCException rpe = new DCException(Constants.ER102);
+					DCException rpe = new DCException(Constants.ER102,req);
 					return rpe.returnErrorString();
 				}
 				
 			//otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER104);
+				DCException rpe = new DCException(Constants.ER104,req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -122,7 +122,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("update organization service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01,req);
 			logger.error("updateOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -165,7 +165,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("delete organization service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01,req);
 			logger.error("deleteOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -215,8 +215,9 @@ public class OrganizationsService extends ServiceCommons{
 		    try {
 		        jsonString = mapper.writeValueAsString(root);
 		    } catch (IOException e) {
-		        jsonString = "fail"; 
-		    }
+        		logger.error("IOException during the construction of status response", e);
+               throw new DCException(Constants.ER01, req);
+            }
 		    
 			return jsonString;
 			
@@ -225,7 +226,7 @@ public class OrganizationsService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("list organization service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01,req);
 			logger.error("listOrganization service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -253,10 +254,7 @@ public class OrganizationsService extends ServiceCommons{
 	 * @throws RPException
 	 */
 	private Gsc001OrganizationEntity getOrganizationObjectById(Long id) throws DCException {
-		ArrayList<String> params = new ArrayList<String>();
-		params.add(Constants.ORG_ID_FIELD);
-		Gsc001OrganizationPersistenceJPA jpa = new Gsc001OrganizationPersistenceJPA();
-		return (Gsc001OrganizationEntity) jpa.load(id);
+		return (Gsc001OrganizationEntity) organizationPersistence.load(id);
 	}	
 	
 	/**
@@ -284,11 +282,23 @@ public class OrganizationsService extends ServiceCommons{
 			throw rpe;
 		} catch(Exception e) {
 			logger.error("unhandled error: ",e);
-			throw new DCException(Constants.ER01);
+			throw new DCException(Constants.ER01,newJson);
 		}			
 	
 	}	
 	
+	/**
+	 * Creates the organization node
+	 * 
+	 * @param id
+	 * @param query
+	 * @param org
+	 * @param userJpa
+	 * @return
+	 * @throws JsonProcessingException
+	 * @throws IOException
+	 * @throws DCException
+	 */
 	private JsonNode createSearchJsonStatus(Long id,String query,Gsc001OrganizationEntity org,Gsc002UserPersistenceJPA userJpa) throws JsonProcessingException, IOException, DCException {
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -301,6 +311,15 @@ public class OrganizationsService extends ServiceCommons{
 		
 	}
 	
+	/**
+	 * Creates the username json node
+	 * 
+	 * @param org
+	 * @param query
+	 * @param userJpa
+	 * @return
+	 * @throws DCException
+	 */
 	private JsonNode createUserListNode(Gsc001OrganizationEntity org,String query,Gsc002UserPersistenceJPA userJpa) throws DCException {
 		ObjectNode usersNodeList = JsonNodeFactory.instance.objectNode();
 		//FIXME check back when users entity is done

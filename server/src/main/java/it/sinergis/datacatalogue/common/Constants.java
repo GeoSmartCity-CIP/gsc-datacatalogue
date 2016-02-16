@@ -12,13 +12,15 @@ public final class Constants {
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
 	public static final String USER_TABLE_NAME = "gsc_002_user";
 	public static final String ROLE_TABLE_NAME = "gsc_003_role";	
+	public static final String DATASOURCE_TABLE_NAME = "gsc_006_datasource";
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
+
 	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
+	public static final String DETAIL_FIELD = "detail";
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
-	//public static final String NEW_ORG_NAME_FIELD = "neworganizationname";
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String USERNAME_FIELD = "username";
 	public static final String ORGANIZATION_FIELD = "organization";
@@ -36,7 +38,11 @@ public final class Constants {
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
-	
+	//Datasource field names
+	public static final String DATASOURCES_NAME_FIELD = "datasources";
+	public static final String DATASOURCE_ID_FIELD = "iddatasource";
+	public static final String DATASOURCE_NAME_FIELD = "datasourcename";
+	public static final String DATASOURCE_FIELD = "datasource";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";
@@ -57,6 +63,13 @@ public final class Constants {
 	public static final String ER102 = "ER102";	
 	public static final String ER103 = "ER103";	
 	public static final String ER104 = "ER104";
+	//Datasource Errors
+	public static final String ER601 = "ER601";	
+	public static final String ER602 = "ER602";	
+	public static final String ER603 = "ER603";	
+	public static final String ER604 = "ER604";
+	public static final String ER605 = "ER605";
+	public static final String ER606 = "ER606";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -67,4 +80,7 @@ public final class Constants {
 	public static final String DATASETS_CREATED = "DATASETS_CREATED";
 	public static final String DATASETS_DELETED = "DATASETS_DELETED";
 	public static final String DATASETS_UPDATED = "DATASETS_UPDATED";
+	public static final String DATASOURCE_CREATED = "DATASOURCE_CREATED";
+	public static final String DATASOURCE_UPDATED = "DATASOURCE_UPDATED";
+	public static final String DATASOURCE_DELETED = "DATASOURCE_DELETED";
 }

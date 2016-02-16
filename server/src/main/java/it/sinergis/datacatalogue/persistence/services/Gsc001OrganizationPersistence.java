@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
-import it.sinergis.datacatalogue.exception.DCException;
 
 /**
  * Basic persistence operations for entity "Gsc001Organization"

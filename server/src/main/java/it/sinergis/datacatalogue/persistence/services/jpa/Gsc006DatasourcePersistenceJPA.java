@@ -6,6 +6,8 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -62,4 +64,10 @@ public class Gsc006DatasourcePersistenceJPA extends GenericJpaService<Gsc006Data
 		return (Long) execute(operation);
 	}
 
+	@Override
+	public List<Gsc006DatasourceEntity> getDatasources(String query) {
+		
+		return super.loadByNativeQuery(query);
+		
+	}
 }
