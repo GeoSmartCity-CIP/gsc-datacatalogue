@@ -9,7 +9,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.common.Constants;
@@ -44,7 +46,7 @@ public class DatasetsService extends ServiceCommons {
 
 			// check if there's another dataset already saved with the same
 			// name
-			Gsc007DatasetEntity datasetEntity = getDatasetObject(req);
+			Gsc007DatasetEntity datasetEntity = getDatasetObjectFromDatasetname(req);
 
 			// if no results found -> add new record
 			if (datasetEntity == null) {
@@ -93,13 +95,25 @@ public class DatasetsService extends ServiceCommons {
 				// Before updating we have to be sure that dataset name
 				// doesn't already exist in another record (not the one
 				// we're updating)
+				Gsc007DatasetEntity datasetEntity = getDatasetObjectFromDatasetname(req);
 
-				// TODO check that the datasource with the given id exists
-				entityFound.setJson(req);
+				// if no results found or the result is-> update record
+				if (datasetEntity == null || (datasetEntity.getId().longValue() == entityFound.getId().longValue())) {
 
-				logger.info("Dataset succesfully created");
-				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED, entityFound.getId(), req);
+					// TODO check that the datasource with the given id exists
+					JsonNode node = om.readTree(req);
+					((ObjectNode) node).remove(Constants.DSET_ID_FIELD);
+					
+					entityFound.setJson(node.toString());
+					gsc007Dao.save(entityFound);
+
+					logger.info("Dataset succesfully updated");
+					logger.info(req);
+					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED, entityFound.getId(),
+							req);
+				} else {
+					throw new DCException(Constants.ER704, req);
+				}
 			}
 
 		} catch (DCException rpe) {
@@ -284,7 +298,7 @@ public class DatasetsService extends ServiceCommons {
 	 * @return
 	 * @throws RPException
 	 */
-	private Gsc007DatasetEntity getDatasetObject(String json) throws DCException {
+	private Gsc007DatasetEntity getDatasetObjectFromDatasetname(String json) throws DCException {
 
 		String datasetName = getFieldValueFromJsonText(json, Constants.DSET_NAME_FIELD);
 
