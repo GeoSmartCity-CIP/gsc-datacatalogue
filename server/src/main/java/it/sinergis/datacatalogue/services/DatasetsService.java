@@ -9,7 +9,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.common.Constants;
@@ -39,26 +41,30 @@ public class DatasetsService extends ServiceCommons {
 	public String createDataset(String req) {
 		try {
 			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.CREATE_DATASET, req);
+			logger.info(req);
 
 			// check if there's another dataset already saved with the same
 			// name
-			Gsc007DatasetEntity datasetEntity = getDatasetObject(req);
+			Gsc007DatasetEntity datasetEntity = getDatasetObjectFromDatasetname(req);
 
 			// if no results found -> add new record
 			if (datasetEntity == null) {
 				Gsc007DatasetEntity dset = new Gsc007DatasetEntity();
 				dset.setJson(req);
 
+				// TODO check if datasource with the given id in the creation
+				// request exists
+
 				dset = gsc007Dao.save(dset);
 
-				logger.info("Organization succesfully created");
+				logger.info("Dataset succesfully created");
 				logger.info(req);
 				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_CREATED, dset.getId(), req);
 
 				// otherwise an error message will be returned
 			} else {
-				DCException rpe = new DCException(Constants.ER700, req);
-				return rpe.returnErrorString();
+				throw new DCException(Constants.ER700, req);
 			}
 
 		} catch (DCException rpe) {
@@ -73,74 +79,140 @@ public class DatasetsService extends ServiceCommons {
 	}
 
 	public String updateDataset(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.UPDATE_DATASET, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
+
+			Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+			if (entityFound == null) {
+				throw new DCException(Constants.ER703, req);
+			} else {
+
+				// Before updating we have to be sure that dataset name
+				// doesn't already exist in another record (not the one
+				// we're updating)
+				Gsc007DatasetEntity datasetEntity = getDatasetObjectFromDatasetname(req);
+
+				// if no results found or the result is-> update record
+				if (datasetEntity == null || (datasetEntity.getId().longValue() == entityFound.getId().longValue())) {
+
+					// TODO check that the datasource with the given id exists
+					JsonNode node = om.readTree(req);
+					((ObjectNode) node).remove(Constants.DSET_ID_FIELD);
+					
+					entityFound.setJson(node.toString());
+					gsc007Dao.save(entityFound);
+
+					logger.info("Dataset succesfully updated");
+					logger.info(req);
+					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED, entityFound.getId(),
+							req);
+				} else {
+					throw new DCException(Constants.ER704, req);
+				}
+			}
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("update dataset service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("update service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String deleteDataset(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.DELETE_DATASET, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
+
+			boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
+			// TODO delete other tables referencing dataset
+
+			if (deleted) {
+				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
+			} else {
+				throw new DCException(Constants.ER702, req);
+			}
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("delete dataset service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("delete service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String listDataset(String req) {
 		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.LIST_DATASET, req);
+			logger.info(req);
+
 			List<Gsc007DatasetEntity> dsets = null;
+			// Retrieving input parameters
+			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
+			String datasetName = getFieldValueFromJsonText(req, Constants.DSET_NAME_FIELD);
+			String idDatasource = getFieldValueFromJsonText(req, Constants.DSOURCE_ID_FIELD);
 
-			if (!req.equals("{}")) {
-				checkJsonWellFormed(req);
-				logger.info(req);
+			// idDataset has priority in the research
+			if (StringUtils.isNotEmpty(idDataset)) {
+				dsets = new ArrayList<Gsc007DatasetEntity>();
 
-				// Retrieving input parameters
-				String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
-				String datasetName = getFieldValueFromJsonText(req, Constants.DSET_NAME_FIELD);
-				String idDatasource = getFieldValueFromJsonText(req, Constants.DSOURCE_ID_FIELD);
-
-				// idDataset has priority in the research
-				if (StringUtils.isNotEmpty(idDataset)) {
-					dsets = new ArrayList<Gsc007DatasetEntity>();
-
-					Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
-					if(entityFound == null) {
-						throw new DCException(Constants.ER701, req);
-					}
-					dsets.add(entityFound);
-				} else {
-					// We build the query appending parameters
-					StringBuilder builderQuery = new StringBuilder();
-
-					if (StringUtils.isNotEmpty(idDatasource)) {
-						builderQuery.append("'");
-						builderQuery.append(Constants.DSOURCE_ID_FIELD);
-						builderQuery.append("' = '");
-						builderQuery.append(idDatasource);
-						builderQuery.append("'");
-					}
-
-					if (StringUtils.isNotEmpty(idDatasource) && StringUtils.isNotEmpty(datasetName)) {
-						builderQuery.append(" AND ");
-					}
-
-					if (StringUtils.isNotEmpty(datasetName)) {
-						builderQuery.append("'");
-						builderQuery.append(Constants.DSET_NAME_FIELD);
-						builderQuery.append("' LIKE '%");
-						builderQuery.append(datasetName);
-						builderQuery.append("%'");
-					}
-
-					// if the builder produced something not empty
-					if (StringUtils.isNotEmpty(builderQuery.toString())) {
-
-						String query = createQuery(builderQuery.toString(), Constants.DATASETS_TABLE_NAME,
-								Constants.JSON_COLUMN_NAME, "select");
-						dsets = gsc007Dao.getDatasets(query);
-					}
-					// else we select all datasets
-					else {
-
-						dsets = gsc007Dao.loadAll();
-					}
+				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+				if (entityFound == null) {
+					throw new DCException(Constants.ER701, req);
 				}
+				dsets.add(entityFound);
 			} else {
-				dsets = gsc007Dao.loadAll();
+				// We build the query appending parameters
+				StringBuilder builderQuery = new StringBuilder();
+
+				if (StringUtils.isNotEmpty(idDatasource)) {
+					builderQuery.append("'");
+					builderQuery.append(Constants.DSOURCE_ID_FIELD);
+					builderQuery.append("' = '");
+					builderQuery.append(idDatasource);
+					builderQuery.append("'");
+				}
+
+				if (StringUtils.isNotEmpty(idDatasource) && StringUtils.isNotEmpty(datasetName)) {
+					builderQuery.append(" AND ");
+				}
+
+				if (StringUtils.isNotEmpty(datasetName)) {
+					builderQuery.append("'");
+					builderQuery.append(Constants.DSET_NAME_FIELD);
+					builderQuery.append("' LIKE '%");
+					builderQuery.append(datasetName);
+					builderQuery.append("%'");
+				}
+
+				// if the builder produced something not empty
+				if (StringUtils.isNotEmpty(builderQuery.toString())) {
+
+					String query = createQuery(builderQuery.toString(), Constants.DATASETS_TABLE_NAME,
+							Constants.JSON_COLUMN_NAME, "select");
+					dsets = gsc007Dao.getDatasets(query);
+				}
+				// else we select all datasets
+				else {
+
+					dsets = gsc007Dao.loadAll();
+				}
 			}
 
 			logger.info("Datasets found: " + dsets.size());
@@ -156,16 +228,16 @@ public class DatasetsService extends ServiceCommons {
 				dsetsMap.put(Constants.DSET_ID_FIELD, entity.getId().toString());
 
 				// Dataset name
-				String datasetName = getFieldValueFromJsonText(entity.getJson(), Constants.DSET_NAME_FIELD);
-				dsetsMap.put(Constants.DSET_NAME_FIELD, datasetName);
+				String datasetNameField = getFieldValueFromJsonText(entity.getJson(), Constants.DSET_NAME_FIELD);
+				dsetsMap.put(Constants.DSET_NAME_FIELD, datasetNameField);
 
 				// Dataset real name
 				String realName = getFieldValueFromJsonText(entity.getJson(), Constants.DSET_REALNAME_FIELD);
 				dsetsMap.put(Constants.DSET_REALNAME_FIELD, realName);
 
-				// TODO inserire datasourcename invece dell'id
 				String idDataSource = getFieldValueFromJsonText(entity.getJson(), Constants.DSOURCE_ID_FIELD);
 				dsetsMap.put(Constants.DSOURCE_ID_FIELD, idDataSource);
+				// TODO inserire datasourcename
 
 				// description
 				String description = getFieldValueFromJsonText(entity.getJson(), Constants.DESCRIPTION_FIELD);
@@ -226,36 +298,31 @@ public class DatasetsService extends ServiceCommons {
 	 * @return
 	 * @throws RPException
 	 */
-	private Gsc007DatasetEntity getDatasetObject(String json) throws DCException {
+	private Gsc007DatasetEntity getDatasetObjectFromDatasetname(String json) throws DCException {
 
 		String datasetName = getFieldValueFromJsonText(json, Constants.DSET_NAME_FIELD);
 
 		try {
-			if (StringUtils.isNotEmpty(datasetName)) {
-				StringBuilder builderQuery = new StringBuilder();
-				builderQuery.append("'");
-				builderQuery.append(Constants.DSET_NAME_FIELD);
-				builderQuery.append("' = '");
-				builderQuery.append(datasetName);
-				builderQuery.append("'");
+			StringBuilder builderQuery = new StringBuilder();
+			builderQuery.append("'");
+			builderQuery.append(Constants.DSET_NAME_FIELD);
+			builderQuery.append("' = '");
+			builderQuery.append(datasetName);
+			builderQuery.append("'");
 
-				String query = createQuery(builderQuery.toString(), Constants.DATASETS_TABLE_NAME,
-						Constants.JSON_COLUMN_NAME, "select");
+			String query = createQuery(builderQuery.toString(), Constants.DATASETS_TABLE_NAME,
+					Constants.JSON_COLUMN_NAME, "select");
 
-				logger.debug("Executing query: " + query);
-				List<Gsc007DatasetEntity> entityList = gsc007Dao.getDatasets(query);
+			logger.debug("Executing query: " + query);
+			List<Gsc007DatasetEntity> entityList = gsc007Dao.getDatasets(query);
 
-				if (entityList.size() == 1) {
-					return entityList.get(0);
-				} else if (entityList.size() == 0) {
-					return null;
-				} else {
-					logger.error("One result expected from query, results found: " + entityList.size());
-					DCException rpe = new DCException(Constants.ER01);
-					throw rpe;
-				}
-			} else {
+			if (entityList.size() == 1) {
+				return entityList.get(0);
+			} else if (entityList.size() == 0) {
 				return null;
+			} else {
+				logger.error("One result expected from query, results found: " + entityList.size());
+				throw new DCException(Constants.ER01);
 			}
 		} catch (Exception e) {
 			logger.error("Generic exception occurred ", e);
