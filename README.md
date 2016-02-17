@@ -11,3 +11,7 @@ The application is divided into two distinct modules
 
 The server module contains all back-end services used by client packed as war
 The client is developed with angular js and handle the user interface of the application
+
+## Test service page
+* See [stub] (http://hub.geosmartcity.eu/gsc-datacatalogue/testService.html) to view stub of service not yet implemented
+* See [test service] (http://hub.geosmartcity.eu/gsc-datacatalogue/testService.jsp) to view example of service implemented
