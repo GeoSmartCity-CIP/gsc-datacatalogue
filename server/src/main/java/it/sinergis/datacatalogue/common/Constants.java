@@ -101,6 +101,10 @@ public final class Constants {
 	
 		
 	/** Services names. */
+	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
+	public static final String UPDATE_ORGANIZATION = "UPDATE_ORGANIZATION";
+	public static final String LIST_ORGANIZATION = "LIST_ORGANIZATION";
+	public static final String DELETE_ORGANIZATION = "DELETE_ORGANIZATION";
 	public static final String CREATE_DATASOURCE = "CREATE_DATASOURCE";
 	public static final String UPDATE_DATASOURCE = "UPDATE_DATASOURCE";
 	public static final String LIST_DATASOURCE = "LIST_DATASOURCE";

@@ -285,4 +285,18 @@ public class ServiceCommons {
 		}
 
 	}
+	
+	/**
+	 * Preliminary checks on the request validity.
+	 * 
+	 * @param jsonRequest
+	 * @param serviceName
+	 * @throws DCException
+	 */
+	protected void preliminaryChecks(String jsonRequest,String serviceName) throws DCException {
+		//checks if the json is syntatically correct.
+		checkJsonWellFormed(jsonRequest);
+		//checks if the request contains all the mandatory parameters
+		checkMandatoryParameters(serviceName,jsonRequest);
+	}
 }
