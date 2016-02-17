@@ -194,14 +194,19 @@ public class DatasetsService extends ServiceCommons {
 			// Retrieving input parameters
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 
-			boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
-			// TODO delete other tables referencing dataset
+			if (StringUtils.isNumeric(idDataset)) {
+				boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
+				// TODO delete other tables referencing dataset
 
-			if (deleted) {
-				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
+				if (deleted) {
+					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
+				} else {
+					// Dataset to delete doesn't exist.
+					throw new DCException(Constants.ER702, req);
+				}
 			} else {
-				// Dataset to delete doesn't exist.
-				throw new DCException(Constants.ER702, req);
+				// Dataset id has to be numeric
+				throw new DCException(Constants.ER707, req);
 			}
 
 		} catch (DCException rpe) {
