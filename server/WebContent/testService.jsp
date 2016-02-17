@@ -25,40 +25,37 @@
 		    	
 		    } else if(selected === 'updateorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON organization.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateOrgExample").value;
 		    	
 		    } else if(selected === 'deleteorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON organization.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteOrgExample").value;
 		    	
 		    } else if(selected === 'listorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON organization.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListOrgExample").value;
 		    	
 		    } else if(selected === 'createdataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDatasetExample").value;
 		    	
 		    } else if(selected === 'listdataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDatasetExample").value;
 		    	
 		    } else if(selected === 'deletedataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONdeleteDatasetExample").value;
 		    	
 		    } else if(selected === 'updatedataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").title = "Insert a JSON dataset.";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONupdateDatasetExample").value;
 		    	
-		    } if(selected === 'createdatasrc' ){
+		    } else if(selected === 'listcols'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONlistColsDatasetExample").value;
+		    	
+		    }if(selected === 'createdatasrc' ){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDataSourceExample").value;
 		    	
@@ -106,6 +103,7 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputListDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONdeleteDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONdeleteDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONupdateDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONupdateDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONlistColsDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONlistColsDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUpdateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
@@ -136,6 +134,7 @@ if (servizio==null) {
             <option value="listdataset" <%= servizio.equals("listdataset") ? "selected=\"selected\"" : ""%>>Dataset - List/Search</option>
             <option value="deletedataset" <%= servizio.equals("deletedataset") ? "selected=\"selected\"" : ""%>>Dataset - Delete</option>
             <option value="updatedataset" <%= servizio.equals("updatedataset") ? "selected=\"selected\"" : ""%>>Dataset - Update</option>
+            <option value="listcols" <%= servizio.equals("listcols") ? "selected=\"selected\"" : ""%>>Dataset - List Columns</option>
             <option value="createdatasrc" <%= servizio.equals("createdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Create</option>
             <option value="listdatasrc" <%= servizio.equals("listdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - List/Search</option>
             <option value="deletedatasrc" <%= servizio.equals("deletedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Delete</option>

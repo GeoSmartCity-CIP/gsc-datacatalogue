@@ -236,12 +236,17 @@ public class DatasetsService extends ServiceCommons {
 			if (StringUtils.isNotEmpty(idDataset)) {
 				dsets = new ArrayList<Gsc007DatasetEntity>();
 
-				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
-				if (entityFound == null) {
-					// No dataset found with given parameters.
-					throw new DCException(Constants.ER701, req);
+				if (StringUtils.isNumeric(idDataset)) {
+					Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+					if (entityFound == null) {
+						// No dataset found with given parameters.
+						throw new DCException(Constants.ER701, req);
+					}
+					dsets.add(entityFound);
+				} else {
+					// Dataset id has to be numeric
+					throw new DCException(Constants.ER707, req);
 				}
-				dsets.add(entityFound);
 			} else {
 				// We build the query appending parameters
 				StringBuilder builderQuery = new StringBuilder();
@@ -362,15 +367,27 @@ public class DatasetsService extends ServiceCommons {
 			// Retrieving input parameters
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 
-			Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
-			if (entityFound == null) {
-				// No dataset found with given parameters.
-				throw new DCException(Constants.ER701, req);
+			if (StringUtils.isNumeric(idDataset)) {
+				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+				if (entityFound == null) {
+					// No dataset found with given parameters.
+					throw new DCException(Constants.ER701, req);
+				} else {
+
+					Map<String, Object> mapColumns = new HashMap<>();
+					String columns = getObjectFromJsonText(entityFound.getJson(), Constants.COLUMNS);
+					
+					if(columns != null) {
+					mapColumns.put(Constants.COLUMNS, om.readTree(columns));
+					return om.writeValueAsString(mapColumns);
+					} else {
+						//No columns found for dataset
+						throw new DCException(Constants.ER708, req);
+					}
+				}
 			} else {
-
-				String columns = getFieldValueFromJsonText(entityFound.getJson(), Constants.COLUMNS);
-				return columns;
-
+				// Dataset id has to be numeric
+				throw new DCException(Constants.ER707, req);
 			}
 
 		} catch (DCException rpe) {

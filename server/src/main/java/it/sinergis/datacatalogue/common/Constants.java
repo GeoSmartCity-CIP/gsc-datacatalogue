@@ -70,6 +70,7 @@ public final class Constants {
 	public static final String ER705 = "ER705";
 	public static final String ER706 = "ER706";
 	public static final String ER707 = "ER707";
+	public static final String ER708 = "ER708";
 
 	/** Organization Errors. */
 	public static final String ER101 = "ER101";	
