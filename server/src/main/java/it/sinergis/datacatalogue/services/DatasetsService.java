@@ -20,6 +20,7 @@ import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
+import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
 
 public class DatasetsService extends ServiceCommons {
 
@@ -64,7 +65,29 @@ public class DatasetsService extends ServiceCommons {
 
 					if (datasourceEntity != null) {
 						Gsc007DatasetEntity dset = new Gsc007DatasetEntity();
-						dset.setJson(req);
+
+						String datasourceType = getFieldValueFromJsonText(datasourceEntity.getJson(), Constants.TYPE);
+
+						//If the datasource is a SHAPE
+						if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.SHAPE)) {
+							String datasetFilename = getFieldValueFromJsonText(req, Constants.DSET_REALNAME_FIELD);
+							String datasourcePath = getFieldValueFromJsonText(datasourceEntity.getJson(),
+									Constants.PATH);
+
+							if (datasourcePath != null && datasetFilename != null) {
+								String columnsJson = ServiceUtil
+										.createJSONColumnsFromShapeFile(datasourcePath + datasetFilename);
+
+								ObjectNode node = (ObjectNode) om.readTree(req);
+								node.put(Constants.COLUMNS, om.readTree(columnsJson));
+
+								dset.setJson(node.toString());
+							} else {
+								dset.setJson(req);
+							}
+						} else {
+							dset.setJson(req);
+						}
 
 						// request exists
 
