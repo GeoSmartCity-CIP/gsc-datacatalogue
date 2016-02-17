@@ -376,11 +376,4 @@ public class DatasourcesService extends ServiceCommons {
 			throw rpe;		
 		}
 	}
-	
-	private void preliminaryChecks(String jsonRequest,String serviceName) throws DCException {
-		//checks if the json is syntatically correct.
-		checkJsonWellFormed(jsonRequest);
-		//checks if the request contains all the mandatory parameters
-		checkMandatoryParameters(serviceName,jsonRequest);
-	}
 }
