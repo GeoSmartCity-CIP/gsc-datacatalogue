@@ -94,7 +94,7 @@ public class OrganizationsService extends ServiceCommons{
 			Gsc001OrganizationEntity organization = getOrganizationObject(req);
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD));	
 			//if the only record found with the same name is the record to be updated itself -> update record
-			if(organization == null || organization.getId() != requestedId) {
+			if(organization == null || organization.getId() == requestedId) {
 				//check if there's another organization already saved with the same ID
 				Gsc001OrganizationEntity retrievedOrganization = getOrganizationObjectById(requestedId);
 				

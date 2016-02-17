@@ -47,12 +47,11 @@ public class DatasourcesService extends ServiceCommons {
 	 */
 	public String createDatasource(String req){
 		try{
-			checkJsonWellFormed(req);
-			//check if the inserted organization id exists in the organization table.
-			if(!isIdOrganizationValid(Long.parseLong(getKeyFromJsonText(req,Constants.ORG_FIELD)))) {
-				DCException rpe = new DCException(Constants.ER607,req);
-				return rpe.returnErrorString();				
-			}
+			//preliminary checks on the request parameters
+			preliminaryChecks(req,Constants.CREATE_DATASOURCE);
+			
+			//check if the inserted organization id exists in the organization table. If not throws exception
+			checkIdOrganizationValid(req); 
 			//check if there's another datasource already saved with the same name
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
 							
@@ -94,13 +93,18 @@ public class DatasourcesService extends ServiceCommons {
 	 */
 	public String updateDatasource(String req){
 		try{
-			checkJsonWellFormed(req);
+			
+			//preliminary checks on the request parameters
+			preliminaryChecks(req,Constants.UPDATE_DATASOURCE);
+			
+			//check if the inserted organization id exists in the organization table. If not throws exception
+			checkIdOrganizationValid(req); 
 			
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD));			
 			
-			//if the only record found with the same name is the record to be updated itself -> update record
-			if(datasource == null || datasource.getId() != requestedId) {
+			//if no datasource with the specified name exists or if the only record found with the same name is the record to be updated itself -> update record
+			if(datasource == null || datasource.getId() == requestedId) {
 				//check if there's another datasource already saved with the same ID
 				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
 				
@@ -145,7 +149,8 @@ public class DatasourcesService extends ServiceCommons {
 	 */
 	public String deleteDatasource(String req){
 		try{
-			checkJsonWellFormed(req);
+			//preliminary checks on the request parameters
+			preliminaryChecks(Constants.DELETE_DATASOURCE,req);
 			
 			//check if there is a datasource with that id
 			Gsc006DatasourceEntity datasource = getDatasourceObjectById(Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD)));
@@ -196,14 +201,18 @@ public class DatasourcesService extends ServiceCommons {
 			List<Gsc006DatasourceEntity> datasources = new ArrayList<Gsc006DatasourceEntity>();
 			
 			if(!req.equals("{}")){
-				checkJsonWellFormed(req);
+				//preliminary checks on the request parameters
+				preliminaryChecks(Constants.LIST_DATASOURCE,req);
 				
 				//There are two research modes:
 				String iddatasourceParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD);
 				String datasourcenameParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_NAME_FIELD);
 				//if the iddatasource parameter is in the request the research will be done by id. THIS has priority over other research types.
 				if(iddatasourceParameter != null) {
-					datasources.add(getDatasourceObjectById(Long.parseLong(iddatasourceParameter)));
+					Gsc006DatasourceEntity datasourceFoundById = getDatasourceObjectById(Long.parseLong(iddatasourceParameter));
+					if(datasourceFoundById != null) {
+						datasources.add(datasourceFoundById);
+					}
 				//otherwise the research is based on the datasourcename parameter.
 				} else if(datasourcenameParameter != null) {
 					String queryText = "'" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.DATASOURCE_NAME_FIELD)+"%'";
@@ -228,6 +237,10 @@ public class DatasourcesService extends ServiceCommons {
 									
 			logger.info("Datasources found: " + datasources.size());
 			logger.info(req);
+			if(datasources.size() == 0) {
+				logger.error("No results found.");
+	            throw new DCException(Constants.ER13, req);
+			}
 			
 			ObjectMapper mapper = new ObjectMapper();
 			ObjectNode root = JsonNodeFactory.instance.objectNode();
@@ -302,6 +315,7 @@ public class DatasourcesService extends ServiceCommons {
 	private Gsc006DatasourceEntity getDatasourceObject(String json) throws DCException {
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.DATASOURCE_NAME_FIELD);
+		params.add(Constants.ORGANIZATION_FIELD);
 		return (Gsc006DatasourceEntity) getRowObject(json, Constants.DATASOURCE_TABLE_NAME, params, datasourcePersistence);
 	}
 	
@@ -347,16 +361,26 @@ public class DatasourcesService extends ServiceCommons {
 	}
 	
 	/**
-	 * Checks if the given parameter for organization matches the id of any existing organization. If not returns false.
+	 * Checks if the given parameter for organization matches the id of any existing organization.
 	 * @param orgId
 	 * @return
+	 * @throws DCException 
+	 * @throws NumberFormatException 
 	 */
-	private boolean isIdOrganizationValid(Long orgId) {
+	private void checkIdOrganizationValid(String req) throws NumberFormatException, DCException {
+		Long orgId = Long.parseLong(getKeyFromJsonText(req,Constants.ORG_FIELD));
 		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class); 
 		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
 		if(orgEntity == null) {
-			return false;
+			DCException rpe = new DCException(Constants.ER607,req);
+			throw rpe;		
 		}
-		return true;
+	}
+	
+	private void preliminaryChecks(String jsonRequest,String serviceName) throws DCException {
+		//checks if the json is syntatically correct.
+		checkJsonWellFormed(jsonRequest);
+		//checks if the request contains all the mandatory parameters
+		checkMandatoryParameters(serviceName,jsonRequest);
 	}
 }

@@ -54,6 +54,7 @@ public final class Constants {
 	public static final String ER07 = "ER07";	
 	public static final String ER11 = "ER11";
 	public static final String ER12 = "ER12";
+	public static final String ER13 = "ER13";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -95,8 +96,13 @@ public final class Constants {
 	
 		
 	/** Services names. */
+	public static final String CREATE_DATASOURCE = "CREATE_DATASOURCE";
+	public static final String UPDATE_DATASOURCE = "UPDATE_DATASOURCE";
+	public static final String LIST_DATASOURCE = "LIST_DATASOURCE";
+	public static final String DELETE_DATASOURCE = "DELETE_DATASOURCE";
 	public static final String CREATE_DATASET = "CREATE_DATASET";
 	public static final String UPDATE_DATASET = "UPDATE_DATASET";
 	public static final String LIST_DATASET = "LIST_DATASET";
 	public static final String DELETE_DATASET = "DELETE_DATASET";
+	
 }
