@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 
 public class DatasourcesService extends ServiceCommons {
@@ -46,20 +48,24 @@ public class DatasourcesService extends ServiceCommons {
 	public String createDatasource(String req){
 		try{
 			checkJsonWellFormed(req);
-			
+			//check if the inserted organization id exists in the organization table.
+			if(!isIdOrganizationValid(Long.parseLong(getKeyFromJsonText(req,Constants.ORG_FIELD)))) {
+				DCException rpe = new DCException(Constants.ER607,req);
+				return rpe.returnErrorString();				
+			}
 			//check if there's another datasource already saved with the same name
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
 							
 			//if no results found -> add new record
 			if(datasource == null) {
-				Gsc006DatasourceEntity org = new Gsc006DatasourceEntity();
-				org.setJson(req);
+				Gsc006DatasourceEntity ds = new Gsc006DatasourceEntity();
+				ds.setJson(req);
 				
-				org = datasourcePersistence.save(org);
+				ds = datasourcePersistence.save(ds);
 				
 				logger.info("Datasource succesfully created");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.DATASOURCE_CREATED,org.getId(),req);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.DATASOURCE_CREATED,ds.getId(),req);
 				
 			//otherwise an error message will be return
 			} else {
@@ -67,8 +73,11 @@ public class DatasourcesService extends ServiceCommons {
 				return rpe.returnErrorString();				
 			}
 			
-		}
-		catch(DCException rpe) {
+		} catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("createDatasource service error",e);
@@ -87,13 +96,13 @@ public class DatasourcesService extends ServiceCommons {
 		try{
 			checkJsonWellFormed(req);
 			
-			//check if there's another datasource already saved with the same name (in the same datasource) TODO
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
-							
-			//if no results found -> update record
-			if(datasource == null) {
+			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD));			
+			
+			//if the only record found with the same name is the record to be updated itself -> update record
+			if(datasource == null || datasource.getId() != requestedId) {
 				//check if there's another datasource already saved with the same ID
-				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD)));
+				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
 				
 				if(retrievedDatasource != null) {
 					retrievedDatasource.setJson(updateDatasourceJson(req));
@@ -103,18 +112,22 @@ public class DatasourcesService extends ServiceCommons {
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE,Constants.DATASOURCE_UPDATED,null,req);
 				} else {
-					DCException rpe = new DCException(Constants.ER102,req);
+					DCException rpe = new DCException(Constants.ER602,req);
 					return rpe.returnErrorString();
 				}
 				
 			//otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER104,req);
+				DCException rpe = new DCException(Constants.ER604,req);
 				return rpe.returnErrorString();				
 			}
 			
 		}
 		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("update datasource service error",e);
@@ -152,12 +165,16 @@ public class DatasourcesService extends ServiceCommons {
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER103);
+				DCException rpe = new DCException(Constants.ER603);
 				return rpe.returnErrorString();				
 			}
 			
 		}
 		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("delete datasource service error",e);
@@ -176,7 +193,7 @@ public class DatasourcesService extends ServiceCommons {
 	public String listDatasource(String req){
 		try{
 			String query = null;
-			List<Gsc006DatasourceEntity> datasources = null;
+			List<Gsc006DatasourceEntity> datasources = new ArrayList<Gsc006DatasourceEntity>();
 			
 			if(!req.equals("{}")){
 				checkJsonWellFormed(req);
@@ -184,17 +201,17 @@ public class DatasourcesService extends ServiceCommons {
 				//There are two research modes:
 				String iddatasourceParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD);
 				String datasourcenameParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_NAME_FIELD);
-				//if the iddatasource parameter is in the request the research will be done by id. THIS has priority over other research types. TODO check.
+				//if the iddatasource parameter is in the request the research will be done by id. THIS has priority over other research types.
 				if(iddatasourceParameter != null) {
 					datasources.add(getDatasourceObjectById(Long.parseLong(iddatasourceParameter)));
 				//otherwise the research is based on the datasourcename parameter.
 				} else if(datasourcenameParameter != null) {
-					String queryText = "'" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '"+getKeyFromJsonText(req,Constants.DATASOURCE_NAME_FIELD)+"%'";
+					String queryText = "'" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.DATASOURCE_NAME_FIELD)+"%'";
 					
 					//user may additionally specify a given organization for the request
-					String organizationidParameter = getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD);
+					String organizationidParameter = getFieldValueFromJsonText(req,Constants.ORG_FIELD);
 					if(organizationidParameter != null) {
-						queryText += " AND '"+Constants.ORG_ID_FIELD +"' =  "+getKeyFromJsonText(req,Constants.ORG_ID_FIELD);
+						queryText += " AND '"+Constants.ORG_FIELD +"' =  '"+organizationidParameter+"'";
 					}
 					
 					query = createQuery(queryText, Constants.DATASOURCE_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
@@ -250,6 +267,10 @@ public class DatasourcesService extends ServiceCommons {
 		}
 		catch(DCException rpe) {
 			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
+			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("list datasource service error",e);
 			DCException rpe = new DCException(Constants.ER01,req);
@@ -280,7 +301,7 @@ public class DatasourcesService extends ServiceCommons {
 	 */
 	private Gsc006DatasourceEntity getDatasourceObject(String json) throws DCException {
 		ArrayList<String> params = new ArrayList<String>();
-		params.add(Constants.ORG_NAME_FIELD);
+		params.add(Constants.DATASOURCE_NAME_FIELD);
 		return (Gsc006DatasourceEntity) getRowObject(json, Constants.DATASOURCE_TABLE_NAME, params, datasourcePersistence);
 	}
 	
@@ -323,5 +344,19 @@ public class DatasourcesService extends ServiceCommons {
 			throw new DCException(Constants.ER01,newJson);
 		}			
 	
-	}	
+	}
+	
+	/**
+	 * Checks if the given parameter for organization matches the id of any existing organization. If not returns false.
+	 * @param orgId
+	 * @return
+	 */
+	private boolean isIdOrganizationValid(Long orgId) {
+		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class); 
+		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
+		if(orgEntity == null) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -38,7 +38,8 @@ public final class Constants {
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
-	//Datasource field names
+	
+	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
 	public static final String DATASOURCE_ID_FIELD = "iddatasource";
 	public static final String DATASOURCE_NAME_FIELD = "datasourcename";
@@ -53,6 +54,7 @@ public final class Constants {
 	public static final String ER06 = "ER06";	
 	public static final String ER07 = "ER07";	
 	public static final String ER11 = "ER11";
+	public static final String ER12 = "ER12";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -66,13 +68,15 @@ public final class Constants {
 	public static final String ER102 = "ER102";	
 	public static final String ER103 = "ER103";	
 	public static final String ER104 = "ER104";
-	//Datasource Errors
+	
+	/** Datasource Errors. */
 	public static final String ER601 = "ER601";	
 	public static final String ER602 = "ER602";	
 	public static final String ER603 = "ER603";	
 	public static final String ER604 = "ER604";
 	public static final String ER605 = "ER605";
 	public static final String ER606 = "ER606";
+	public static final String ER607 = "ER607";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";

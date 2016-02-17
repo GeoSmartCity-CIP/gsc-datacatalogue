@@ -19,7 +19,6 @@ import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
-import it.sinergis.datacatalogue.persistence.services.jpa.Gsc001OrganizationPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc002UserPersistenceJPA;
 
 public class OrganizationsService extends ServiceCommons{
@@ -93,11 +92,11 @@ public class OrganizationsService extends ServiceCommons{
 			
 			//check if there's another organization already saved with the same name we want to give to the organization
 			Gsc001OrganizationEntity organization = getOrganizationObject(req);
-							
-			//if no results found -> update record
-			if(organization == null) {
+			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD));	
+			//if the only record found with the same name is the record to be updated itself -> update record
+			if(organization == null || organization.getId() != requestedId) {
 				//check if there's another organization already saved with the same ID
-				Gsc001OrganizationEntity retrievedOrganization = getOrganizationObjectById(Long.parseLong(getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD)));
+				Gsc001OrganizationEntity retrievedOrganization = getOrganizationObjectById(requestedId);
 				
 				if(retrievedOrganization != null) {
 					retrievedOrganization.setJson(updateOrganizationJson(req));
@@ -119,6 +118,10 @@ public class OrganizationsService extends ServiceCommons{
 			
 		}
 		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("update organization service error",e);
@@ -163,6 +166,10 @@ public class OrganizationsService extends ServiceCommons{
 		}
 		catch(DCException rpe) {
 			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
+			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("delete organization service error",e);
 			DCException rpe = new DCException(Constants.ER01,req);
@@ -186,7 +193,7 @@ public class OrganizationsService extends ServiceCommons{
 			if(!req.equals("{}")){
 				checkJsonWellFormed(req);
 				
-				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
+				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 				query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 				
 				orgs = organizationPersistence.getOrganizations(query);
@@ -223,6 +230,10 @@ public class OrganizationsService extends ServiceCommons{
 			
 		}
 		catch(DCException rpe) {
+			return rpe.returnErrorString();
+		} catch(NumberFormatException nfe) {
+			logger.error("inserted id parameter is not a number",nfe);
+			DCException rpe = new DCException(Constants.ER12,req);
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("list organization service error",e);
