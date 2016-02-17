@@ -37,6 +37,11 @@ public final class Constants {
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
+	public static final String NAME = "name";
+	public static final String TYPE = "type";
+	public static final String ALIAS = "alias";
+	public static final String VISIBILITY = "visibility";
+	public static final String COLUMNS = "columns";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -105,4 +110,9 @@ public final class Constants {
 	public static final String LIST_DATASET = "LIST_DATASET";
 	public static final String DELETE_DATASET = "DELETE_DATASET";
 	
+	/** Values. */
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
+	public static final String SHAPE = "shape";
+	public static final String PATH = "path";
 }
