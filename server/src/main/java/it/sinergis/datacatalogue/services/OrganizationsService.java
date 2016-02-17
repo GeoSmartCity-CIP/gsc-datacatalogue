@@ -48,7 +48,7 @@ public class OrganizationsService extends ServiceCommons{
 
 		try{
 			//preliminary checks on the request parameters
-			preliminaryChecks(Constants.CREATE_ORGANIZATION,req);
+			preliminaryChecks(req,Constants.CREATE_ORGANIZATION);
 			
 			//check if there's another organization already saved with the same name
 			Gsc001OrganizationEntity organization = getOrganizationObject(req);
@@ -90,7 +90,7 @@ public class OrganizationsService extends ServiceCommons{
 	public String updateOrganization(String req){
 		try{
 			//preliminary checks on the request parameters
-			preliminaryChecks(Constants.UPDATE_ORGANIZATION,req);
+			preliminaryChecks(req,Constants.UPDATE_ORGANIZATION);
 			
 			//check if there's another organization already saved with the same name we want to give to the organization
 			Gsc001OrganizationEntity organization = getOrganizationObject(req);
@@ -142,7 +142,7 @@ public class OrganizationsService extends ServiceCommons{
 	public String deleteOrganization(String req){
 		try{
 			//preliminary checks on the request parameters
-			preliminaryChecks(Constants.DELETE_ORGANIZATION,req);
+			preliminaryChecks(req,Constants.DELETE_ORGANIZATION);
 			
 			//check if there's another organization already saved with the same name
 			Gsc001OrganizationEntity organization = getOrganizationObjectById(Long.parseLong(getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD)));
@@ -195,7 +195,7 @@ public class OrganizationsService extends ServiceCommons{
 			
 			if(!req.equals("{}")){
 				//preliminary checks on the request parameters
-				preliminaryChecks(Constants.LIST_ORGANIZATION,req);
+				preliminaryChecks(req,Constants.LIST_ORGANIZATION);
 				
 				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 				query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");

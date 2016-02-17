@@ -150,7 +150,7 @@ public class DatasourcesService extends ServiceCommons {
 	public String deleteDatasource(String req){
 		try{
 			//preliminary checks on the request parameters
-			preliminaryChecks(Constants.DELETE_DATASOURCE,req);
+			preliminaryChecks(req,Constants.DELETE_DATASOURCE);
 			
 			//check if there is a datasource with that id
 			Gsc006DatasourceEntity datasource = getDatasourceObjectById(Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD)));
@@ -202,7 +202,7 @@ public class DatasourcesService extends ServiceCommons {
 			
 			if(!req.equals("{}")){
 				//preliminary checks on the request parameters
-				preliminaryChecks(Constants.LIST_DATASOURCE,req);
+				preliminaryChecks(req,Constants.LIST_DATASOURCE);
 				
 				//There are two research modes:
 				String iddatasourceParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD);
