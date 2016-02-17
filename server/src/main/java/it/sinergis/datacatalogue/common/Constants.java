@@ -109,6 +109,7 @@ public final class Constants {
 	public static final String UPDATE_DATASET = "UPDATE_DATASET";
 	public static final String LIST_DATASET = "LIST_DATASET";
 	public static final String DELETE_DATASET = "DELETE_DATASET";
+	public static final String LIST_DATASET_COLUMNS = "LIST_DATASET_COLUMNS";
 	
 	/** Values. */
 	public static final String TRUE = "true";

@@ -38,24 +38,24 @@ public class ServiceUtil {
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 		try (FeatureIterator<SimpleFeature> features = collection.features()) {
 			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> listaColonne = new ArrayList<>();
+			List<Map<String, Object>> columnsList = new ArrayList<>();
 
 			while (features.hasNext()) {
 				SimpleFeature feature = features.next();
 				feature.getAttributes();
 				for (Property attribute : feature.getProperties()) {
-					Map<String, Object> mappaValore = new HashMap<>();
-					mappaValore.put(Constants.NAME, attribute.getName().toString());
-					mappaValore.put(Constants.TYPE, attribute.getType().getBinding().getSimpleName().toString());
-					mappaValore.put(Constants.ALIAS, attribute.getName().toString());
-					mappaValore.put(Constants.VISIBILITY, Constants.TRUE);
-					listaColonne.add(mappaValore);
+					Map<String, Object> mapValues = new HashMap<>();
+					mapValues.put(Constants.NAME, attribute.getName().toString());
+					mapValues.put(Constants.TYPE, attribute.getType().getBinding().getSimpleName().toString());
+					mapValues.put(Constants.ALIAS, attribute.getName().toString());
+					mapValues.put(Constants.VISIBILITY, Constants.TRUE);
+					columnsList.add(mapValues);
 				}
 				break;
 			}
 
 			
-			return mapper.writeValueAsString(listaColonne);
+			return mapper.writeValueAsString(columnsList);
 		}
 	}
 }

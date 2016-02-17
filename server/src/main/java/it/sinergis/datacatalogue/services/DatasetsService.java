@@ -68,7 +68,7 @@ public class DatasetsService extends ServiceCommons {
 
 						String datasourceType = getFieldValueFromJsonText(datasourceEntity.getJson(), Constants.TYPE);
 
-						//If the datasource is a SHAPE
+						// If the datasource is a SHAPE
 						if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.SHAPE)) {
 							String datasetFilename = getFieldValueFromJsonText(req, Constants.DSET_REALNAME_FIELD);
 							String datasourcePath = getFieldValueFromJsonText(datasourceEntity.getJson(),
@@ -349,7 +349,34 @@ public class DatasetsService extends ServiceCommons {
 	}
 
 	public String listColumns(String req) {
-		return RESPONSE_JSON_LIST_COLS_METADATA;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.LIST_DATASET_COLUMNS, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
+
+			Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+			if (entityFound == null) {
+				// No dataset found with given parameters.
+				throw new DCException(Constants.ER701, req);
+			} else {
+
+				String columns = getFieldValueFromJsonText(entityFound.getJson(), Constants.COLUMNS);
+				return columns;
+
+			}
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("list dataset service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("listDataset service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String updateColumnsMetadata(String req) {
