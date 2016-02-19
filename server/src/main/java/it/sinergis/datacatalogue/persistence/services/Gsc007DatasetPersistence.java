@@ -7,6 +7,8 @@ package it.sinergis.datacatalogue.persistence.services;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 
 /**
@@ -17,7 +19,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc007DatasetPersistence {
+public interface Gsc007DatasetPersistence extends GenericPersistence {
 
 	/**
 	 * Deletes the given entity <br>
@@ -34,6 +36,8 @@ public interface Gsc007DatasetPersistence {
 	 * @return true if found and deleted, false if not found
 	 */
 	public boolean delete(Long id) ;
+	
+	public boolean deleteNoTrans(Long id,EntityManager em) ;
 
 	/**
 	 * Inserts the given entity and commit <br>

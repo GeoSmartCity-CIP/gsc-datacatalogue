@@ -41,6 +41,18 @@ public class Gsc006DatasourcePersistenceJPA extends GenericJpaService<Gsc006Data
 	public boolean delete( Long id ) {
 		return super.delete( id );
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc006DatasourceEntity entity = em.find(Gsc006DatasourceEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public boolean delete(Gsc006DatasourceEntity entity) {

@@ -31,6 +31,7 @@ import it.sinergis.datacatalogue.persistence.PersistenceConfig;
 public abstract class GenericJpaService<T, PK extends java.io.Serializable> {
 
 	private static final boolean TRANSACTIONAL = true ;
+	private static final boolean NON_TRANSACTIONAL = false ;
 	
 	private static final Predicate[] VOID_PREDICATE_ARRAY = {};
 	
@@ -247,7 +248,31 @@ public abstract class GenericJpaService<T, PK extends java.io.Serializable> {
 		Boolean b = (Boolean) execute(operation, TRANSACTIONAL) ;
 		return b.booleanValue();
 	}
-
+	
+	/**
+	 * Delete entity by primary key ( NO TRANSACTIONAL )
+	 * @param primaryKey
+	 */
+	public boolean deleteNoTrans(final PK primaryKey) {
+		// JPA operation definition 
+		JpaOperation operation = new JpaOperation() {
+			@Override
+			public Object exectue(EntityManager em) throws PersistenceException {
+				final T entity = em.find(persistentClass, primaryKey);
+				if (entity != null) {
+					em.remove(entity);
+					return Boolean.TRUE ;
+				}
+				else {
+					return Boolean.FALSE ;
+				}
+			}
+		} ;
+		// JPA operation execution 
+		Boolean b = (Boolean) execute(operation) ;
+		return b.booleanValue();
+	}
+	
 	/**
 	 * Search entities using the given query parameters <br>
 	 * Returns all the entities if no query parameter 

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +19,10 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
+import it.sinergis.datacatalogue.persistence.PersistenceConfig;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironment;
+import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 
@@ -157,12 +163,20 @@ public class DatasourcesService extends ServiceCommons {
 							
 			//if results found -> delete record
 			if(datasource != null) {
-				datasourcePersistence.delete(datasource);
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteDatasource(null,null,datasource.getId());
 				
+//				EntityManager em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+//				EntityTransaction transaction = jpaEnvironment.openTransaction(em);
+//				gsc006Dao.delete(datasource);
+//				
 				//TODO
 				//we need to explicitly handle deletion of tables that rely on this entity
 				//by calling delete methods of the following:
 				//dataset
+//				jpaEnvironment.commitTransaction(transaction);
+				
+				
 				
 				logger.info("Datasource succesfully deleted");
 				logger.info(req);

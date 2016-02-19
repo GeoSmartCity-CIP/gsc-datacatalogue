@@ -36,6 +36,10 @@ public class JpaEnvironment {
 		return this.persistenceUnitName ;
 	}
 	
+	public final EntityManagerFactory getEntityManagerFactory() {
+		return this.emf ;
+	}
+	
 	public final Object executeWithTransaction(JpaOperation operation) throws PersistenceException {
 		
 		Object result = null ;
@@ -80,6 +84,27 @@ public class JpaEnvironment {
 		}
 		
 		return result ;
+	}
+	
+	public final EntityTransaction openTransaction(EntityManager em) {
+		
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+		
+		return transaction;
+	}
+	
+	public final void commitTransaction(EntityTransaction transaction) {
+		
+		try {
+			// Commit Transaction
+			transaction.commit();
+		
+		} finally {
+			// Rollback Transaction if Transaction is still active ( Commit not done )
+			if (transaction.isActive())
+				transaction.rollback();
+		}
 	}
 	
 }

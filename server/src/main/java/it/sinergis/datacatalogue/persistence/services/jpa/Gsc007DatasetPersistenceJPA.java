@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
@@ -40,6 +41,18 @@ public class Gsc007DatasetPersistenceJPA extends GenericJpaService<Gsc007Dataset
 	@Override
 	public boolean delete( Long id ) {
 		return super.delete( id );
+	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id, EntityManager em ) {
+		final Gsc007DatasetEntity entity = em.find(Gsc007DatasetEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
 	}
 
 	@Override
