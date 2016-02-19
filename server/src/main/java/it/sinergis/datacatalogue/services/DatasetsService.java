@@ -157,7 +157,6 @@ public class DatasetsService extends ServiceCommons {
 							gsc007Dao.save(entityFound);
 
 							logger.info("Dataset succesfully updated");
-							logger.info(req);
 							return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED,
 									entityFound.getId(), req);
 						} else {
@@ -378,8 +377,8 @@ public class DatasetsService extends ServiceCommons {
 					String columns = getObjectFromJsonText(entityFound.getJson(), Constants.COLUMNS);
 					
 					if(columns != null) {
-					mapColumns.put(Constants.COLUMNS, om.readTree(columns));
-					return om.writeValueAsString(mapColumns);
+						mapColumns.put(Constants.COLUMNS, om.readTree(columns));
+						return om.writeValueAsString(mapColumns);
 					} else {
 						//No columns found for dataset
 						throw new DCException(Constants.ER708, req);
@@ -402,7 +401,48 @@ public class DatasetsService extends ServiceCommons {
 	}
 
 	public String updateColumnsMetadata(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.UPDATE_DATASET_COLUMNS, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
+			String columns = getObjectFromJsonText(req, Constants.COLUMNS);
+
+			if (StringUtils.isNumeric(idDataset)) {
+				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+				if (entityFound == null) {
+					// No dataset found with given parameters.
+					throw new DCException(Constants.ER701, req);
+				} else {
+					//TODO check columns
+					ObjectNode node = (ObjectNode) om.readTree(req);
+					node.remove(Constants.COLUMNS);
+					node.put(Constants.COLUMNS, om.readTree(columns));
+					
+					entityFound.setJson(node.toString());
+					gsc007Dao.save(entityFound);
+
+					logger.info("Dataset columns succesfully updated");
+					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED,
+							entityFound.getId(), req);
+					
+				}
+			} else {
+				// Dataset id has to be numeric
+				throw new DCException(Constants.ER707, req);
+			}
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("list dataset service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("listDataset service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String createCronService(String req) {

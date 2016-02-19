@@ -55,7 +55,11 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONlistColsDatasetExample").value;
 		    	
-		    }if(selected === 'createdatasrc' ){
+		    } else if(selected === 'updcolsmetadata'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONupdateColsDatasetExample").value;
+		    	
+		    }  else if(selected === 'createdatasrc' ){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDataSourceExample").value;
 		    	
@@ -104,6 +108,7 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONdeleteDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONdeleteDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONupdateDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONupdateDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONlistColsDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONlistColsDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONupdateColsDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONupdateColsDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUpdateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
@@ -135,6 +140,7 @@ if (servizio==null) {
             <option value="deletedataset" <%= servizio.equals("deletedataset") ? "selected=\"selected\"" : ""%>>Dataset - Delete</option>
             <option value="updatedataset" <%= servizio.equals("updatedataset") ? "selected=\"selected\"" : ""%>>Dataset - Update</option>
             <option value="listcols" <%= servizio.equals("listcols") ? "selected=\"selected\"" : ""%>>Dataset - List Columns</option>
+            <option value="updcolsmetadata" <%= servizio.equals("updcolsmetadata") ? "selected=\"selected\"" : ""%>>Dataset - Update Columns Metadata</option>
             <option value="createdatasrc" <%= servizio.equals("createdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Create</option>
             <option value="listdatasrc" <%= servizio.equals("listdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - List/Search</option>
             <option value="deletedatasrc" <%= servizio.equals("deletedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Delete</option>
