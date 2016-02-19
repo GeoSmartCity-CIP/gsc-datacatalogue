@@ -85,7 +85,18 @@ public class DatasetsService extends ServiceCommons {
 							} else {
 								dset.setJson(req);
 							}
-						} else {
+						}
+						//if the datasource is POSTGIS
+						else if(datasourceType != null && datasourceType.equalsIgnoreCase(Constants.POSTGIS)) {
+							
+							String columnsJson = ServiceUtil.createJSONColumnsFromPostGisDB("", "", 5432, "", "", "", "");
+							
+							ObjectNode node = (ObjectNode) om.readTree(req);
+							node.put(Constants.COLUMNS, om.readTree(columnsJson));
+
+							dset.setJson(node.toString());
+						}
+						else {
 							dset.setJson(req);
 						}
 
@@ -113,9 +124,9 @@ public class DatasetsService extends ServiceCommons {
 		} catch (DCException rpe) {
 			return rpe.returnErrorString();
 		} catch (Exception e) {
-			logger.error("create organization service error", e);
+			logger.error("create dataset service error", e);
 			DCException rpe = new DCException(Constants.ER01, req);
-			logger.error("createOrganization service: unhandled error " + rpe.returnErrorString());
+			logger.error("createDataset service: unhandled error " + rpe.returnErrorString());
 
 			return rpe.returnErrorString();
 		}
@@ -416,8 +427,8 @@ public class DatasetsService extends ServiceCommons {
 					// No dataset found with given parameters.
 					throw new DCException(Constants.ER701, req);
 				} else {
-					//TODO check columns
-					ObjectNode node = (ObjectNode) om.readTree(req);
+					//we don't check columns, we just replace the columns value with the one sent by the client
+					ObjectNode node = (ObjectNode) om.readTree(entityFound.getJson());
 					node.remove(Constants.COLUMNS);
 					node.put(Constants.COLUMNS, om.readTree(columns));
 					

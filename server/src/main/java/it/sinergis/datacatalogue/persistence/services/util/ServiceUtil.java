@@ -23,11 +23,31 @@ import it.sinergis.datacatalogue.common.Constants;
 
 public class ServiceUtil {
 
-	public static String createJSONColumnsFromShapeFile(String path) throws IOException  {
+	public static String createJSONColumnsFromShapeFile(String path) throws IOException {
 		File file = new File(path);
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("url", file.toURI().toURL());
+
+		return buildJSONFromMapOptions(map);
+	}
+
+	public static String createJSONColumnsFromPostGisDB(String dbType, String host, int port, String schema,
+			String database, String user, String password) throws IOException {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("dbtype", "postgis");
+		map.put("host", "gsm-db.nco.inet");
+		map.put("port", 5432);
+		map.put("schema", "gscdatacatalogue");
+		map.put("database", "postgres");
+		map.put("user", "gscdatacatalogue");
+		map.put("passwd", "gscdatacatalogue");
+
+		return buildJSONFromMapOptions(map);
+	}
+	
+	private static String buildJSONFromMapOptions(Map<String, Object> map) throws IOException {
 
 		DataStore dataStore = DataStoreFinder.getDataStore(map);
 		String typeName = dataStore.getTypeNames()[0];
@@ -54,7 +74,6 @@ public class ServiceUtil {
 				break;
 			}
 
-			
 			return mapper.writeValueAsString(columnsList);
 		}
 	}

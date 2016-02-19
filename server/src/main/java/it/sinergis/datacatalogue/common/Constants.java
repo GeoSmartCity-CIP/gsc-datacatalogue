@@ -121,5 +121,6 @@ public final class Constants {
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String SHAPE = "shape";
+	public static final String POSTGIS = "postgis";
 	public static final String PATH = "path";
 }
