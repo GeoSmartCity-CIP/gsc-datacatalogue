@@ -23,6 +23,7 @@ public final class Constants {
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String USERNAME_FIELD = "username";
+	public static final String PASSWORD_FIELD = "password";
 	public static final String ORGANIZATION_FIELD = "organization";
 	public static final String ROLE_NAME_FIELD = "rolename";
 	public static final String ORG_FIELD = "organization";
@@ -122,5 +123,8 @@ public final class Constants {
 	public static final String FALSE = "false";
 	public static final String SHAPE = "shape";
 	public static final String POSTGIS = "postgis";
+	public static final String POSTGRES = "postgres";
 	public static final String PATH = "path";
+	public static final String URL = "url";
+	public static final String PORT = "port";
 }
