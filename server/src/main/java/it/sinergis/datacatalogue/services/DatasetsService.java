@@ -74,7 +74,7 @@ public class DatasetsService extends ServiceCommons {
 							String datasourcePath = getFieldValueFromJsonText(datasourceEntity.getJson(),
 									Constants.PATH);
 
-							if (datasourcePath != null && datasetFilename != null) {
+							if (StringUtils.isNotEmpty(datasourcePath) && StringUtils.isNotEmpty(datasetFilename)) {
 								String columnsJson = ServiceUtil
 										.createJSONColumnsFromShapeFile(datasourcePath + datasetFilename);
 
@@ -86,17 +86,35 @@ public class DatasetsService extends ServiceCommons {
 								dset.setJson(req);
 							}
 						}
-						//if the datasource is POSTGIS
-						else if(datasourceType != null && datasourceType.equalsIgnoreCase(Constants.POSTGIS)) {
-							
-							String columnsJson = ServiceUtil.createJSONColumnsFromPostGisDB("", "", 5432, "", "", "", "");
-							
-							ObjectNode node = (ObjectNode) om.readTree(req);
-							node.put(Constants.COLUMNS, om.readTree(columnsJson));
+						// if the datasource is POSTGIS
+						else if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.POSTGIS)) {
 
-							dset.setJson(node.toString());
-						}
-						else {
+							String urlDatasource = getFieldValueFromJsonText(datasourceEntity.getJson(), Constants.URL);
+							String portDatasource = getFieldValueFromJsonText(datasourceEntity.getJson(),
+									Constants.PORT);
+							String schema = getFieldValueFromJsonText(datasourceEntity.getJson(),
+									Constants.USERNAME_FIELD);
+							String username = getFieldValueFromJsonText(datasourceEntity.getJson(),
+									Constants.USERNAME_FIELD);
+							String password = getFieldValueFromJsonText(datasourceEntity.getJson(),
+									Constants.PASSWORD_FIELD);
+							String datasetRealname = getFieldValueFromJsonText(req, Constants.DSET_REALNAME_FIELD);
+
+							if (StringUtils.isNotEmpty(urlDatasource) && StringUtils.isNotEmpty(portDatasource)
+									&& StringUtils.isNotEmpty(schema) && StringUtils.isNotEmpty(username)
+									&& StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(datasetRealname)) {
+								String columnsJson = ServiceUtil.createJSONColumnsFromPostGisDB(Constants.POSTGIS,
+										urlDatasource, portDatasource, schema, Constants.POSTGRES, username, password,
+										datasetRealname);
+
+								ObjectNode node = (ObjectNode) om.readTree(req);
+								node.put(Constants.COLUMNS, om.readTree(columnsJson));
+
+								dset.setJson(node.toString());
+							} else {
+								dset.setJson(req);
+							}
+						} else {
 							dset.setJson(req);
 						}
 
@@ -386,12 +404,12 @@ public class DatasetsService extends ServiceCommons {
 
 					Map<String, Object> mapColumns = new HashMap<>();
 					String columns = getObjectFromJsonText(entityFound.getJson(), Constants.COLUMNS);
-					
-					if(columns != null) {
+
+					if (columns != null) {
 						mapColumns.put(Constants.COLUMNS, om.readTree(columns));
 						return om.writeValueAsString(mapColumns);
 					} else {
-						//No columns found for dataset
+						// No columns found for dataset
 						throw new DCException(Constants.ER708, req);
 					}
 				}
@@ -427,18 +445,19 @@ public class DatasetsService extends ServiceCommons {
 					// No dataset found with given parameters.
 					throw new DCException(Constants.ER701, req);
 				} else {
-					//we don't check columns, we just replace the columns value with the one sent by the client
+					// we don't check columns, we just replace the columns value
+					// with the one sent by the client
 					ObjectNode node = (ObjectNode) om.readTree(entityFound.getJson());
 					node.remove(Constants.COLUMNS);
 					node.put(Constants.COLUMNS, om.readTree(columns));
-					
+
 					entityFound.setJson(node.toString());
 					gsc007Dao.save(entityFound);
 
 					logger.info("Dataset columns succesfully updated");
-					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED,
-							entityFound.getId(), req);
-					
+					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_UPDATED, entityFound.getId(),
+							req);
+
 				}
 			} else {
 				// Dataset id has to be numeric

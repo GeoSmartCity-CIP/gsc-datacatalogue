@@ -29,33 +29,55 @@ public class ServiceUtil {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("url", file.toURI().toURL());
 
-		return buildJSONFromMapOptions(map);
-	}
-
-	public static String createJSONColumnsFromPostGisDB(String dbType, String host, int port, String schema,
-			String database, String user, String password) throws IOException {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dbtype", "postgis");
-		map.put("host", "gsm-db.nco.inet");
-		map.put("port", 5432);
-		map.put("schema", "gscdatacatalogue");
-		map.put("database", "postgres");
-		map.put("user", "gscdatacatalogue");
-		map.put("passwd", "gscdatacatalogue");
-
-		return buildJSONFromMapOptions(map);
-	}
-	
-	private static String buildJSONFromMapOptions(Map<String, Object> map) throws IOException {
-
 		DataStore dataStore = DataStoreFinder.getDataStore(map);
 		String typeName = dataStore.getTypeNames()[0];
 
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
 		Filter filter = Filter.INCLUDE;
 
-		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
+		return buildJsonColumns(source.getFeatures(filter));
+	}
+
+	public static String createJSONColumnsFromPostGisDB(String dbType, String host, String port, String schema,
+			String database, String user, String password, String table) throws IOException {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("dbtype", dbType);
+		map.put("host", host);
+		map.put("port", Integer.parseInt(port));
+		map.put("schema", schema);
+		map.put("database", database);
+		map.put("user", user);
+		map.put("passwd", password);
+		
+		DataStore dataStore = DataStoreFinder.getDataStore(map);
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
+		Filter filter = Filter.INCLUDE;
+
+		return buildJsonColumns(source.getFeatures(filter));
+	}
+	
+	public static String createJSONColumnsFromOracleDB(String dbType, String host, String port, String schema,
+			String database, String user, String password, String table) throws IOException {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("dbtype", dbType);
+		map.put("host", host);
+		map.put("port", Integer.parseInt(port));
+		map.put("schema", schema);
+		map.put("database", database);
+		map.put("user", user);
+		map.put("passwd", password);
+		
+		DataStore dataStore = DataStoreFinder.getDataStore(map);
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
+		Filter filter = Filter.INCLUDE;
+
+		return buildJsonColumns(source.getFeatures(filter));
+	}
+	
+	private static String buildJsonColumns(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) throws IOException {
+		
 		try (FeatureIterator<SimpleFeature> features = collection.features()) {
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> columnsList = new ArrayList<>();

@@ -6,11 +6,14 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc004FunctionEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
 import it.sinergis.datacatalogue.persistence.services.Gsc004FunctionPersistence;
@@ -60,6 +63,11 @@ public class Gsc004FunctionPersistenceJPA extends GenericJpaService<Gsc004Functi
 		} ;
 		// JPA operation execution 
 		return (Long) execute(operation);
+	}
+	
+	@Override
+	public List<Gsc004FunctionEntity> getFunction(final String query) {
+		return super.loadByNativeQuery(query);
 	}
 
 }

@@ -323,4 +323,30 @@ public class ServiceCommons {
 		//checks if the request contains all the mandatory parameters
 		checkMandatoryParameters(serviceName,jsonRequest);
 	}
+	
+	/**
+	 * Given a jsonRequest and a key, this method remove the key from the request.
+	 * 
+	 * @param json
+	 * @param key
+	 * @return
+	 */
+	protected String removeJsonField(String json, String key) throws DCException{
+		try {
+			JsonNode rootNode = om.readTree(json);
+			JsonNode keyNode = rootNode.findValue(key);
+			
+			if (keyNode != null){
+				((ObjectNode) rootNode).remove(key);			
+			}			
+			return rootNode.toString();
+			
+		} catch (JsonProcessingException e) {
+			logger.error("Error removing the key "+ key + " from the given json");
+			throw new DCException(Constants.ER01, json);			
+		} catch (IOException e) {
+			throw new DCException(Constants.ER01, json);			
+		}			
+	}
+	
 }

@@ -91,4 +91,11 @@ public interface Gsc004FunctionPersistence {
 	 */
 	public long countAll();
 	
+	/**
+	 * Executes the native query.
+	 * @param query
+	 * @return
+	 */
+	public List<Gsc004FunctionEntity> getFunction(final String query);
+	
 }

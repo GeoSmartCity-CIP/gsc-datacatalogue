@@ -14,6 +14,7 @@ public final class Constants {
 	public static final String ROLE_TABLE_NAME = "gsc_003_role";	
 	public static final String DATASOURCE_TABLE_NAME = "gsc_006_datasource";
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
+	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 
 	public static final String JSON_COLUMN_NAME = "json";	
 
@@ -23,6 +24,7 @@ public final class Constants {
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String USERNAME_FIELD = "username";
+	public static final String PASSWORD_FIELD = "password";
 	public static final String ORGANIZATION_FIELD = "organization";
 	public static final String ROLE_NAME_FIELD = "rolename";
 	public static final String ORG_FIELD = "organization";
@@ -41,13 +43,17 @@ public final class Constants {
 	public static final String TYPE = "type";
 	public static final String ALIAS = "alias";
 	public static final String VISIBILITY = "visibility";
-	public static final String COLUMNS = "columns";
+	public static final String COLUMNS = "columns";		
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
 	public static final String DATASOURCE_ID_FIELD = "iddatasource";
 	public static final String DATASOURCE_NAME_FIELD = "datasourcename";
 	public static final String DATASOURCE_FIELD = "datasource";
+	
+	/** Function field names */
+	public static final String FUNC_NAME_FIELD = "functionname";
+	public static final String FUNC_ID_FIELD = "idfunction";
 	
 	/** ERRORS */
 	public static final String ER01 = "ER01";
@@ -88,6 +94,12 @@ public final class Constants {
 	public static final String ER607 = "ER607";
 	public static final String ER608 = "ER608";
 	
+	/** Function Errors. */
+	public static final String ER401 = "ER401";
+	public static final String ER402 = "ER402";
+	public static final String ER403 = "ER403";
+	public static final String ER404 = "ER404";
+	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
 	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";
@@ -100,6 +112,9 @@ public final class Constants {
 	public static final String DATASOURCE_CREATED = "DATASOURCE_CREATED";
 	public static final String DATASOURCE_UPDATED = "DATASOURCE_UPDATED";
 	public static final String DATASOURCE_DELETED = "DATASOURCE_DELETED";
+	public static final String FUNCTION_CREATED = "FUNCTION_CREATED";
+	public static final String FUNCTION_UPDATED = "FUNCTION_UPDATED";
+	public static final String FUNCTION_DELETED = "FUNCTION_DELETED";
 	
 		
 	/** Services names. */
@@ -117,11 +132,18 @@ public final class Constants {
 	public static final String DELETE_DATASET = "DELETE_DATASET";
 	public static final String LIST_DATASET_COLUMNS = "LIST_DATASET_COLUMNS";
 	public static final String UPDATE_DATASET_COLUMNS = "UPDATE_DATASET_COLUMNS";
+	public static final String CREATE_FUNCTION = "CREATE_FUNCTION";
+	public static final String UPDATE_FUNCTION = "UPDATE_FUNCTION";
+	public static final String DELETE_FUNCTION = "DELETE_FUNCTION";
+	public static final String LIST_FUNCTION = "LIST_FUNCTION";
 	
 	/** Values. */
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String SHAPE = "shape";
 	public static final String POSTGIS = "postgis";
+	public static final String POSTGRES = "postgres";
 	public static final String PATH = "path";
+	public static final String URL = "url";
+	public static final String PORT = "port";
 }
