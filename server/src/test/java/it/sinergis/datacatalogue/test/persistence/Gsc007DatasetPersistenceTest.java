@@ -4,6 +4,7 @@
  */
 package it.sinergis.datacatalogue.test.persistence;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,44 +24,89 @@ public class Gsc007DatasetPersistenceTest extends ServiceCommons {
 	final String ID_ORGANIZATION = "28";
 	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"" + ID_ORGANIZATION
 			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\"}";
-	
+
 	@Test
 	public void testDasetsServiceShape() throws Exception {
 
-		System.out.println("Test datasets service start");
-
+		String idDatasource = "";
 		// For this test we assume the organization exists with the given ID, if
 		// it doesn't the test will return success.
-		DatasourcesService datasourceDS = new DatasourcesService();
 		DatasetsService datasetDS = new DatasetsService();
+		DatasourcesService datasourceDS = new DatasourcesService();
 
-		String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE);
-		String idDatasource = getFieldValueFromJsonText(jsonDS, Constants.ID);
-		Assert.assertTrue("Datasource created with id: " + idDatasource, idDatasource != null);
+		try {
+			System.out.println("-------");
+			System.out.println("Test datasets service start");
+			System.out.println("-------");
 
-		String createDatasetJSON = "{\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
-				+ idDatasource + "\",\"description\": \"descrizione\"}";
-		String jsonDataset = datasetDS.createDataset(createDatasetJSON);
-		Assert.assertTrue(getFieldValueFromJsonText(jsonDataset, Constants.STATUS_FIELD).equalsIgnoreCase(Constants.STATUS_DONE));
-		String idDataset = getFieldValueFromJsonText(jsonDataset, Constants.ID);
+			String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE);
+			idDatasource = getFieldValueFromJsonText(jsonDS, Constants.ID);
+			Assert.assertTrue("Datasource created with id: " + idDatasource, idDatasource != null);
 
-		Assert.assertTrue("Dataset created with id" + idDataset, idDataset != null);
+			String createDatasetJSON = "{\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
+					+ idDatasource + "\",\"description\": \"descrizione\"}";
+			String jsonDataset = datasetDS.createDataset(createDatasetJSON);
+			Assert.assertTrue(getFieldValueFromJsonText(jsonDataset, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+			String idDataset = getFieldValueFromJsonText(jsonDataset, Constants.ID);
 
-		String listDatasetJSON = "{\"iddataset\":\"" + idDataset +"\"}";
-		datasetDS.listDataset(listDatasetJSON);
-		// datasetDS.updateDataset("");
-		// datasetDS.listDataset("");
-		//
-		// datasetDS.listColumns("");
-		// datasetDS.updateColumnsMetadata("");
-		// datasetDS.listColumns("");
-		//
-		
-		String deleteDatasourceJSON = "{\"iddatasource\":\"" + idDatasource +"\"}";
-		String jsonDatasourceDeleted = datasourceDS.deleteDatasource(deleteDatasourceJSON);
-		Assert.assertTrue(getFieldValueFromJsonText(jsonDatasourceDeleted, Constants.STATUS_FIELD).equalsIgnoreCase(Constants.STATUS_DONE));
+			Assert.assertTrue("Dataset created with id" + idDataset, idDataset != null);
 
+			/** LIST DATASET */
+			String listDatasetJSON = "{\"iddataset\":\"" + idDataset + "\"}";
+			String listSet = datasetDS.listDataset(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List set: " + listSet);
+			System.out.println("-------");
+
+			Assert.assertTrue(getFieldValueFromJsonText(listSet, Constants.STATUS_FIELD) == null);
+
+			
+
+			/** LIST COLUMNS */
+			String listColumns = datasetDS.listColumns(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List columns: " + listColumns);
+			System.out.println("-------");
+
+			Assert.assertTrue(getFieldValueFromJsonText(listColumns, Constants.STATUS_FIELD) == null);
+
+			String updateColumnsMetadata = "{\"iddataset\":\"" + idDataset + "\",\"columns\":[{\"visibility\":\"true\",\"name\":\"the_geom\",\"alias\":\"the_geom\",\"type\":\"MultiLineString\"}]}";
+			String updatedColumns = datasetDS.updateColumnsMetadata(updateColumnsMetadata);
+			Assert.assertTrue(getFieldValueFromJsonText(updatedColumns, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+
+			/** UPDATE DATASET */
+
+			String updateDatasetJSON = "{\"iddataset\":\"" + idDataset
+					+ "\",\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
+					+ idDatasource + "\",\"description\": \"newDesc\"}";
+			String updateSet = datasetDS.updateDataset(updateDatasetJSON);
+			Assert.assertTrue(getFieldValueFromJsonText(updateSet, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+			listSet = datasetDS.listDataset(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List set: " + listSet);
+			System.out.println("-------");
+			Assert.assertTrue(getFieldValueFromJsonText(listSet, Constants.STATUS_FIELD) == null);
+			Assert.assertTrue(
+					getFieldValueFromJsonText(listSet, Constants.DESCRIPTION_FIELD).equalsIgnoreCase("newDesc"));
+
+		} finally {
+			if (StringUtils.isNotEmpty(idDatasource)) {
+				String deleteDatasourceJSON = "{\"iddatasource\":\"" + idDatasource + "\"}";
+				String jsonDatasourceDeleted = datasourceDS.deleteDatasource(deleteDatasourceJSON);
+				Assert.assertTrue(getFieldValueFromJsonText(jsonDatasourceDeleted, Constants.STATUS_FIELD)
+						.equalsIgnoreCase(Constants.STATUS_DONE));
+			}
+
+		}
+		System.out.println("-------");
 		System.out.println("Test datasets service end");
+		System.out.println("-------");
 	}
 
 }
