@@ -84,7 +84,6 @@ public class ServiceUtil {
 
 			while (features.hasNext()) {
 				SimpleFeature feature = features.next();
-				feature.getAttributes();
 				for (Property attribute : feature.getProperties()) {
 					Map<String, Object> mapValues = new HashMap<>();
 					mapValues.put(Constants.NAME, attribute.getName().toString());

@@ -4,14 +4,13 @@
  */
 package it.sinergis.datacatalogue.test.persistence;
 
-
-import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
-import it.sinergis.datacatalogue.mock.Gsc007DatasetEntityMock;
-import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
-import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.services.DatasetsService;
+import it.sinergis.datacatalogue.services.DatasourcesService;
+import it.sinergis.datacatalogue.services.ServiceCommons;
 
 /**
  * JUnit test case for Gsc007Dataset persistence service
@@ -19,61 +18,49 @@ import org.junit.Test;
  * @author Telosys Tools Generator
  *
  */
-public class Gsc007DatasetPersistenceTest 
-{
-	@Test
-	public void test1() {
-		
-		System.out.println("Test count ..." );
-		
-		Gsc007DatasetPersistence service = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
-		System.out.println("CountAll = " + service.countAll() );
-	}
+public class Gsc007DatasetPersistenceTest extends ServiceCommons {
+
+	final String ID_ORGANIZATION = "28";
+	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"" + ID_ORGANIZATION
+			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\"}";
 	
 	@Test
-	public void test2() {
+	public void testDasetsServiceShape() throws Exception {
+
+		System.out.println("Test datasets service start");
+
+		// For this test we assume the organization exists with the given ID, if
+		// it doesn't the test will return success.
+		DatasourcesService datasourceDS = new DatasourcesService();
+		DatasetsService datasetDS = new DatasetsService();
+
+		String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE);
+		String idDatasource = getFieldValueFromJsonText(jsonDS, Constants.ID);
+		Assert.assertTrue("Datasource created with id: " + idDatasource, idDatasource != null);
+
+		String createDatasetJSON = "{\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
+				+ idDatasource + "\",\"description\": \"descrizione\"}";
+		String jsonDataset = datasetDS.createDataset(createDatasetJSON);
+		Assert.assertTrue(getFieldValueFromJsonText(jsonDataset, Constants.STATUS_FIELD).equalsIgnoreCase(Constants.STATUS_DONE));
+		String idDataset = getFieldValueFromJsonText(jsonDataset, Constants.ID);
+
+		Assert.assertTrue("Dataset created with id" + idDataset, idDataset != null);
+
+		String listDatasetJSON = "{\"iddataset\":\"" + idDataset +"\"}";
+		datasetDS.listDataset(listDatasetJSON);
+		// datasetDS.updateDataset("");
+		// datasetDS.listDataset("");
+		//
+		// datasetDS.listColumns("");
+		// datasetDS.updateColumnsMetadata("");
+		// datasetDS.listColumns("");
+		//
 		
-		System.out.println("Test Gsc007Dataset persistence : delete + load ..." );
-		
-		Gsc007DatasetPersistence service = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
-		
-		Gsc007DatasetEntityMock mock = new Gsc007DatasetEntityMock();
-		
-		// TODO : set primary key values here 
-		process( service, mock, (long)0  );
-		// process( service, mock, ... );
+		String deleteDatasourceJSON = "{\"iddatasource\":\"" + idDatasource +"\"}";
+		String jsonDatasourceDeleted = datasourceDS.deleteDatasource(deleteDatasourceJSON);
+		Assert.assertTrue(getFieldValueFromJsonText(jsonDatasourceDeleted, Constants.STATUS_FIELD).equalsIgnoreCase(Constants.STATUS_DONE));
+
+		System.out.println("Test datasets service end");
 	}
 
-	private void process(Gsc007DatasetPersistence service, Gsc007DatasetEntityMock mock, Long id ) {
-		System.out.println("----- "  );
-		System.out.println(" . load : " );
-		Gsc007DatasetEntity entity = service.load( id );
-		if ( entity != null ) {
-			// Found 
-			System.out.println("   FOUND : " + entity );
-			
-			// Save (update) with the same values to avoid database integrity errors  
-			System.out.println(" . save : " + entity );
-			service.save(entity);
-			System.out.println("   saved : " + entity );
-		}
-		else {
-			// Not found 
-			System.out.println("   NOT FOUND" );
-			// Create a new instance 
-			entity = mock.createInstance( id ) ;
-			Assert.assertNotNull(entity);
-
-			// No reference : insert is possible 
-			// Try to insert the new instance
-			System.out.println(" . insert : " + entity );
-			service.insert(entity);
-			System.out.println("   inserted : " + entity );
-
-			System.out.println(" . delete : " );
-			boolean deleted = service.delete( id );
-			System.out.println("   deleted = " + deleted);
-			Assert.assertTrue(deleted) ;
-		}		
-	}
 }

@@ -23,6 +23,7 @@ public final class Constants {
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String DESCRIPTION_FIELD = "description";
+	public static final String SCHEMA_FIELD = "schema";
 	public static final String USERNAME_FIELD = "username";
 	public static final String PASSWORD_FIELD = "password";
 	public static final String ORGANIZATION_FIELD = "organization";
