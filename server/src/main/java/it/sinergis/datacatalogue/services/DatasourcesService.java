@@ -166,18 +166,6 @@ public class DatasourcesService extends ServiceCommons {
 				DeleteService deleteService = new DeleteService();
 				deleteService.deleteDatasource(null,null,datasource.getId());
 				
-//				EntityManager em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
-//				EntityTransaction transaction = jpaEnvironment.openTransaction(em);
-//				gsc006Dao.delete(datasource);
-//				
-				//TODO
-				//we need to explicitly handle deletion of tables that rely on this entity
-				//by calling delete methods of the following:
-				//dataset
-//				jpaEnvironment.commitTransaction(transaction);
-				
-				
-				
 				logger.info("Datasource succesfully deleted");
 				logger.info(req);
 				return createJsonStatus(Constants.STATUS_DONE,Constants.DATASOURCE_DELETED,null,req);
@@ -218,30 +206,37 @@ public class DatasourcesService extends ServiceCommons {
 				//preliminary checks on the request parameters
 				preliminaryChecks(req,Constants.LIST_DATASOURCE);
 				
-				//There are two research modes:
+				//There are two research modes: by id and by organization
+				//If both parameters are found in the request an error will be thrown.
+				//If a research by organization is performed, users may specify a partial or total datasourcename, 
+				//in order to refine the content of the response.
 				String iddatasourceParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD);
+				String organizationidParameter = getFieldValueFromJsonText(req,Constants.ORG_FIELD);
 				String datasourcenameParameter = getFieldValueFromJsonText(req,Constants.DATASOURCE_NAME_FIELD);
-				//if the iddatasource parameter is in the request the research will be done by id. THIS has priority over other research types.
+				if(iddatasourceParameter != null && (datasourcenameParameter != null || organizationidParameter != null)) {
+					logger.error("Incorrect parameters: perform a request either by datasourceid or by organization (and datasourcename). Both parameters are not allowed at the same time");
+	                throw new DCException(Constants.ER608, req);
+				}
+				//if the iddatasource parameter is in the request the research will be done by id.
 				if(iddatasourceParameter != null) {
 					Gsc006DatasourceEntity datasourceFoundById = getDatasourceObjectById(Long.parseLong(iddatasourceParameter));
 					if(datasourceFoundById != null) {
 						datasources.add(datasourceFoundById);
 					}
-				//otherwise the research is based on the datasourcename parameter.
-				} else if(datasourcenameParameter != null) {
-					String queryText = "'" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.DATASOURCE_NAME_FIELD)+"%'";
+				//otherwise the research is based on the organization parameter.
+				} else if(organizationidParameter != null) {
+					String queryText = "'"+Constants.ORG_FIELD +"' =  '"+organizationidParameter+"'";
 					
-					//user may additionally specify a given organization for the request
-					String organizationidParameter = getFieldValueFromJsonText(req,Constants.ORG_FIELD);
-					if(organizationidParameter != null) {
-						queryText += " AND '"+Constants.ORG_FIELD +"' =  '"+organizationidParameter+"'";
+					//user may additionally specify a partial or complete datasourcename to refine the research process.
+					if(datasourcenameParameter != null) {
+						queryText += " AND '" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.DATASOURCE_NAME_FIELD)+"%'";
 					}
 					
 					query = createQuery(queryText, Constants.DATASOURCE_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 					datasources = datasourcePersistence.getDatasources(query);
 
 				} else {
-					logger.error("Incorrect parameters: either datasourcename or iddatasource parameters should be specified or else use an empty request {}");
+					logger.error("Incorrect parameters: either organization or iddatasource parameters should be specified.");
 	                throw new DCException(Constants.ER605, req);
 				}
 			}
@@ -263,24 +258,26 @@ public class DatasourcesService extends ServiceCommons {
 				ObjectNode datasourceBasic = (ObjectNode) mapper.readTree(datasource.getJson());
 				
 				
-				//user may specify detail level of the response. We assume true if not specified (verbose response).
+				//user may specify detail level of the response. We assume false if not specified (short response).
 				String detailParameter = getFieldValueFromJsonText(req,Constants.DETAIL_FIELD);
-				if(detailParameter == null || "true".equalsIgnoreCase(detailParameter)) {
-					datasourceBasic.put(Constants.ID,datasource.getId());
-					datasourceNodeList.add(datasourceBasic);
+				
 				//short response (only name and id)
-				} else if("false".equalsIgnoreCase(detailParameter)){
+				if(detailParameter == null || "false".equalsIgnoreCase(detailParameter)){
 					ObjectNode modifiedDatasource = JsonNodeFactory.instance.objectNode();
 					//copies datasourcename value 
 					modifiedDatasource.put(Constants.DATASOURCE_NAME_FIELD, datasourceBasic.get(Constants.DATASOURCE_NAME_FIELD));
 					modifiedDatasource.put(Constants.ID,datasource.getId());
 					datasourceNodeList.add(modifiedDatasource);
+				} else if("true".equalsIgnoreCase(detailParameter)) {
+					datasourceBasic.put(Constants.ID,datasource.getId());
+					datasourceNodeList.add(datasourceBasic);
 				} else {
 					logger.error("Incorrect parameters: detail parameter value can only be 'true' or 'false' if omitted it will be considered as true");
 	                throw new DCException(Constants.ER606, req);
 				}	
 			}
 			root.put(Constants.DATASOURCES_NAME_FIELD,datasourceNodeList);
+			root.put(Constants.REQUEST,mapper.readTree(req));
 		    String jsonString;
 		    try {
 		        jsonString = mapper.writeValueAsString(root);

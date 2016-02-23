@@ -93,6 +93,7 @@ public final class Constants {
 	public static final String ER605 = "ER605";
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
+	public static final String ER608 = "ER608";
 	
 	/** Function Errors. */
 	public static final String ER401 = "ER401";
