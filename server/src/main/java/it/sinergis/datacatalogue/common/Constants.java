@@ -86,6 +86,7 @@ public final class Constants {
 	public static final String ER605 = "ER605";
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
+	public static final String ER608 = "ER608";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
