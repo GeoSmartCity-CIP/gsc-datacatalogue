@@ -75,19 +75,23 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDataSourceExample").value;
 		    	
-		    }else if(selected === 'createfunc'){
+		    } else if(selected === 'listdataorigin'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDataOriginExample").value;
+		    	
+		    } else if(selected === 'createfunc'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateFunctionExample").value;
 		    	
-		    }else if(selected === 'updatefunc'){
+		    } else if(selected === 'updatefunc'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateFunctionExample").value;
 		    	
-		    }else if (selected === 'deletefunc'){
+		    } else if (selected === 'deletefunc'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteFunctionExample").value;
 		    	
-		    }else if (selected === 'listfunc'){
+		    } else if (selected === 'listfunc'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListFunctionExample").value;
 		    }
@@ -128,6 +132,7 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListDataOriginExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDataOriginExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUpdateFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
@@ -163,6 +168,7 @@ if (servizio==null) {
             <option value="listdatasrc" <%= servizio.equals("listdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - List/Search</option>
             <option value="deletedatasrc" <%= servizio.equals("deletedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Delete</option>
             <option value="updatedatasrc" <%= servizio.equals("updatedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Update</option>
+            <option value="listdataorigin" <%= servizio.equals("listdataorigin") ? "selected=\"selected\"" : ""%>>Datasource - List Data Origih</option>
             <option value="createfunc" <%= servizio.equals("createfunc") ? "selected=\"selected\"" : ""%>>Function - Create</option>
             <option value="updatefunc" <%= servizio.equals("updatefunc") ? "selected=\"selected\"" : ""%>>Function - Update</option>
             <option value="deletefunc" <%= servizio.equals("deletefunc") ? "selected=\"selected\"" : ""%>>Function - Delete</option>

@@ -67,6 +67,7 @@ public final class Constants {
 	public static final String ER11 = "ER11";
 	public static final String ER12 = "ER12";
 	public static final String ER13 = "ER13";
+	public static final String ER14 = "ER14";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -94,6 +95,10 @@ public final class Constants {
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
 	public static final String ER608 = "ER608";
+	public static final String ER609 = "ER609";
+	public static final String ER610 = "ER610";
+	public static final String ER611 = "ER611";
+	public static final String ER612 = "ER612";
 	
 	/** Function Errors. */
 	public static final String ER401 = "ER401";
@@ -127,6 +132,7 @@ public final class Constants {
 	public static final String UPDATE_DATASOURCE = "UPDATE_DATASOURCE";
 	public static final String LIST_DATASOURCE = "LIST_DATASOURCE";
 	public static final String DELETE_DATASOURCE = "DELETE_DATASOURCE";
+	public static final String DATA_ORIGIN_LIST = "DATA_ORIGIN_LIST";
 	public static final String CREATE_DATASET = "CREATE_DATASET";
 	public static final String UPDATE_DATASET = "UPDATE_DATASET";
 	public static final String LIST_DATASET = "LIST_DATASET";
