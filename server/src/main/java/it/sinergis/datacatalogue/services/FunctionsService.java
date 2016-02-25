@@ -37,6 +37,13 @@ public class FunctionsService extends ServiceCommons {
 		gsc004dao = PersistenceServiceProvider.getService(Gsc004FunctionPersistence.class);
 	}
 	
+	/**
+	 * Create a new Function into the gsc_004_function table.
+	 * @param req
+	 * 			New Function data (JSON Format).
+	 * @return
+	 * 			Final status of the operation.
+	 */
 	public String createFunction(String req){
 		try{			
 			preliminaryChecks(req,Constants.CREATE_FUNCTION);
@@ -45,8 +52,8 @@ public class FunctionsService extends ServiceCommons {
 			// check if the specified organization id exists in the organization table. If not throws exception
 			checkIdOrganizationValid(req);
 			
-			/* Check if there' s another Function already saved with the same specs. */
-			Gsc004FunctionEntity datasetEntity = getFunctionObjectFromNameAndOrg(req);
+			// check if there' s another Function already saved with the same specs.
+			Gsc004FunctionEntity datasetEntity = getFunctionObjectByUniqueKey(req);
 			
 			// if no results found -> add new record
 			if (datasetEntity == null) {
@@ -75,7 +82,14 @@ public class FunctionsService extends ServiceCommons {
 		}
 
 	}
-	
+	 
+	/**
+	 * Update the Function identified by the given functionid into the gsc_004_table.
+	 * @param req
+	 * 			Function identifier and new Function data (JSON Format).
+	 * @return
+	 * 			Final Status of the operation.
+	 */
 	public String updateFunction(String req){
 		try{			
 			preliminaryChecks(req,Constants.UPDATE_FUNCTION);
@@ -84,24 +98,28 @@ public class FunctionsService extends ServiceCommons {
 			// check if the specified organization id exists in the organization table. If not throws exception
 			checkIdOrganizationValid(req);
 			
-			Long functionId = Long.parseLong(getFieldValueFromJsonText(req, Constants.FUNC_ID_FIELD));
+			Long functionId = Long.parseLong(getFieldValueFromJsonText(req, Constants.FUNC_ID_FIELD));			
+			
+			// extract the function with the specified id from the function table 
+			Gsc004FunctionEntity functionDb = getFunctionObjetctById(functionId);
 			
 			// check if a function with the specified id exists in the function table
-			Gsc004FunctionEntity function = getFunctionObjetctById(functionId);
-			
-			if (function != null){
-								
+			if (functionDb != null){
+
 				// check if a function with the specified name already exists for the given organization.
-				if (getFunctionObjectFromNameAndOrg(req) == null){
-					
+				Gsc004FunctionEntity checkFunction = getFunctionObjectByUniqueKey(req);
+				
+				if (checkFunction == null || checkFunction.getId().equals(functionId)){										
+						
 					String updatedJson = removeJsonField(req, Constants.FUNC_ID_FIELD);
-					
-					function.setJson(updatedJson);
-					function = gsc004dao.save(function);
-					
+						
+					functionDb.setJson(updatedJson);
+					functionDb = gsc004dao.save(functionDb);
+						
 					logger.info("Function successfully updated");
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE, Constants.FUNCTION_UPDATED, null, req);
+				
 				}else{					
 					throw new DCException(Constants.ER401, req);
 				}				
@@ -121,6 +139,13 @@ public class FunctionsService extends ServiceCommons {
 		}
 	}
 	
+	/**
+	 * Delete from the gsc_004_function table the specified Function.
+	 * @param req
+	 * 			Function identifier (JSON Format).
+	 * @return
+	 * 			Final Status of the operation.
+	 */
 	public String deleteFunction(String req){
 		try{
 			preliminaryChecks(req, Constants.DELETE_FUNCTION);
@@ -156,6 +181,13 @@ public class FunctionsService extends ServiceCommons {
 		}
 	}
 	
+	/**
+	 * According to the input request, lists all the Functions or search the Function identified by the name in the request, for the specified organization.  
+	 * @param req
+	 * 			Organization id and optionally Function name (JSON Format).
+	 * @return
+	 * 			List of the functions according to the input request, or status message in case of error.
+	 */
 	public String listFunction(String req){
 		try{
 			preliminaryChecks(req, Constants.LIST_FUNCTION);
@@ -210,7 +242,7 @@ public class FunctionsService extends ServiceCommons {
 				
 				logger.info("List of extracted functions: ");
 				logger.info(root.toString());
-				return createJsonStatus(Constants.STATUS_DONE, Constants.FUNCTION_UPDATED, null, root.toString());
+				return root.toString();
 			}else{
 				throw new DCException(Constants.ER404, req);
 			}
@@ -233,10 +265,10 @@ public class FunctionsService extends ServiceCommons {
 	 * @return
 	 * @throws RPException
 	 */
-	private Gsc004FunctionEntity getFunctionObjectFromNameAndOrg(String json) throws DCException {
+	private Gsc004FunctionEntity getFunctionObjectByUniqueKey(String json) throws DCException {
 
 		String functionName = getFieldValueFromJsonText(json, Constants.FUNC_NAME_FIELD);
-		String organizationId = getFieldValueFromJsonText(json, Constants.ORGANIZATION_FIELD);
+		String organizationId = getFieldValueFromJsonText(json, Constants.ORGANIZATION_FIELD);		
 
 		try {
 			StringBuilder builderQuery = new StringBuilder();
@@ -273,6 +305,12 @@ public class FunctionsService extends ServiceCommons {
 
 	}
 	
+	/**
+	 * Retrieves the Function identified by the id parameter.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	private Gsc004FunctionEntity getFunctionObjetctById(Long id){
 		return (Gsc004FunctionEntity) gsc004dao.load(id);
 	}
