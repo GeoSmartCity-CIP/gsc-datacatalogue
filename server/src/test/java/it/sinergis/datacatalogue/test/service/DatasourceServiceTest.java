@@ -38,7 +38,7 @@ public class DatasourceServiceTest extends ServiceCommons
 	public static final String CREATE_ORG_REQ_1 = "{\"organizationname\":\"TestOrg\",\"description\":\"Create test succeed\"}";
 	
 	//create ds request
-	public static final String CREATE_DS_REQ_1 = "{\"datasourcename\":\"DSShapeTest\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
+	public static final String CREATE_DS_REQ_1 = "{\"datasourcename\":\"DSShapeTest\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
 	public static final String CREATE_DS_REQ_2 = "{\"datasourcename\":\"DSShapeTestUpdated\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
 	public static final String CREATE_DS_REQ_3 = "{\"datasourcename\":\"DSPostgisTestUnit\",\"type\":\"POSTGIS\",\"description\":\"Postgis descript\",\"updated\":\"true\",\"url\":\"gsm-db.nco.inet\",\"schema\":\"gscdatacatalogue\",\"username\":\"gscdatacatalogue\",\"password\":\"gscdatacatalogue\",\"port\":\"5432\",\"organization\":";
 	//create request for the update service test
