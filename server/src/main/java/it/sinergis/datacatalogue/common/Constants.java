@@ -106,6 +106,7 @@ public final class Constants {
 	public static final String ER402 = "ER402";
 	public static final String ER403 = "ER403";
 	public static final String ER404 = "ER404";
+	public static final String ER405 = "ER405";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
