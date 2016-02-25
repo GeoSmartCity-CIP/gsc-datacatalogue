@@ -352,7 +352,7 @@ public class DatasourcesService extends ServiceCommons {
 
 					String datasourceType = getFieldValueFromJsonText(datasource.getJson(), Constants.TYPE);
 
-					if ("SHAPE".equalsIgnoreCase(datasourceType)) {
+					if (Constants.SHAPE.equalsIgnoreCase(datasourceType)) {
 
 						String path = getFieldValueFromJsonText(datasource.getJson(), Constants.PATH);
 						File dir = new File(path);
@@ -362,7 +362,7 @@ public class DatasourcesService extends ServiceCommons {
 							File[] listOfFiles = dir.listFiles(new FilenameFilter() {
 								@Override
 								public boolean accept(File dir, String name) {
-									return name.endsWith(".shp");
+									return name.endsWith(Constants.SHP_EXT);
 								}
 							});
 
@@ -377,7 +377,7 @@ public class DatasourcesService extends ServiceCommons {
 									valuesList.add(valuesMap);
 								}
 
-								mapColumns.put("dataorigin", valuesList);
+								mapColumns.put(Constants.DATA_ORIGIN, valuesList);
 
 								return om.writeValueAsString(mapColumns);
 							} else {
@@ -391,7 +391,7 @@ public class DatasourcesService extends ServiceCommons {
 							throw new DCException(Constants.ER609, req);
 						}
 
-					} else if ("POSTGIS".equalsIgnoreCase(datasourceType)) {
+					} else if (Constants.POSTGIS.equalsIgnoreCase(datasourceType)) {
 						String urlDatasource = getFieldValueFromJsonText(datasource.getJson(), Constants.URL);
 						String portDatasource = getFieldValueFromJsonText(datasource.getJson(), Constants.PORT);
 						String schema = getFieldValueFromJsonText(datasource.getJson(), Constants.SCHEMA_FIELD);
@@ -414,7 +414,7 @@ public class DatasourcesService extends ServiceCommons {
 									valuesList.add(valuesMap);
 								}
 
-								mapColumns.put("dataorigin", valuesList);
+								mapColumns.put(Constants.DATA_ORIGIN, valuesList);
 
 								return om.writeValueAsString(mapColumns);
 							} else {

@@ -44,7 +44,8 @@ public final class Constants {
 	public static final String TYPE = "type";
 	public static final String ALIAS = "alias";
 	public static final String VISIBILITY = "visibility";
-	public static final String COLUMNS = "columns";		
+	public static final String COLUMNS = "columns";	
+	public static final String DATA_ORIGIN = "dataorigin";	
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -153,4 +154,5 @@ public final class Constants {
 	public static final String PATH = "path";
 	public static final String URL = "url";
 	public static final String PORT = "port";
+	public static final String SHP_EXT = ".shp";
 }
