@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,10 +16,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
-import it.sinergis.datacatalogue.persistence.PersistenceConfig;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
-import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironment;
-import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 
@@ -110,7 +104,7 @@ public class DatasourcesService extends ServiceCommons {
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req,Constants.DATASOURCE_ID_FIELD));			
 			
 			//if no datasource with the specified name exists or if the only record found with the same name is the record to be updated itself -> update record
-			if(datasource == null || datasource.getId() == requestedId) {
+			if(datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
 				//check if there's another datasource already saved with the same ID
 				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
 				
@@ -172,7 +166,7 @@ public class DatasourcesService extends ServiceCommons {
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER603);
+				DCException rpe = new DCException(Constants.ER603,req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -272,7 +266,7 @@ public class DatasourcesService extends ServiceCommons {
 					datasourceBasic.put(Constants.ID,datasource.getId());
 					datasourceNodeList.add(datasourceBasic);
 				} else {
-					logger.error("Incorrect parameters: detail parameter value can only be 'true' or 'false' if omitted it will be considered as true");
+					logger.error("Incorrect parameters: detail parameter value can only be 'true' or 'false' if omitted it will be considered as false");
 	                throw new DCException(Constants.ER606, req);
 				}	
 			}
@@ -354,7 +348,7 @@ public class DatasourcesService extends ServiceCommons {
 			JsonNode newDSName = newRootNode.findValue(Constants.DATASOURCE_NAME_FIELD);
 			if(newDSName == null) {
 				logger.error(Constants.DATASOURCE_NAME_FIELD + " parameter is mandatory within the json string.");
-				throw new DCException(Constants.ER04);
+				throw new DCException(Constants.ER04,newJson);
 			}
 			
 			((ObjectNode) newRootNode).put(Constants.DATASOURCE_NAME_FIELD, newDSName.toString().replace("\"", ""));
