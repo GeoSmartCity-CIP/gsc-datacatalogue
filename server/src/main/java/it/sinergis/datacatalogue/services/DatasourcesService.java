@@ -120,7 +120,7 @@ public class DatasourcesService extends ServiceCommons {
 			// if no datasource with the specified name exists or if the only
 			// record found with the same name is the record to be updated
 			// itself -> update record
-			if (datasource == null || datasource.getId() == requestedId) {
+			if (datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
 				// check if there's another datasource already saved with the
 				// same ID
 				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);

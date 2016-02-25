@@ -149,12 +149,10 @@ public class OrganizationsService extends ServiceCommons{
 							
 			//if results found -> delete record
 			if(organization != null) {
-				organizationPersistence.delete(organization);
 				
-				//TODO
-				//we need to explicitly handle deletion of tables that rely on this entity
-				//by calling delete methods of the following:
-				//datasource, application, grouplayer, function, role, user
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteOrganization(null, null, organization.getId());
+				//organizationPersistence.delete(organization);
 				
 				logger.info("Organization succesfully deleted");
 				logger.info(req);

@@ -17,6 +17,7 @@ import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironment;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
+import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
@@ -25,12 +26,16 @@ import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersisten
 public class DeleteService extends ServiceCommons {
 
 	public final String DATASOURCE_ID_NAME = "iddatasource";
+	public final String ORGANIZATION_ID_NAME = "organization";
 	public final String DATASET_ID_NAME = "";
 	
 	/** Logger. */
 	private static Logger logger;
 	
-	/** Gsc001Datasource  DAO. */
+	/** Organization  DAO. */
+	private Gsc001OrganizationPersistence gsc001Dao;
+	
+	/** Datasource  DAO. */
 	private Gsc006DatasourcePersistence gsc006Dao;
 	
 	/** Dao dataset. */
@@ -47,6 +52,7 @@ public class DeleteService extends ServiceCommons {
 		
 		jpaEnvironment = JpaEnvironments.getInstance().getJpaEnvironment(PersistenceConfig.JPA_PERSISTENCE_UNIT_NAME);
 		
+		gsc001Dao = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class);
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 	}
@@ -82,7 +88,7 @@ public class DeleteService extends ServiceCommons {
 					Gsc006DatasourcePersistenceJPA datasourcePersistencejpa = new Gsc006DatasourcePersistenceJPA();
 					List<Object> retrievedDatasources = createSearchIdQuery(Constants.DATASOURCE_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,datasourcePersistencejpa);
 					for(Object retrievedDatasource : retrievedDatasources) {
-						if(retrievedDatasources instanceof Gsc006DatasourceEntity) {
+						if(retrievedDatasource instanceof Gsc006DatasourceEntity) {
 							gsc006Dao.delete(((Gsc006DatasourceEntity) retrievedDatasource).getId());
 							deletedSelfId.add(((Gsc006DatasourceEntity) retrievedDatasource).getId());
 						}
@@ -138,6 +144,38 @@ public class DeleteService extends ServiceCommons {
 				throw new DCException("ER01");
 			}
 		}
+	}
+	
+public void deleteOrganization(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+		
+		if(selfId != null) {
+			EntityManager em = null;
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+			
+				gsc001Dao.deleteNoTrans(selfId,em);
+				
+				List<Long> predIds = new ArrayList<Long>();
+				predIds.add(selfId);
+				
+				//we need to explicitly handle deletion of tables that rely on this entity
+				//by calling delete methods of the following:
+				
+				//DATASET
+				deleteDatasource(ORGANIZATION_ID_NAME,predIds,null);
+				//TODO application, grouplayer, function, role, user
+				
+				jpaEnvironment.commitTransaction(transaction);
+			} catch(Exception e) {
+				transaction.rollback();
+			} finally {
+				em.close();
+			}
+		} else {
+			//Organization doesn't depend on any other entity
+		}		
 	}
 	
 	/**
