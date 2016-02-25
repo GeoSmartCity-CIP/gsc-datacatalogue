@@ -35,14 +35,19 @@ public class ServiceUtil {
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
 		Filter filter = Filter.INCLUDE;
 
-		return buildJsonColumns(source.getFeatures(filter));
+		String json = buildJsonColumns(source.getFeatures(filter));
+		dataStore.dispose();
+		return json;
 	}
 	
 	public static String[] getDatastoreTypeNames(String dbType, String host, String port, String schema,
 			String database, String user, String password) throws IOException {
 		DataStore dataStore = createDatastorePostgis(dbType, host, port, schema, database, user, password);
 		
-		return dataStore.getTypeNames();
+		String[] typeNames = dataStore.getTypeNames();
+		dataStore.dispose();
+		
+		return typeNames;
 	}
 
 	public static String createJSONColumnsFromPostGisDB(String dbType, String host, String port, String schema,
@@ -52,7 +57,9 @@ public class ServiceUtil {
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
 		Filter filter = Filter.INCLUDE;
 
-		return buildJsonColumns(source.getFeatures(filter));
+		String json = buildJsonColumns(source.getFeatures(filter));
+		dataStore.dispose();
+		return json;
 	}
 
 	private static DataStore createDatastorePostgis(String dbType, String host, String port, String schema,
