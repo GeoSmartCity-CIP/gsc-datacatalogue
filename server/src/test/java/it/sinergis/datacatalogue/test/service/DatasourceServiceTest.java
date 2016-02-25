@@ -71,9 +71,9 @@ public class DatasourceServiceTest extends ServiceCommons
 		org_service.deleteOrganization(buildIdRequest(DELETE_ORG_REQ_1,id));
 	}
 	
-	private void deleteDsRecord(Long id) {
-		ds_service.deleteDatasource(buildIdRequest(DELETE_DS_REQ_1,id));
-	}
+//	private void deleteDsRecord(Long id) {
+//		ds_service.deleteDatasource(buildIdRequest(DELETE_DS_REQ_1,id));
+//	}
 	
 	private String createOrgRecord(String req) {
 		return org_service.createOrganization(req);
@@ -100,7 +100,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void createDSTest() {
 		System.out.println("TEST STARTED: createDSTest()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		try {
 			//create an organization record
 			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
@@ -111,8 +110,7 @@ public class DatasourceServiceTest extends ServiceCommons
 			//create the ds linked to the newly created org
 			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
+
 			//check if response is a well formed json	
 			om.readTree(create_ds_response);
 			//Assert the json response does not have an error field
@@ -123,9 +121,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: createDSTest()");
 		}
 	}
@@ -134,7 +132,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void createDSTestFail() {
 		System.out.println("TEST STARTED: createDSTestFail()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		try {
 			//create an organization record
 			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
@@ -145,8 +142,7 @@ public class DatasourceServiceTest extends ServiceCommons
 			//create the ds linked to the newly created org
 			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
+
 			//try to create another record with the same name 
 			String create_ds_response_2 = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
 			System.out.println(create_ds_response_2);
@@ -161,9 +157,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: createDSTestFail()");
 		}
 	}
@@ -193,7 +189,7 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
 			System.out.println("TEST ENDED: createDSTestFail2()");
 		}
@@ -213,7 +209,7 @@ public class DatasourceServiceTest extends ServiceCommons
 			create_org_id = getRecordId(create_org_response);
 			
 			//create the ds linked to the newly created org
-			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
+			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,create_org_id));
 			System.out.println(create_ds_response);
 			//get its id
 			create_ds_id = getRecordId(create_ds_response);
@@ -230,9 +226,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: updateDSTest()");
 		}
 	}
@@ -267,9 +263,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: updateDSTestFail()");
 		}
 	}
@@ -278,7 +274,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void updateTestFail2() {
 		System.out.println("TEST STARTED: updateDSTestFail2()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		Long create_ds_id_2 = null;
 		try {
 			//create an organization record
@@ -288,13 +283,11 @@ public class DatasourceServiceTest extends ServiceCommons
 			create_org_id = getRecordId(create_org_response);
 			
 			//create the ds linked to the newly created org
-			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
+			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,create_org_id));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
 			
 			//create the ds linked to the newly created org
-			String create_ds_response2 = createDSRecord(buildIdRequest(CREATE_DS_REQ_2,getRecordId(create_org_response)));
+			String create_ds_response2 = createDSRecord(buildIdRequest(CREATE_DS_REQ_2,create_org_id));
 			System.out.println(create_ds_response2);
 			//get its id
 			create_ds_id_2 = getRecordId(create_ds_response2);
@@ -311,10 +304,10 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
-			deleteDsRecord(create_ds_id_2);
+			//deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id_2);
 			System.out.println("TEST ENDED: updateDSTestFail2()");
 		}
 	}
@@ -349,7 +342,7 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
 			System.out.println("TEST ENDED: deleteDSTest()");
 		}
@@ -385,9 +378,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: deleteDSTestFail()");
 		}
 	}
@@ -422,9 +415,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSByIdTest()");
 		}
 	}
@@ -433,7 +426,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void readDSTest2() {
 		System.out.println("TEST STARTED: readDSByOrganizationTest()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		try {
 			//create an organization record
 			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
@@ -444,8 +436,6 @@ public class DatasourceServiceTest extends ServiceCommons
 			//create the ds linked to the newly created org
 			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,getRecordId(create_org_response)));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
 			
 			//research by orgname (and datasource name)
 			String read_ds_response = ds_service.listDatasource(buildIdRequest(READ_DS_REQ_2,create_org_id));
@@ -459,9 +449,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSByOrganizationTest()");
 		}
 	}
@@ -470,7 +460,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void readDSTestFail() {
 		System.out.println("TEST STARTED: readDSTestFail()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		try {
 			//create an organization record
 			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
@@ -481,8 +470,6 @@ public class DatasourceServiceTest extends ServiceCommons
 			//create the ds linked to the newly created org
 			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,create_org_id));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
 			
 			//research by id
 			String read_ds_response = ds_service.listDatasource(READ_DS_REQ_3);
@@ -496,9 +483,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSTestFail()");
 		}
 	}
@@ -533,9 +520,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSTestFail2()");
 		}
 	}
@@ -570,9 +557,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSTestFail3()");
 		}
 	}
@@ -581,7 +568,6 @@ public class DatasourceServiceTest extends ServiceCommons
 	public void readDSTestFail4() {
 		System.out.println("TEST STARTED: readDSTestFail4()");
 		Long create_org_id = null;
-		Long create_ds_id = null;
 		try {
 			//create an organization record
 			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
@@ -592,8 +578,6 @@ public class DatasourceServiceTest extends ServiceCommons
 			//create the ds linked to the newly created org
 			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,create_org_id));
 			System.out.println(create_ds_response);
-			//get its id
-			create_ds_id = getRecordId(create_ds_response);
 			
 			//research by organization (but the given id doesn't exist) -> no results found error
 			String read_ds_response = ds_service.listDatasource(buildIdRequest(READ_DS_REQ_2,create_org_id+1));
@@ -607,9 +591,9 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
+			// later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
-			deleteDsRecord(create_ds_id);
+			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSTestFail4()");
 		}
 	}

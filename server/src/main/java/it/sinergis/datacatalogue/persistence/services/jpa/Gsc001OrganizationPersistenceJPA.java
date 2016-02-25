@@ -49,6 +49,18 @@ public class Gsc001OrganizationPersistenceJPA extends GenericJpaService<Gsc001Or
 		}
 		return false ;
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc001OrganizationEntity entity = em.find(Gsc001OrganizationEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public long countAll() {
