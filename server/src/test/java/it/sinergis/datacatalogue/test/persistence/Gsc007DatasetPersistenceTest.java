@@ -4,14 +4,14 @@
  */
 package it.sinergis.datacatalogue.test.persistence;
 
-
-import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
-import it.sinergis.datacatalogue.mock.Gsc007DatasetEntityMock;
-import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
-import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
-
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.services.DatasetsService;
+import it.sinergis.datacatalogue.services.DatasourcesService;
+import it.sinergis.datacatalogue.services.ServiceCommons;
 
 /**
  * JUnit test case for Gsc007Dataset persistence service
@@ -19,61 +19,94 @@ import org.junit.Test;
  * @author Telosys Tools Generator
  *
  */
-public class Gsc007DatasetPersistenceTest 
-{
-	@Test
-	public void test1() {
-		
-		System.out.println("Test count ..." );
-		
-		Gsc007DatasetPersistence service = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
-		System.out.println("CountAll = " + service.countAll() );
-	}
-	
-	@Test
-	public void test2() {
-		
-		System.out.println("Test Gsc007Dataset persistence : delete + load ..." );
-		
-		Gsc007DatasetPersistence service = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
-		
-		Gsc007DatasetEntityMock mock = new Gsc007DatasetEntityMock();
-		
-		// TODO : set primary key values here 
-		process( service, mock, (long)0  );
-		// process( service, mock, ... );
-	}
+public class Gsc007DatasetPersistenceTest extends ServiceCommons {
 
-	private void process(Gsc007DatasetPersistence service, Gsc007DatasetEntityMock mock, Long id ) {
-		System.out.println("----- "  );
-		System.out.println(" . load : " );
-		Gsc007DatasetEntity entity = service.load( id );
-		if ( entity != null ) {
-			// Found 
-			System.out.println("   FOUND : " + entity );
+	final String ID_ORGANIZATION = "28";
+	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"" + ID_ORGANIZATION
+			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\"}";
+
+	@Test
+	public void testDasetsServiceShape() throws Exception {
+
+		String idDatasource = "";
+		// For this test we assume the organization exists with the given ID, if
+		// it doesn't the test will return success.
+		DatasetsService datasetDS = new DatasetsService();
+		DatasourcesService datasourceDS = new DatasourcesService();
+
+		try {
+			System.out.println("-------");
+			System.out.println("Test datasets service start");
+			System.out.println("-------");
+
+			String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE);
+			idDatasource = getFieldValueFromJsonText(jsonDS, Constants.ID);
+			Assert.assertTrue("Datasource created with id: " + idDatasource, idDatasource != null);
+
+			String createDatasetJSON = "{\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
+					+ idDatasource + "\",\"description\": \"descrizione\"}";
+			String jsonDataset = datasetDS.createDataset(createDatasetJSON);
+			Assert.assertTrue(getFieldValueFromJsonText(jsonDataset, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+			String idDataset = getFieldValueFromJsonText(jsonDataset, Constants.ID);
+
+			Assert.assertTrue("Dataset created with id" + idDataset, idDataset != null);
+
+			/** LIST DATASET */
+			String listDatasetJSON = "{\"iddataset\":\"" + idDataset + "\"}";
+			String listSet = datasetDS.listDataset(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List set: " + listSet);
+			System.out.println("-------");
+
+			Assert.assertTrue(getFieldValueFromJsonText(listSet, Constants.STATUS_FIELD) == null);
+
 			
-			// Save (update) with the same values to avoid database integrity errors  
-			System.out.println(" . save : " + entity );
-			service.save(entity);
-			System.out.println("   saved : " + entity );
+
+			/** LIST COLUMNS */
+			String listColumns = datasetDS.listColumns(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List columns: " + listColumns);
+			System.out.println("-------");
+
+			Assert.assertTrue(getFieldValueFromJsonText(listColumns, Constants.STATUS_FIELD) == null);
+
+			String updateColumnsMetadata = "{\"iddataset\":\"" + idDataset + "\",\"columns\":[{\"visibility\":\"true\",\"name\":\"the_geom\",\"alias\":\"the_geom\",\"type\":\"MultiLineString\"}]}";
+			String updatedColumns = datasetDS.updateColumnsMetadata(updateColumnsMetadata);
+			Assert.assertTrue(getFieldValueFromJsonText(updatedColumns, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+
+			/** UPDATE DATASET */
+
+			String updateDatasetJSON = "{\"iddataset\":\"" + idDataset
+					+ "\",\"datasetname\": \"datasetSHAPETest\",\"realname\": \"zone.shp\",\"iddatasource\":\""
+					+ idDatasource + "\",\"description\": \"newDesc\"}";
+			String updateSet = datasetDS.updateDataset(updateDatasetJSON);
+			Assert.assertTrue(getFieldValueFromJsonText(updateSet, Constants.STATUS_FIELD)
+					.equalsIgnoreCase(Constants.STATUS_DONE));
+			listSet = datasetDS.listDataset(listDatasetJSON);
+
+			System.out.println("-------");
+			System.out.println("List set: " + listSet);
+			System.out.println("-------");
+			Assert.assertTrue(getFieldValueFromJsonText(listSet, Constants.STATUS_FIELD) == null);
+			Assert.assertTrue(
+					getFieldValueFromJsonText(listSet, Constants.DESCRIPTION_FIELD).equalsIgnoreCase("newDesc"));
+
+		} finally {
+			if (StringUtils.isNotEmpty(idDatasource)) {
+				String deleteDatasourceJSON = "{\"iddatasource\":\"" + idDatasource + "\"}";
+				String jsonDatasourceDeleted = datasourceDS.deleteDatasource(deleteDatasourceJSON);
+				Assert.assertTrue(getFieldValueFromJsonText(jsonDatasourceDeleted, Constants.STATUS_FIELD)
+						.equalsIgnoreCase(Constants.STATUS_DONE));
+			}
+
 		}
-		else {
-			// Not found 
-			System.out.println("   NOT FOUND" );
-			// Create a new instance 
-			entity = mock.createInstance( id ) ;
-			Assert.assertNotNull(entity);
-
-			// No reference : insert is possible 
-			// Try to insert the new instance
-			System.out.println(" . insert : " + entity );
-			service.insert(entity);
-			System.out.println("   inserted : " + entity );
-
-			System.out.println(" . delete : " );
-			boolean deleted = service.delete( id );
-			System.out.println("   deleted = " + deleted);
-			Assert.assertTrue(deleted) ;
-		}		
+		System.out.println("-------");
+		System.out.println("Test datasets service end");
+		System.out.println("-------");
 	}
+
 }

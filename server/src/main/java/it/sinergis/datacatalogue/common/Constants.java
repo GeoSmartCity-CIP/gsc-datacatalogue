@@ -23,6 +23,7 @@ public final class Constants {
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String DESCRIPTION_FIELD = "description";
+	public static final String SCHEMA_FIELD = "schema";
 	public static final String USERNAME_FIELD = "username";
 	public static final String PASSWORD_FIELD = "password";
 	public static final String ORGANIZATION_FIELD = "organization";
@@ -43,7 +44,8 @@ public final class Constants {
 	public static final String TYPE = "type";
 	public static final String ALIAS = "alias";
 	public static final String VISIBILITY = "visibility";
-	public static final String COLUMNS = "columns";		
+	public static final String COLUMNS = "columns";	
+	public static final String DATA_ORIGIN = "dataorigin";	
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -66,6 +68,7 @@ public final class Constants {
 	public static final String ER11 = "ER11";
 	public static final String ER12 = "ER12";
 	public static final String ER13 = "ER13";
+	public static final String ER14 = "ER14";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -93,6 +96,10 @@ public final class Constants {
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
 	public static final String ER608 = "ER608";
+	public static final String ER609 = "ER609";
+	public static final String ER610 = "ER610";
+	public static final String ER611 = "ER611";
+	public static final String ER612 = "ER612";
 	
 	/** Function Errors. */
 	public static final String ER401 = "ER401";
@@ -126,6 +133,7 @@ public final class Constants {
 	public static final String UPDATE_DATASOURCE = "UPDATE_DATASOURCE";
 	public static final String LIST_DATASOURCE = "LIST_DATASOURCE";
 	public static final String DELETE_DATASOURCE = "DELETE_DATASOURCE";
+	public static final String DATA_ORIGIN_LIST = "DATA_ORIGIN_LIST";
 	public static final String CREATE_DATASET = "CREATE_DATASET";
 	public static final String UPDATE_DATASET = "UPDATE_DATASET";
 	public static final String LIST_DATASET = "LIST_DATASET";
@@ -146,4 +154,5 @@ public final class Constants {
 	public static final String PATH = "path";
 	public static final String URL = "url";
 	public static final String PORT = "port";
+	public static final String SHP_EXT = ".shp";
 }

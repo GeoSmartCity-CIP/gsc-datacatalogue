@@ -37,10 +37,26 @@ public class ServiceUtil {
 
 		return buildJsonColumns(source.getFeatures(filter));
 	}
+	
+	public static String[] getDatastoreTypeNames(String dbType, String host, String port, String schema,
+			String database, String user, String password) throws IOException {
+		DataStore dataStore = createDatastorePostgis(dbType, host, port, schema, database, user, password);
+		
+		return dataStore.getTypeNames();
+	}
 
 	public static String createJSONColumnsFromPostGisDB(String dbType, String host, String port, String schema,
 			String database, String user, String password, String table) throws IOException {
 
+		DataStore dataStore = createDatastorePostgis(dbType, host, port, schema, database, user, password);
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
+		Filter filter = Filter.INCLUDE;
+
+		return buildJsonColumns(source.getFeatures(filter));
+	}
+
+	private static DataStore createDatastorePostgis(String dbType, String host, String port, String schema,
+			String database, String user, String password) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dbtype", dbType);
 		map.put("host", host);
@@ -49,42 +65,21 @@ public class ServiceUtil {
 		map.put("database", database);
 		map.put("user", user);
 		map.put("passwd", password);
-		
+
 		DataStore dataStore = DataStoreFinder.getDataStore(map);
-		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
-		Filter filter = Filter.INCLUDE;
 
-		return buildJsonColumns(source.getFeatures(filter));
+		return dataStore;
 	}
-	
-	public static String createJSONColumnsFromOracleDB(String dbType, String host, String port, String schema,
-			String database, String user, String password, String table) throws IOException {
 
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("dbtype", dbType);
-		map.put("host", host);
-		map.put("port", Integer.parseInt(port));
-		map.put("schema", schema);
-		map.put("database", database);
-		map.put("user", user);
-		map.put("passwd", password);
-		
-		DataStore dataStore = DataStoreFinder.getDataStore(map);
-		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(table);
-		Filter filter = Filter.INCLUDE;
+	private static String buildJsonColumns(FeatureCollection<SimpleFeatureType, SimpleFeature> collection)
+			throws IOException {
 
-		return buildJsonColumns(source.getFeatures(filter));
-	}
-	
-	private static String buildJsonColumns(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) throws IOException {
-		
 		try (FeatureIterator<SimpleFeature> features = collection.features()) {
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> columnsList = new ArrayList<>();
 
 			while (features.hasNext()) {
 				SimpleFeature feature = features.next();
-				feature.getAttributes();
 				for (Property attribute : feature.getProperties()) {
 					Map<String, Object> mapValues = new HashMap<>();
 					mapValues.put(Constants.NAME, attribute.getName().toString());

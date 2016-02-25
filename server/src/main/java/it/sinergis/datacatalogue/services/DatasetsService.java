@@ -93,7 +93,7 @@ public class DatasetsService extends ServiceCommons {
 							String portDatasource = getFieldValueFromJsonText(datasourceEntity.getJson(),
 									Constants.PORT);
 							String schema = getFieldValueFromJsonText(datasourceEntity.getJson(),
-									Constants.USERNAME_FIELD);
+									Constants.SCHEMA_FIELD);
 							String username = getFieldValueFromJsonText(datasourceEntity.getJson(),
 									Constants.USERNAME_FIELD);
 							String password = getFieldValueFromJsonText(datasourceEntity.getJson(),
