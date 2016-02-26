@@ -154,5 +154,10 @@ public final class Constants {
 	public static final String PATH = "path";
 	public static final String URL = "url";
 	public static final String PORT = "port";
+	public static final String DBTYPE = "dbtype";
+	public static final String DATABASE = "database";
+	public static final String USER = "user";
+	public static final String PASSWD = "passwd";
+	public static final String HOST = "host";
 	public static final String SHP_EXT = ".shp";
 }
