@@ -6,6 +6,8 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -39,6 +41,18 @@ public class Gsc008LayerPersistenceJPA extends GenericJpaService<Gsc008LayerEnti
 	public boolean delete( Long id ) {
 		return super.delete( id );
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc008LayerEntity entity = em.find(Gsc008LayerEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public boolean delete(Gsc008LayerEntity entity) {
@@ -60,6 +74,13 @@ public class Gsc008LayerPersistenceJPA extends GenericJpaService<Gsc008LayerEnti
 		} ;
 		// JPA operation execution 
 		return (Long) execute(operation);
+	}
+	
+	@Override
+	public List<Gsc008LayerEntity> getLayers(String query) {
+		
+		return super.loadByNativeQuery(query);
+		
 	}
 
 }

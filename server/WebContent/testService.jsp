@@ -85,15 +85,31 @@
 		    	
 		    } else if(selected === 'updatefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateLayerExample").value;
 		    	
 		    } else if (selected === 'deletefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteLayerExample").value;
 		    	
 		    } else if (selected === 'listfunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    
+		    } else if(selected === 'createlyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateLayerExample").value;
+		    	
+		    } else if(selected === 'updatelyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateLayerExample").value;
+		    	
+		    } else if (selected === 'deletelyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteLayerExample").value;
+		    	
+		    } else if (selected === 'listlyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
 		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
@@ -137,6 +153,10 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUpdateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
 <%
@@ -173,7 +193,11 @@ if (servizio==null) {
             <option value="updatefunc" <%= servizio.equals("updatefunc") ? "selected=\"selected\"" : ""%>>Function - Update</option>
             <option value="deletefunc" <%= servizio.equals("deletefunc") ? "selected=\"selected\"" : ""%>>Function - Delete</option>
             <option value="listfunc" <%= servizio.equals("listfunc") ? "selected=\"selected\"" : ""%>>Function - List/Search</option>
-            							
+            <option value="createlyr" <%= servizio.equals("createlyr") ? "selected=\"selected\"" : ""%>>Layer - Create</option>
+            <option value="updatelyr" <%= servizio.equals("updatelyr") ? "selected=\"selected\"" : ""%>>Layer - Update</option>
+            <option value="deletelyr" <%= servizio.equals("deletelyr") ? "selected=\"selected\"" : ""%>>Layer - Delete</option>
+            <option value="listlyr" <%= servizio.equals("listlyr") ? "selected=\"selected\"" : ""%>>Layer - List/Search</option>
+            								
 			<option value=""></option>
 		</select></td>
 	</tr>

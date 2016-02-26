@@ -15,6 +15,8 @@ public final class Constants {
 	public static final String DATASOURCE_TABLE_NAME = "gsc_006_datasource";
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
+	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
+
 
 	public static final String JSON_COLUMN_NAME = "json";	
 
@@ -52,6 +54,10 @@ public final class Constants {
 	public static final String DATASOURCE_ID_FIELD = "iddatasource";
 	public static final String DATASOURCE_NAME_FIELD = "datasourcename";
 	public static final String DATASOURCE_FIELD = "datasource";
+	
+	/** Layer field names. */
+	public static final String LAYER_NAME_FIELD = "layername";
+	public static final String LAYER_ID_FIELD = "idlayer";
 	
 	/** Function field names */
 	public static final String FUNC_NAME_FIELD = "functionname";
@@ -107,6 +113,16 @@ public final class Constants {
 	public static final String ER403 = "ER403";
 	public static final String ER404 = "ER404";
 	
+	/** Layers errors. */
+	public static final String ER801 = "ER801";
+	public static final String ER802 = "ER802";
+	public static final String ER803 = "ER803";
+	public static final String ER804 = "ER804";
+	public static final String ER805 = "ER805";
+	public static final String ER806 = "ER806";
+	public static final String ER807 = "ER807";
+	
+	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
 	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";
@@ -122,6 +138,9 @@ public final class Constants {
 	public static final String FUNCTION_CREATED = "FUNCTION_CREATED";
 	public static final String FUNCTION_UPDATED = "FUNCTION_UPDATED";
 	public static final String FUNCTION_DELETED = "FUNCTION_DELETED";
+	public static final String LAYER_CREATED = "LAYER_CREATED";
+	public static final String LAYER_UPDATED = "LAYER_UPDATED";
+	public static final String LAYER_DELETED = "LAYER_DELETED";
 	
 		
 	/** Services names. */
@@ -144,6 +163,10 @@ public final class Constants {
 	public static final String UPDATE_FUNCTION = "UPDATE_FUNCTION";
 	public static final String DELETE_FUNCTION = "DELETE_FUNCTION";
 	public static final String LIST_FUNCTION = "LIST_FUNCTION";
+	public static final String CREATE_LAYER = "CREATE_LAYER";
+	public static final String UPDATE_LAYER = "UPDATE_LAYER";
+	public static final String DELETE_LAYER = "DELETE_LAYER";
+	public static final String LIST_LAYER = "LIST_LAYER";
 	
 	/** Values. */
 	public static final String TRUE = "true";

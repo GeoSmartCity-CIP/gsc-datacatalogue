@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceConfig;
@@ -20,8 +21,10 @@ import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersistenceJPA;
+import it.sinergis.datacatalogue.persistence.services.jpa.Gsc008LayerPersistenceJPA;
 
 public class DeleteService extends ServiceCommons {
 
@@ -41,6 +44,9 @@ public class DeleteService extends ServiceCommons {
 	/** Dao dataset. */
 	private Gsc007DatasetPersistence gsc007Dao;
 	
+	/** Dao layer. */
+	private Gsc008LayerPersistence gsc008Dao;
+	
 	/** jpa environment*/
 	JpaEnvironment jpaEnvironment;
 	
@@ -55,6 +61,52 @@ public class DeleteService extends ServiceCommons {
 		gsc001Dao = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class);
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
+		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
+	}
+	
+	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+		
+		if(selfId != null) {
+			EntityManager em = null;
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+			
+				gsc008Dao.deleteNoTrans(selfId,em);
+				
+				//we need to explicitly handle deletion of tables that rely on this entity
+				List<Long> predIds = new ArrayList<Long>();
+				predIds.add(selfId);
+				
+				//TODO understand table relationships to delete cascade
+				
+				jpaEnvironment.commitTransaction(transaction);
+			} catch(Exception e) {
+				transaction.rollback();
+			} finally {
+				em.close();
+			}
+		} else {
+			try {
+				List<Long> deletedSelfId = new ArrayList<Long>();
+				for(Long id : predecessorsId) {
+					Gsc008LayerPersistenceJPA layerPersistencejpa = new Gsc008LayerPersistenceJPA();
+					List<Object> retrievedLayers = createSearchIdQuery(Constants.LAYER_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,layerPersistencejpa);
+					for(Object retrievedLayer : retrievedLayers) {
+						if(retrievedLayer instanceof Gsc008LayerPersistence) {
+							gsc008Dao.delete(((Gsc008LayerEntity) retrievedLayer).getId());
+							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
+						}
+					}
+				}
+				//CASCADE DELETIONS
+				//TODO understand table relationships
+			}catch(Exception e) {
+				logger.error(e);
+				throw new DCException("ER01");
+			}
+		}		
 	}
 
 	public void deleteDatasource(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
@@ -146,8 +198,8 @@ public class DeleteService extends ServiceCommons {
 		}
 	}
 	
-public void deleteOrganization(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
-		
+	public void deleteOrganization(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+	
 		if(selfId != null) {
 			EntityManager em = null;
 			EntityTransaction transaction = null;
