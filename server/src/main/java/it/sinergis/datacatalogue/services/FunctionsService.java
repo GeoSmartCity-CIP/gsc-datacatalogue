@@ -327,7 +327,7 @@ public class FunctionsService extends ServiceCommons {
 		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class); 
 		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
 		if(orgEntity == null) {
-			DCException rpe = new DCException(Constants.ER403,req);
+			DCException rpe = new DCException(Constants.ER405,req);
 			throw rpe;		
 		}
 	}
