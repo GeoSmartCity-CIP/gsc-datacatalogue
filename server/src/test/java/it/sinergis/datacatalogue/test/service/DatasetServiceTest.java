@@ -23,7 +23,7 @@ public class DatasetServiceTest extends ServiceCommons {
 
 	final String ID_ORGANIZATION = "28";
 	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"" + ID_ORGANIZATION
-			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"C:\\\\dati\\\\bologna\\\\shape\\\\\"}";
+			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\"}";
 
 	@Test
 	public void testDasetsServiceShape() throws Exception {

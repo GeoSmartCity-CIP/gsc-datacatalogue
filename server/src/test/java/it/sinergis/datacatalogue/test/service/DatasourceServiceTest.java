@@ -38,8 +38,9 @@ public class DatasourceServiceTest extends ServiceCommons
 	public static final String CREATE_ORG_REQ_1 = "{\"organizationname\":\"TestOrg\",\"description\":\"Create test succeed\"}";
 	
 	//create ds request
-	public static final String CREATE_DS_REQ_1 = "{\"datasourcename\":\"DSShapeTest\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
-	public static final String CREATE_DS_REQ_2 = "{\"datasourcename\":\"DSShapeTestUpdated\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";	
+	public static final String CREATE_DS_REQ_1 = "{\"datasourcename\":\"DSShapeTest\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
+	public static final String CREATE_DS_REQ_2 = "{\"datasourcename\":\"DSShapeTestUpdated\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"D:\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
+	public static final String CREATE_DS_REQ_3 = "{\"datasourcename\":\"DSPostgisTestUnit\",\"type\":\"POSTGIS\",\"description\":\"Postgis descript\",\"updated\":\"true\",\"url\":\"gsm-db.nco.inet\",\"schema\":\"gscdatacatalogue\",\"username\":\"gscdatacatalogue\",\"password\":\"gscdatacatalogue\",\"port\":\"5432\",\"organization\":";
 	//create request for the update service test
 	public static final String CREATE_ORG_REQ_2 = "{\"organizationname\":\"TestOrgForUpdate\",\"description\":\"When we update another record org name to this service fails.\"}";
 	//delete org request
@@ -59,6 +60,9 @@ public class DatasourceServiceTest extends ServiceCommons
 	public static final String READ_DS_REQ_4_PART_2 = ",\"iddatasource\":";
 	//none of the mandatory parameter is specified
 	public static final String READ_DS_REQ_5 = "{\"detail\":\"NEITHERTRUEORFALSE\",\"iddatasource\":";
+	
+	//delete ds request
+	public static final String LIST_DATA_ORIGIN_REQ = "{\"iddatasource\":";	
 
 	//request end
 	public static final String REQ_END = "}";
@@ -592,5 +596,83 @@ public class DatasourceServiceTest extends ServiceCommons
 			//deleteDsRecord(create_ds_id);
 			System.out.println("TEST ENDED: readDSTestFail4()");
 		}
+	}
+	
+	@Test
+	public void listDataOriginShape() {
+		System.out.println("TEST STARTED: listDataOriginShape()");
+		
+		Long create_org_id = null;
+		Long create_ds_id = null;
+		try {
+			//create an organization record
+			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
+			System.out.println(create_org_response);
+			//get its id
+			create_org_id = getRecordId(create_org_response);
+			
+			//create the ds linked to the newly created org
+			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_1,create_org_id));
+			System.out.println(create_ds_response);
+			//get its id
+			create_ds_id = getRecordId(create_ds_response);
+			
+			String listDataOriginResponse = ds_service.listDataOrigin(buildIdRequest(LIST_DATA_ORIGIN_REQ, create_ds_id));
+			System.out.println(listDataOriginResponse);
+			
+			//check if response is a well formed json	
+			om.readTree(listDataOriginResponse);
+			//Assert the json response has an error field
+			Assert.assertTrue(!listDataOriginResponse.contains("\"status\":\"error\""));
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			Assert.fail();
+		} finally {
+			//cleanup (delete the just inserted records)
+			//TODO FIXME later on the delete org should handle the ds deletion as well
+			deleteOrgRecord(create_org_id);
+			System.out.println("TEST ENDED: listDataOriginShape()");
+		}
+		
+	}
+	
+	@Test
+	public void listDataOriginPostgis() {
+		System.out.println("TEST STARTED: listDataOriginPostgis()");
+		
+		Long create_org_id = null;
+		Long create_ds_id = null;
+		try {
+			//create an organization record
+			String create_org_response = createOrgRecord(CREATE_ORG_REQ_1);
+			System.out.println(create_org_response);
+			//get its id
+			create_org_id = getRecordId(create_org_response);
+			
+			//create the ds linked to the newly created org
+			String create_ds_response = createDSRecord(buildIdRequest(CREATE_DS_REQ_3,create_org_id));
+			System.out.println(create_ds_response);
+			//get its id
+			create_ds_id = getRecordId(create_ds_response);
+			
+			String listDataOriginResponse = ds_service.listDataOrigin(buildIdRequest(LIST_DATA_ORIGIN_REQ, create_ds_id));
+			System.out.println(listDataOriginResponse);
+			
+			//check if response is a well formed json	
+			om.readTree(listDataOriginResponse);
+			//Assert the json response has an error field
+			Assert.assertTrue(!listDataOriginResponse.contains("\"status\":\"error\""));
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			Assert.fail();
+		} finally {
+			//cleanup (delete the just inserted records)
+			//TODO FIXME later on the delete org should handle the ds deletion as well
+			deleteOrgRecord(create_org_id);
+			System.out.println("TEST ENDED: listDataOriginShape()");
+		}
+		
 	}
 }

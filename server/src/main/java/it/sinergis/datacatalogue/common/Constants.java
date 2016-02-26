@@ -112,6 +112,7 @@ public final class Constants {
 	public static final String ER402 = "ER402";
 	public static final String ER403 = "ER403";
 	public static final String ER404 = "ER404";
+	public static final String ER405 = "ER405";
 	
 	/** Layers errors. */
 	public static final String ER801 = "ER801";
@@ -177,5 +178,10 @@ public final class Constants {
 	public static final String PATH = "path";
 	public static final String URL = "url";
 	public static final String PORT = "port";
+	public static final String DBTYPE = "dbtype";
+	public static final String DATABASE = "database";
+	public static final String USER = "user";
+	public static final String PASSWD = "passwd";
+	public static final String HOST = "host";
 	public static final String SHP_EXT = ".shp";
 }
