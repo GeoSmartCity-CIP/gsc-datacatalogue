@@ -117,15 +117,17 @@ public class DatasourcesService extends ServiceCommons {
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD));
 
-			// if no datasource with the specified name exists or if the only
-			// record found with the same name is the record to be updated
-			// itself -> update record
-			if (datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
-				// check if there's another datasource already saved with the
-				// same ID
-				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
+			
+			// check if there's another datasource already saved with the
+			// same ID
+			Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
 
-				if (retrievedDatasource != null) {
+			if (retrievedDatasource != null) {
+				// if no datasource with the specified name exists or if the only
+				// record found with the same name is the record to be updated
+				// itself -> update record
+				if (datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
+				
 					retrievedDatasource.setJson(updateDatasourceJson(req));
 					datasourcePersistence.save(retrievedDatasource);
 
@@ -133,13 +135,13 @@ public class DatasourcesService extends ServiceCommons {
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASOURCE_UPDATED, null, req);
 				} else {
-					DCException rpe = new DCException(Constants.ER602, req);
+					DCException rpe = new DCException(Constants.ER604, req);
 					return rpe.returnErrorString();
 				}
 
 				// otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER604, req);
+				DCException rpe = new DCException(Constants.ER602, req);
 				return rpe.returnErrorString();
 			}
 

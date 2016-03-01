@@ -110,15 +110,16 @@ public class LayersService extends ServiceCommons {
 			Gsc008LayerEntity layer = getDatasourceObject(req);
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req, Constants.LAYER_ID_FIELD));
 
-			// if no layer with the specified name exists or if the only
-			// record found with the same name is the record to be updated
-			// itself -> update record
-			if (layer == null || layer.getId().longValue() == requestedId.longValue()) {
-				// check if there's another layer already saved with the
-				// same ID
-				Gsc008LayerEntity retrievedLayer = getLayerObjectById(requestedId);
+			// check if there's another layer already saved with the
+			// same ID
+			Gsc008LayerEntity retrievedLayer = getLayerObjectById(requestedId);
 
-				if (retrievedLayer != null) {
+			if (retrievedLayer != null) {
+				// if no layer with the specified name exists or if the only
+				// record found with the same name is the record to be updated
+				// itself -> update record
+				if (layer == null || layer.getId().longValue() == requestedId.longValue()) {
+				
 					retrievedLayer.setJson(updateLayerJson(req));
 					layerPersistence.save(retrievedLayer);
 
@@ -126,13 +127,13 @@ public class LayersService extends ServiceCommons {
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE, Constants.LAYER_UPDATED, null, req);
 				} else {
-					DCException rpe = new DCException(Constants.ER803, req);
+					DCException rpe = new DCException(Constants.ER804, req);
 					return rpe.returnErrorString();
 				}
 
 				// otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER804, req);
+				DCException rpe = new DCException(Constants.ER803, req);
 				return rpe.returnErrorString();
 			}
 
@@ -274,7 +275,7 @@ public class LayersService extends ServiceCommons {
 				layerBasic.put(Constants.ID, layer.getId());
 				layerNodeList.add(layerBasic);
 			}
-			root.put(Constants.LAYER_NAME_FIELD, layerNodeList);
+			root.put(Constants.LAYERS, layerNodeList);
 			root.put(Constants.REQUEST, mapper.readTree(req));
 			String jsonString;
 			try {

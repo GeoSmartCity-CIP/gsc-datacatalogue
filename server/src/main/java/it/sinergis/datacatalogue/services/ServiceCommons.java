@@ -95,7 +95,7 @@ public class ServiceCommons {
 				text = StringUtils.replace(text, oldPiece, pieces[i]);
 			}
 			query += text;
-			logger.info("transformed query:" + query);
+			logger.debug("transformed query:" + query);
 			return query;
 		} catch (Exception e) {
 			logger.error("Error", e);

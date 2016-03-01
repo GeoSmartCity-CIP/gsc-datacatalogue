@@ -58,6 +58,7 @@ public final class Constants {
 	/** Layer field names. */
 	public static final String LAYER_NAME_FIELD = "layername";
 	public static final String LAYER_ID_FIELD = "idlayer";
+	public static final String LAYERS = "layers";
 	
 	/** Function field names */
 	public static final String FUNC_NAME_FIELD = "functionname";
