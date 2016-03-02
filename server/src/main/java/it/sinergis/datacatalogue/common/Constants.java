@@ -16,6 +16,7 @@ public final class Constants {
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
+	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 
 
 	public static final String JSON_COLUMN_NAME = "json";	
@@ -48,6 +49,7 @@ public final class Constants {
 	public static final String VISIBILITY = "visibility";
 	public static final String COLUMNS = "columns";	
 	public static final String DATA_ORIGIN = "dataorigin";	
+	public static final String APP_NAME_FIELD = "applicationname";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -123,6 +125,10 @@ public final class Constants {
 	public static final String ER806 = "ER806";
 	public static final String ER807 = "ER807";
 	
+	/** Application errors. */
+	public static final String ER1000 = "ER1000";
+	public static final String ER1001 = "ER1001";
+	public static final String ER1002 = "ER1002";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -142,6 +148,7 @@ public final class Constants {
 	public static final String LAYER_CREATED = "LAYER_CREATED";
 	public static final String LAYER_UPDATED = "LAYER_UPDATED";
 	public static final String LAYER_DELETED = "LAYER_DELETED";
+	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
 	
 		
 	/** Services names. */
@@ -168,6 +175,7 @@ public final class Constants {
 	public static final String UPDATE_LAYER = "UPDATE_LAYER";
 	public static final String DELETE_LAYER = "DELETE_LAYER";
 	public static final String LIST_LAYER = "LIST_LAYER";
+	public static final String CREATE_APP = "CREATE_APP";
 	
 	/** Values. */
 	public static final String TRUE = "true";

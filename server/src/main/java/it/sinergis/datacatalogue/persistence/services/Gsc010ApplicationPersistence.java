@@ -91,4 +91,11 @@ public interface Gsc010ApplicationPersistence {
 	 */
 	public long countAll();
 	
+	/**
+	 * Get applications from query.
+	 * @param query
+	 * @return
+	 */
+	public List<Gsc010ApplicationEntity> getApplications(final String query);
+	
 }
