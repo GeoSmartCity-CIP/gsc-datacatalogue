@@ -30,7 +30,7 @@ public class DeleteService extends ServiceCommons {
 
 	public final String DATASOURCE_ID_NAME = "iddatasource";
 	public final String ORGANIZATION_ID_NAME = "organization";
-	public final String DATASET_ID_NAME = "";
+	public final String DATASET_ID_NAME = "iddataset";
 	
 	/** Logger. */
 	private static Logger logger;
@@ -94,7 +94,7 @@ public class DeleteService extends ServiceCommons {
 					Gsc008LayerPersistenceJPA layerPersistencejpa = new Gsc008LayerPersistenceJPA();
 					List<Object> retrievedLayers = createSearchIdQuery(Constants.LAYER_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,layerPersistencejpa);
 					for(Object retrievedLayer : retrievedLayers) {
-						if(retrievedLayer instanceof Gsc008LayerPersistence) {
+						if(retrievedLayer instanceof Gsc008LayerEntity) {
 							gsc008Dao.delete(((Gsc008LayerEntity) retrievedLayer).getId());
 							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
 						}
@@ -165,9 +165,14 @@ public class DeleteService extends ServiceCommons {
 				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
 				transaction = jpaEnvironment.openTransaction(em);
 				
-				gsc007Dao.delete(selfId);
-				//chiamate in cascata
-				//TODO
+				gsc007Dao.deleteNoTrans(selfId,em);
+				
+				//we need to explicitly handle deletion of tables that rely on this entity
+				List<Long> predIds = new ArrayList<Long>();
+				predIds.add(selfId);
+				
+				//LAYERS
+				deleteLayer(DATASET_ID_NAME,predIds,null);
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
@@ -188,9 +193,9 @@ public class DeleteService extends ServiceCommons {
 						}
 					}
 				}
-				for(Long id : deletedSelfId) {
-					//TODO
-				}
+				//CASCADE DELETIONS
+				//LAYERS
+				deleteLayer(DATASET_ID_NAME,deletedSelfId,null);
 			}catch(Exception e) {
 				logger.error(e);
 				throw new DCException("ER01");
