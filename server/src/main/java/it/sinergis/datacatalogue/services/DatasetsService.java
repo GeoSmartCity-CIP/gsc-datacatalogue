@@ -123,7 +123,6 @@ public class DatasetsService extends ServiceCommons {
 						dset = gsc007Dao.save(dset);
 
 						logger.info("Dataset succesfully created");
-						logger.info(req);
 						return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_CREATED, dset.getId(), req);
 					} else {
 						// Datasource doesn't exist

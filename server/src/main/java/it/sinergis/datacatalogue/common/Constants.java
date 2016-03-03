@@ -17,6 +17,8 @@ public final class Constants {
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
+	
+	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 
 
 	public static final String JSON_COLUMN_NAME = "json";	
@@ -49,6 +51,7 @@ public final class Constants {
 	public static final String VISIBILITY = "visibility";
 	public static final String COLUMNS = "columns";	
 	public static final String DATA_ORIGIN = "dataorigin";	
+	public static final String APP_NAME_FIELD = "applicationname";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -139,6 +142,12 @@ public final class Constants {
 	public static final String ER905 = "ER905";
 	public static final String ER906 = "ER906";
 	
+	/** Application errors. */
+	public static final String ER1000 = "ER1000";
+	public static final String ER1001 = "ER1001";
+	public static final String ER1002 = "ER1002";
+	
+	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
 	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";
@@ -160,6 +169,7 @@ public final class Constants {
 	public static final String GROUP_LAYER_CREATED = "GROUP_LAYER_CREATED";
 	public static final String GROUP_LAYER_ASSIGNED = "GROUP_LAYER_ASSIGNED";
 	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
+	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
 	
 		
 	/** Services names. */
@@ -190,7 +200,7 @@ public final class Constants {
 	public static final String ASSIGN_LAYER_TO_GROUP = "ASSIGN_LAYER_TO_GROUP";
 	public static final String DELETE_GROUP_LAYER = "DELETE_GROUP_LAYER";
 	public static final String LIST_GROUP_LAYER = "LIST_GROUP_LAYER";
-	
+	public static final String CREATE_APP = "CREATE_APP";
 	
 	/** Values. */
 	public static final String TRUE = "true";
