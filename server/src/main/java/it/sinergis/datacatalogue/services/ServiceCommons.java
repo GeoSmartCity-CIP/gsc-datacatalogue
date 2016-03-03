@@ -11,13 +11,17 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.common.PropertyReader;
 import it.sinergis.datacatalogue.exception.DCException;
+import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.GenericPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 
 public class ServiceCommons {
 
@@ -289,8 +293,10 @@ public class ServiceCommons {
 	 * @param jsonRequest
 	 * @return
 	 * @throws DCException
+	 * @throws IOException 
+	 * @throws JsonProcessingException 
 	 */
-	protected void checkMandatoryParameters(String service, String jsonRequest) throws DCException {
+	protected void checkMandatoryParameters(String service, String jsonRequest) throws DCException, JsonProcessingException, IOException {
 		PropertyReader pr = new PropertyReader("service_parameters.properties");
 
 		String mandatoryParameters = pr.getValue(service);
@@ -299,15 +305,46 @@ public class ServiceCommons {
 
 		if (mandatoryParameters.length() > 0) {
 			for (String parameter : mandatoryParametersArray) {
-				String value = getFieldValueFromJsonText(jsonRequest, parameter);
-
-				if (value == null) {
-					logger.error("Mandatory parameter is missing. Expected parameters: " + mandatoryParameters);
-					throw new DCException(Constants.ER04, jsonRequest);
+				
+				//if we have a list we may want to check one or more mandatory parameters within every object of the list
+				if(parameter.contains("-")) {
+					// - symbol splits the list name from the mandatory parameters inside it.
+					String[] listSplit = StringUtils.split(parameter, "-");
+					
+					checkParameter(jsonRequest, listSplit[0], mandatoryParameters,jsonRequest);
+					
+					// + symbol splits the parameter list if we have 2 or more mandatory parameters 
+					String[] listParameterSplit = StringUtils.split(listSplit[1], "+");
+					
+					
+					ObjectMapper mapper = new ObjectMapper();		
+					ObjectNode jsonObject = (ObjectNode) mapper.readTree(jsonRequest);
+					ArrayNode listNode = (ArrayNode) jsonObject.findValue(listSplit[0]);
+					//we allow the list to be empty []
+					for(int i = 0; i < listNode.size(); i++) {
+						JsonNode listElementNode = listNode.get(i);
+						String listElementNodeJson = mapper.writeValueAsString(listElementNode);
+						for (String listParameter : listParameterSplit) {
+							checkParameter(listElementNodeJson,listParameter,mandatoryParameters,jsonRequest);
+						}
+					}
+				} else {			
+					checkParameter(jsonRequest, parameter,mandatoryParameters,jsonRequest);
 				}
 			}
 		}
 
+	}
+	
+	private void checkParameter(String jsonRequest,String parameter,String mandatoryParameters,String jsonRequestPrint) throws DCException {
+		String value = getFieldValueFromJsonText(jsonRequest, parameter);
+
+		if (value == null) {
+			
+			logger.error("Mandatory parameter is missing. Expected parameters: " + mandatoryParameters);
+			logger.error("parameter "+parameter+ " not found in "+ jsonRequest);
+			throw new DCException(Constants.ER04, jsonRequestPrint);
+		}
 	}
 	
 	/**
@@ -316,8 +353,10 @@ public class ServiceCommons {
 	 * @param jsonRequest
 	 * @param serviceName
 	 * @throws DCException
+	 * @throws IOException 
+	 * @throws JsonProcessingException 
 	 */
-	protected void preliminaryChecks(String jsonRequest,String serviceName) throws DCException {
+	protected void preliminaryChecks(String jsonRequest,String serviceName) throws DCException, JsonProcessingException, IOException {
 		//checks if the json is syntatically correct.
 		checkJsonWellFormed(jsonRequest);
 		//checks if the request contains all the mandatory parameters
@@ -349,4 +388,23 @@ public class ServiceCommons {
 		}			
 	}
 	
+	/**
+	 * Checks if the given parameter for organization matches the id of any
+	 * existing organization.
+	 * 
+	 * @param orgId
+	 * @return
+	 * @throws DCException
+	 * @throws NumberFormatException
+	 */
+	protected void checkIdOrganizationValid(String req) throws NumberFormatException, DCException {
+		Long orgId = Long.parseLong(getKeyFromJsonText(req, Constants.ORG_FIELD));
+		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider
+				.getService(Gsc001OrganizationPersistence.class);
+		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
+		if (orgEntity == null) {
+			DCException rpe = new DCException(Constants.ER15, req);
+			throw rpe;
+		}
+	}
 }

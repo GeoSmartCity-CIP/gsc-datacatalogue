@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc009GrouplayerEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceConfig;
@@ -22,9 +23,11 @@ import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersiste
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc008LayerPersistenceJPA;
+import it.sinergis.datacatalogue.persistence.services.jpa.Gsc009GrouplayerPersistenceJPA;
 
 public class DeleteService extends ServiceCommons {
 
@@ -47,6 +50,9 @@ public class DeleteService extends ServiceCommons {
 	/** Dao layer. */
 	private Gsc008LayerPersistence gsc008Dao;
 	
+	/** Dao layer. */
+	private Gsc009GrouplayerPersistence gsc009Dao;
+	
 	/** jpa environment*/
 	JpaEnvironment jpaEnvironment;
 	
@@ -62,6 +68,7 @@ public class DeleteService extends ServiceCommons {
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
+		gsc009Dao = PersistenceServiceProvider.getService(Gsc009GrouplayerPersistence.class);
 	}
 	
 	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
@@ -156,6 +163,53 @@ public class DeleteService extends ServiceCommons {
 		}		
 	}
 	
+	public void deleteGroupLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+		
+		if(selfId != null) {
+			EntityManager em = null;
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+			
+				gsc009Dao.deleteNoTrans(selfId,em);
+				
+				//we need to explicitly handle deletion of tables that rely on this entity
+				List<Long> predIds = new ArrayList<Long>();
+				predIds.add(selfId);
+				
+				//XXX
+				//Nothing apparently
+				
+				jpaEnvironment.commitTransaction(transaction);
+			} catch(Exception e) {
+				transaction.rollback();
+			} finally {
+				em.close();
+			}
+		} else {
+			try {
+				List<Long> deletedSelfId = new ArrayList<Long>();
+				for(Long id : predecessorsId) {
+					Gsc009GrouplayerPersistenceJPA grouplayerPersistencejpa = new Gsc009GrouplayerPersistenceJPA();
+					List<Object> retrievedDatasources = createSearchIdQuery(Constants.GROUP_LAYER_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,grouplayerPersistencejpa);
+					for(Object retrievedDatasource : retrievedDatasources) {
+						if(retrievedDatasource instanceof Gsc009GrouplayerEntity) {
+							gsc009Dao.delete(((Gsc009GrouplayerEntity) retrievedDatasource).getId());
+							deletedSelfId.add(((Gsc009GrouplayerEntity) retrievedDatasource).getId());
+						}
+					}
+				}
+				//CASCADE DELETIONS
+				//XXX
+				//Nothing apparently
+			}catch(Exception e) {
+				logger.error(e);
+				throw new DCException("ER01");
+			}
+		}		
+	}
+	
 	public void deleteDataset(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
 			
 		if(selfId != null) {
@@ -222,7 +276,9 @@ public class DeleteService extends ServiceCommons {
 				
 				//DATASET
 				deleteDatasource(ORGANIZATION_ID_NAME,predIds,null);
-				//TODO application, grouplayer, function, role, user
+				//GROUPLAYER
+				deleteGroupLayer(ORGANIZATION_ID_NAME,predIds,null);
+				//TODO application, , function, role, user
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
