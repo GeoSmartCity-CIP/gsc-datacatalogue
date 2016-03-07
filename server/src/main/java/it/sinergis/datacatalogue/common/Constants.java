@@ -50,6 +50,8 @@ public final class Constants {
 	public static final String COLUMNS = "columns";	
 	public static final String DATA_ORIGIN = "dataorigin";	
 	public static final String APP_NAME_FIELD = "applicationname";
+	public static final String APPLICATION_ID = "idapplication";
+	public static final String APPLICATION_RESULT = "applications";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -130,6 +132,8 @@ public final class Constants {
 	public static final String ER1000 = "ER1000";
 	public static final String ER1001 = "ER1001";
 	public static final String ER1002 = "ER1002";
+	public static final String ER1003 = "ER1003";
+	public static final String ER1004 = "ER1004";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -177,6 +181,7 @@ public final class Constants {
 	public static final String DELETE_LAYER = "DELETE_LAYER";
 	public static final String LIST_LAYER = "LIST_LAYER";
 	public static final String CREATE_APP = "CREATE_APP";
+	public static final String LIST_APP = "LIST_APP";
 	
 	/** Values. */
 	public static final String TRUE = "true";

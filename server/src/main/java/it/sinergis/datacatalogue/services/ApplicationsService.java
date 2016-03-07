@@ -1,9 +1,15 @@
 package it.sinergis.datacatalogue.services;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc010ApplicationEntity;
@@ -128,7 +134,119 @@ public class ApplicationsService extends ServiceCommons {
 	}
 
 	public String listApplication(String req) {
-		return RESPONSE_JSON_LIST_APPLICATION;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.LIST_APP, req);
+			logger.info(req);
+
+			List<Gsc010ApplicationEntity> appEntities = null;
+			// Retrieving input parameters
+			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
+			String applicationName = getFieldValueFromJsonText(req, Constants.APP_NAME_FIELD);
+			String organization = getFieldValueFromJsonText(req, Constants.ORGANIZATION_FIELD);
+
+			// idApplication has priority in the research
+			if (StringUtils.isNotEmpty(idApplication)) {
+				appEntities = new ArrayList<Gsc010ApplicationEntity>();
+
+				if (StringUtils.isNumeric(idApplication)) {
+					Gsc010ApplicationEntity entityFound = gsc010Dao.load(Long.parseLong(idApplication));
+					if (entityFound == null) {
+						// No dataset found with given parameters.
+						throw new DCException(Constants.ER1004, req);
+					}
+					appEntities.add(entityFound);
+				} else {
+					// Application id has to be numeric
+					throw new DCException(Constants.ER1003, req);
+				}
+			} else {
+				// We build the query appending parameters
+				StringBuilder builderQuery = new StringBuilder();
+
+				if (StringUtils.isNotEmpty(organization)) {
+
+					if (StringUtils.isNumeric(organization)) {
+						builderQuery.append("'");
+						builderQuery.append(Constants.ORGANIZATION_FIELD);
+						builderQuery.append("' = '");
+						builderQuery.append(organization);
+						builderQuery.append("'");
+					} else {
+						// Organization id has to be numeric
+						throw new DCException(Constants.ER1001, req);
+					}
+				}
+
+				if (StringUtils.isNotEmpty(organization) && StringUtils.isNotEmpty(applicationName)) {
+					builderQuery.append(" AND ");
+				}
+
+				if (StringUtils.isNotEmpty(applicationName)) {
+					builderQuery.append("'");
+					builderQuery.append(Constants.APP_NAME_FIELD);
+					builderQuery.append("' LIKE '%");
+					builderQuery.append(applicationName);
+					builderQuery.append("%'");
+				}
+
+				// if the builder produced something not empty
+				if (StringUtils.isNotEmpty(builderQuery.toString())) {
+
+					String query = createQuery(builderQuery.toString(), Constants.APPLICATION_TABLE_NAME,
+							Constants.JSON_COLUMN_NAME, "select");
+					appEntities = gsc010Dao.getApplications(query);
+				}
+				// else we select all datasets
+				else {
+
+					appEntities = gsc010Dao.loadAll();
+				}
+			}
+
+			logger.info("Applications found: " + appEntities.size());
+
+			Map<String, List<Map<String, Object>>> appsResult = new HashMap<String, List<Map<String, Object>>>();
+
+			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+			for (Gsc010ApplicationEntity entity : appEntities) {
+
+				Map<String, Object> appMap = new HashMap<String, Object>();
+				// ID Application
+				appMap.put(Constants.APPLICATION_ID, entity.getId().toString());
+
+				// Application name
+				String appNameField = getFieldValueFromJsonText(entity.getJson(), Constants.APP_NAME_FIELD);
+				appMap.put(Constants.APP_NAME_FIELD, appNameField);
+
+				//TODO layer and groups
+
+				resultList.add(appMap);
+			}
+
+			appsResult.put(Constants.APPLICATION_RESULT, resultList);
+
+			String jsonString;
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				jsonString = mapper.writeValueAsString(appsResult);
+			} catch (IOException e) {
+				logger.error("IOException", e);
+				throw new DCException(Constants.ER01, req);
+			}
+
+			return jsonString;
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("list dataset service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("listDataset service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String publishToGeoserver(String req) {
