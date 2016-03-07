@@ -17,12 +17,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
-import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
 
@@ -511,25 +509,5 @@ public class DatasourcesService extends ServiceCommons {
 			throw new DCException(Constants.ER01, newJson);
 		}
 
-	}
-
-	/**
-	 * Checks if the given parameter for organization matches the id of any
-	 * existing organization.
-	 * 
-	 * @param orgId
-	 * @return
-	 * @throws DCException
-	 * @throws NumberFormatException
-	 */
-	private void checkIdOrganizationValid(String req) throws NumberFormatException, DCException {
-		Long orgId = Long.parseLong(getKeyFromJsonText(req, Constants.ORG_FIELD));
-		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider
-				.getService(Gsc001OrganizationPersistence.class);
-		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
-		if (orgEntity == null) {
-			DCException rpe = new DCException(Constants.ER607, req);
-			throw rpe;
-		}
 	}
 }

@@ -110,8 +110,24 @@
 		    } else if (selected === 'listlyr') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    
+		    } else if(selected === 'creategrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateGroupLayerExample").value;
 		    	
-		    } else if (selected === 'createapp') {
+		    } else if(selected === 'assignlyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignLayerExample").value;
+		    	
+		    } else if (selected === 'deletegrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteGroupLayerExample").value;
+		    	
+		    } else if (selected === 'listgrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListGroupLayerExample").value;
+		    
+			} else if (selected === 'createapp') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateAppExample").value;
 		    	
@@ -174,6 +190,10 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputAssignLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUpdateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
@@ -218,11 +238,15 @@ if (servizio==null) {
             <option value="updatelyr" <%= servizio.equals("updatelyr") ? "selected=\"selected\"" : ""%>>Layer - Update</option>
             <option value="deletelyr" <%= servizio.equals("deletelyr") ? "selected=\"selected\"" : ""%>>Layer - Delete</option>
             <option value="listlyr" <%= servizio.equals("listlyr") ? "selected=\"selected\"" : ""%>>Layer - List/Search</option>
+            <option value="creategrp" <%= servizio.equals("creategrp") ? "selected=\"selected\"" : ""%>>Layer Group - Create</option>
+            <option value="assignlyr" <%= servizio.equals("assignlyr") ? "selected=\"selected\"" : ""%>>Layer Group - Assign Layer</option>
+            <option value="deletegrp" <%= servizio.equals("deletegrp") ? "selected=\"selected\"" : ""%>>Layer Group - Delete</option>
+            <option value="listgrp" <%= servizio.equals("listgrp") ? "selected=\"selected\"" : ""%>>Layer Group - List/Search</option>
             <option value="createapp" <%= servizio.equals("createapp") ? "selected=\"selected\"" : ""%>>Application - Create</option>
             <option value="assigntoapp" <%= servizio.equals("assigntoapp") ? "selected=\"selected\"" : ""%>>Application - Update/Assign layers/group to application</option>
             <option value="deleteapp" <%= servizio.equals("deleteapp") ? "selected=\"selected\"" : ""%>>Application - Delete</option>
             <option value="listapp" <%= servizio.equals("listapp") ? "selected=\"selected\"" : ""%>>Application - List/Search</option>
-            								
+            											
 			<option value=""></option>
 		</select></td>
 	</tr>

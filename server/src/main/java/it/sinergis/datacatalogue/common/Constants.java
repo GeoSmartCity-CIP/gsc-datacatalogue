@@ -16,6 +16,8 @@ public final class Constants {
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
+	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
+	
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 
 
@@ -64,6 +66,11 @@ public final class Constants {
 	public static final String LAYER_ID_FIELD = "idlayer";
 	public static final String LAYERS = "layers";
 	
+	/** GROUP Layer field names. */
+	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
+	public static final String GROUP_LAYER_ID_FIELD = "idgroup";
+	public static final String GROUP_LAYER = "grouplayers";
+	
 	/** Function field names */
 	public static final String FUNC_NAME_FIELD = "functionname";
 	public static final String FUNC_ID_FIELD = "idfunction";
@@ -80,6 +87,7 @@ public final class Constants {
 	public static final String ER12 = "ER12";
 	public static final String ER13 = "ER13";
 	public static final String ER14 = "ER14";
+	public static final String ER15 = "ER15";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -128,12 +136,21 @@ public final class Constants {
 	public static final String ER806 = "ER806";
 	public static final String ER807 = "ER807";
 	
+	/** group layer errors. */
+	public static final String ER901 = "ER901";
+	public static final String ER902 = "ER902";
+	public static final String ER903 = "ER903";
+	public static final String ER904 = "ER904";
+	public static final String ER905 = "ER905";
+	public static final String ER906 = "ER906";
+	
 	/** Application errors. */
 	public static final String ER1000 = "ER1000";
 	public static final String ER1001 = "ER1001";
 	public static final String ER1002 = "ER1002";
 	public static final String ER1003 = "ER1003";
 	public static final String ER1004 = "ER1004";
+	
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -153,6 +170,9 @@ public final class Constants {
 	public static final String LAYER_CREATED = "LAYER_CREATED";
 	public static final String LAYER_UPDATED = "LAYER_UPDATED";
 	public static final String LAYER_DELETED = "LAYER_DELETED";
+	public static final String GROUP_LAYER_CREATED = "GROUP_LAYER_CREATED";
+	public static final String GROUP_LAYER_ASSIGNED = "GROUP_LAYER_ASSIGNED";
+	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
 	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
 	
 		
@@ -180,6 +200,10 @@ public final class Constants {
 	public static final String UPDATE_LAYER = "UPDATE_LAYER";
 	public static final String DELETE_LAYER = "DELETE_LAYER";
 	public static final String LIST_LAYER = "LIST_LAYER";
+	public static final String CREATE_GROUP_LAYER = "CREATE_GROUP_LAYER";
+	public static final String ASSIGN_LAYER_TO_GROUP = "ASSIGN_LAYER_TO_GROUP";
+	public static final String DELETE_GROUP_LAYER = "DELETE_GROUP_LAYER";
+	public static final String LIST_GROUP_LAYER = "LIST_GROUP_LAYER";
 	public static final String CREATE_APP = "CREATE_APP";
 	public static final String LIST_APP = "LIST_APP";
 	

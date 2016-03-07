@@ -445,7 +445,7 @@ public class LayerServiceTest extends ServiceCommons
 			System.out.println(create_lyr_response);	
 			
 			//research by id
-			String read_lyr_response = lyr_service.listLayer(buildIdRequest(READ_LYR_REQ_1,getRecordId(create_lyr_response)));
+			String read_lyr_response = lyr_service.listLayer(buildIdRequest(READ_LYR_REQ_2,dst_id));
 			System.out.println("LIST_LYR_RESPONSE:");
 			System.out.println(read_lyr_response);
 			
@@ -500,7 +500,7 @@ public class LayerServiceTest extends ServiceCommons
 	 *  This test is a list layer error test.
 	 *  The response will be checked, and it should contain an error.
 	 *  This should trigger error ER806
-	 *  "Incorrect parameters: perform a request either by layerid or by datasetid (and optionally layername). Both parameters are not allowed at the same time."
+	 *  "ncorrect parameters: perform a request either by grouplayerid or by organizationid (and grouplayername). Both parameters are not allowed at the same time."
 	 */
 	@Test
 	public void readLYRTestFail2() {
