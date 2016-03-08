@@ -111,7 +111,7 @@ public class GroupLayersService extends ServiceCommons {
 			// if results found -> delete record
 			if (grouplayer != null) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteGroupLayer(null, null, grouplayer.getId());
+				deleteService.deleteGroupLayer(null, null, grouplayer.getId(),null);
 
 				logger.info("Group Layer succesfully deleted");
 				logger.info(req);

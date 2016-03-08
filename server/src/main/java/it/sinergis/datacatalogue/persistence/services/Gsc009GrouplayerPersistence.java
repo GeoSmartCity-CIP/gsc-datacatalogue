@@ -110,4 +110,11 @@ public interface Gsc009GrouplayerPersistence extends GenericPersistence{
 	 */
 	public  List<Gsc009GrouplayerEntity> getGroupLayers(String query);
 	
+	/**
+	 * Delete from each record of this table all the instances of parameter that appear in a list within the json field.
+	 * @param query native query
+	 * @return number of rows affected by modification
+	 */
+	public int deleteFromList(String query,EntityManager em);
+	
 }

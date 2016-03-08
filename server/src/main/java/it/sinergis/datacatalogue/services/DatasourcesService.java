@@ -177,7 +177,7 @@ public class DatasourcesService extends ServiceCommons {
 			// if results found -> delete record
 			if (datasource != null) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteDatasource(null, null, datasource.getId());
+				deleteService.deleteDatasource(null, null, datasource.getId(),null);
 
 				logger.info("Datasource succesfully deleted");
 				logger.info(req);

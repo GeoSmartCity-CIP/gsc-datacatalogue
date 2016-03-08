@@ -170,7 +170,7 @@ public class LayersService extends ServiceCommons {
 			// if results found -> delete record
 			if (layer != null) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteLayer(null, null, layer.getId());
+				deleteService.deleteLayer(null, null, layer.getId(),null);
 
 				logger.info("Layer succesfully deleted");
 				logger.info(req);

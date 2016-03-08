@@ -82,4 +82,10 @@ public class Gsc009GrouplayerPersistenceJPA extends GenericJpaService<Gsc009Grou
 		return super.loadByNativeQuery(query);
 		
 	}
+
+	@Override
+	public int deleteFromList(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 }

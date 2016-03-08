@@ -35,6 +35,10 @@ public class DeleteService extends ServiceCommons {
 	public final String ORGANIZATION_ID_NAME = "organization";
 	public final String DATASET_ID_NAME = "iddataset";
 	
+	public final String LAYER_PATH = "'layers'";
+	public final String LAYER_ID_ASSIGNMENT = "'idlayer' = '";
+	public final String LAYER_ID_ASSIGNMENT_END = "'";
+	
 	/** Logger. */
 	private static Logger logger;
 	
@@ -71,16 +75,22 @@ public class DeleteService extends ServiceCommons {
 		gsc009Dao = PersistenceServiceProvider.getService(Gsc009GrouplayerPersistence.class);
 	}
 	
-	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
 		
 		if(selfId != null) {
-			EntityManager em = null;
 			EntityTransaction transaction = null;
 			try {
 				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
 				transaction = jpaEnvironment.openTransaction(em);
 			
 				gsc008Dao.deleteNoTrans(selfId,em);
+				//need to handle deletion on entities that have this entity as a list within their json
+				//GROUPLAYERS, APPLICATIONS
+				String query = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
+						Constants.JSON_COLUMN_NAME,
+						LAYER_ID_ASSIGNMENT+selfId+LAYER_ID_ASSIGNMENT_END,
+						LAYER_PATH);
+				gsc009Dao.deleteFromList(query,em);
 				
 				//we need to explicitly handle deletion of tables that rely on this entity
 				List<Long> predIds = new ArrayList<Long>();
@@ -103,6 +113,15 @@ public class DeleteService extends ServiceCommons {
 					for(Object retrievedLayer : retrievedLayers) {
 						if(retrievedLayer instanceof Gsc008LayerEntity) {
 							gsc008Dao.delete(((Gsc008LayerEntity) retrievedLayer).getId());
+							
+							//need to handle deletion on entities that have this entity as a list within their json
+							//GROUPLAYERS, APPLICATIONS
+							String query = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
+									Constants.JSON_COLUMN_NAME,
+									LAYER_ID_ASSIGNMENT+((Gsc008LayerEntity) retrievedLayer).getId()+LAYER_ID_ASSIGNMENT_END,
+									LAYER_PATH);
+							gsc009Dao.deleteFromList(query,em);
+							
 							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
 						}
 					}
@@ -116,10 +135,9 @@ public class DeleteService extends ServiceCommons {
 		}		
 	}
 
-	public void deleteDatasource(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+	public void deleteDatasource(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
 		
 		if(selfId != null) {
-			EntityManager em = null;
 			EntityTransaction transaction = null;
 			try {
 				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
@@ -132,7 +150,7 @@ public class DeleteService extends ServiceCommons {
 				predIds.add(selfId);
 				
 				//DATASET
-				deleteDataset(DATASOURCE_ID_NAME,predIds,null);
+				deleteDataset(DATASOURCE_ID_NAME,predIds,null,em);
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
@@ -155,7 +173,7 @@ public class DeleteService extends ServiceCommons {
 				}
 				//CASCADE DELETIONS
 				//DATASET
-				deleteDataset(DATASOURCE_ID_NAME,deletedSelfId,null);
+				deleteDataset(DATASOURCE_ID_NAME,deletedSelfId,null,em);
 			}catch(Exception e) {
 				logger.error(e);
 				throw new DCException("ER01");
@@ -163,10 +181,9 @@ public class DeleteService extends ServiceCommons {
 		}		
 	}
 	
-	public void deleteGroupLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+	public void deleteGroupLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
 		
 		if(selfId != null) {
-			EntityManager em = null;
 			EntityTransaction transaction = null;
 			try {
 				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
@@ -210,10 +227,9 @@ public class DeleteService extends ServiceCommons {
 		}		
 	}
 	
-	public void deleteDataset(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
+	public void deleteDataset(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
 			
 		if(selfId != null) {
-			EntityManager em = null;
 			EntityTransaction transaction = null;
 			try {
 				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
@@ -226,7 +242,7 @@ public class DeleteService extends ServiceCommons {
 				predIds.add(selfId);
 				
 				//LAYERS
-				deleteLayer(DATASET_ID_NAME,predIds,null);
+				deleteLayer(DATASET_ID_NAME,predIds,null,em);
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
@@ -249,7 +265,7 @@ public class DeleteService extends ServiceCommons {
 				}
 				//CASCADE DELETIONS
 				//LAYERS
-				deleteLayer(DATASET_ID_NAME,deletedSelfId,null);
+				deleteLayer(DATASET_ID_NAME,deletedSelfId,null,em);
 			}catch(Exception e) {
 				logger.error(e);
 				throw new DCException("ER01");
@@ -275,9 +291,9 @@ public class DeleteService extends ServiceCommons {
 				//by calling delete methods of the following:
 				
 				//DATASET
-				deleteDatasource(ORGANIZATION_ID_NAME,predIds,null);
+				deleteDatasource(ORGANIZATION_ID_NAME,predIds,null,em);
 				//GROUPLAYER
-				deleteGroupLayer(ORGANIZATION_ID_NAME,predIds,null);
+				deleteGroupLayer(ORGANIZATION_ID_NAME,predIds,null,em);
 				//TODO application, , function, role, user
 				
 				jpaEnvironment.commitTransaction(transaction);
@@ -318,5 +334,28 @@ public class DeleteService extends ServiceCommons {
 		return genericJPA.loadByNativeQuery(queryText);
 
 		
+	}
+	
+	/**
+	 * Generic query creation for deletion of elements within json arrays
+	 * 
+	 * @param tablename the table containing the json to be update
+	 * @param jsonColumnName the name of the json column in that table
+	 * @param idElement the id expression that indicates all the elements that have to be deleted (e.g. 'idlayer' = '3')
+	 * @param arrayPath the path to the array within the json (e.g. 'layers' if the root element of the array contains an element 'layers':[{elem1},{elem2},...])
+	 * @return
+	 */
+	private String createDeleteFromListQuery(String tablename,String jsonColumnName,String idElement,String arrayPath) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("WITH rownumber AS (");
+		sb.append("SELECT id, CAST((row_number() OVER (PARTITION by id)) AS integer)-1 AS rn, obj, t.json newjson ");
+		sb.append("FROM "+tablename+" t, jsonb_array_elements(t."+jsonColumnName+"->"+arrayPath+") obj) ");
+		sb.append("update "+tablename+" t set json = (");
+		sb.append("select rownumber.newjson - "+arrayPath+" || jsonb_build_object("+arrayPath+",((rownumber.newjson->"+arrayPath+") - rownumber.rn))");
+		sb.append(" from rownumber where rownumber.obj->>"+idElement+" AND rownumber.id = t.id)");
+		sb.append("from rownumber where rownumber.id = t.id AND rownumber.obj->>"+idElement);
+		System.out.println(sb.toString());
+		return sb.toString();
 	}
 }
