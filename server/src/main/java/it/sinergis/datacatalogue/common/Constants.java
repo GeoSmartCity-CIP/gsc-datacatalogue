@@ -88,6 +88,7 @@ public final class Constants {
 	public static final String ER13 = "ER13";
 	public static final String ER14 = "ER14";
 	public static final String ER15 = "ER15";
+	public static final String ER16 = "ER16";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
