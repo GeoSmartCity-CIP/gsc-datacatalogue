@@ -24,6 +24,7 @@ import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistenc
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc008LayerPersistenceJPA;
@@ -38,6 +39,10 @@ public class DeleteService extends ServiceCommons {
 	public final String LAYER_PATH = "'layers'";
 	public final String LAYER_ID_ASSIGNMENT = "'idlayer' = '";
 	public final String LAYER_ID_ASSIGNMENT_END = "'";
+	
+	public final String GROUP_PATH = "'groups'";
+	public final String GROUP_ID_ASSIGNMENT = "'idgroup' = '";
+	public final String GROUP_ID_ASSIGNMENT_END = "'";
 	
 	/** Logger. */
 	private static Logger logger;
@@ -57,6 +62,9 @@ public class DeleteService extends ServiceCommons {
 	/** Dao layer. */
 	private Gsc009GrouplayerPersistence gsc009Dao;
 	
+	/** Application layer. */
+	private Gsc010ApplicationPersistence gsc010Dao;
+	
 	/** jpa environment*/
 	JpaEnvironment jpaEnvironment;
 	
@@ -73,6 +81,7 @@ public class DeleteService extends ServiceCommons {
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
 		gsc009Dao = PersistenceServiceProvider.getService(Gsc009GrouplayerPersistence.class);
+		gsc010Dao = PersistenceServiceProvider.getService(Gsc010ApplicationPersistence.class);
 	}
 	
 	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
@@ -86,11 +95,17 @@ public class DeleteService extends ServiceCommons {
 				gsc008Dao.deleteNoTrans(selfId,em);
 				//need to handle deletion on entities that have this entity as a list within their json
 				//GROUPLAYERS, APPLICATIONS
-				String query = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
+				String queryRemoveLayerFromGroups = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
 						Constants.JSON_COLUMN_NAME,
 						LAYER_ID_ASSIGNMENT+selfId+LAYER_ID_ASSIGNMENT_END,
 						LAYER_PATH);
-				gsc009Dao.deleteFromList(query,em);
+				gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,em);
+				
+				String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+						Constants.JSON_COLUMN_NAME,
+						LAYER_ID_ASSIGNMENT+selfId+LAYER_ID_ASSIGNMENT_END,
+						LAYER_PATH);
+				gsc010Dao.deleteFromList(queryRemoveLayerFromApplication,em);
 				
 				//we need to explicitly handle deletion of tables that rely on this entity
 				List<Long> predIds = new ArrayList<Long>();
@@ -116,11 +131,17 @@ public class DeleteService extends ServiceCommons {
 							
 							//need to handle deletion on entities that have this entity as a list within their json
 							//GROUPLAYERS, APPLICATIONS
-							String query = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
+							String queryRemoveLayerFromGroups = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
 									Constants.JSON_COLUMN_NAME,
 									LAYER_ID_ASSIGNMENT+((Gsc008LayerEntity) retrievedLayer).getId()+LAYER_ID_ASSIGNMENT_END,
 									LAYER_PATH);
-							gsc009Dao.deleteFromList(query,em);
+							gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,em);
+							
+							String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+									Constants.JSON_COLUMN_NAME,
+									LAYER_ID_ASSIGNMENT+((Gsc008LayerEntity) retrievedLayer).getId()+LAYER_ID_ASSIGNMENT_END,
+									LAYER_PATH);
+							gsc010Dao.deleteFromList(queryRemoveLayerFromApplication,em);
 							
 							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
 						}
@@ -191,6 +212,14 @@ public class DeleteService extends ServiceCommons {
 			
 				gsc009Dao.deleteNoTrans(selfId,em);
 				
+				//need to handle deletion on entities that have this entity as a list within their json
+				// APPLICATIONS
+				String queryRemoveGroupsFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+						Constants.JSON_COLUMN_NAME,
+						GROUP_ID_ASSIGNMENT+selfId+GROUP_ID_ASSIGNMENT_END,
+						GROUP_PATH);
+				gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication,em);
+				
 				//we need to explicitly handle deletion of tables that rely on this entity
 				List<Long> predIds = new ArrayList<Long>();
 				predIds.add(selfId);
@@ -209,11 +238,20 @@ public class DeleteService extends ServiceCommons {
 				List<Long> deletedSelfId = new ArrayList<Long>();
 				for(Long id : predecessorsId) {
 					Gsc009GrouplayerPersistenceJPA grouplayerPersistencejpa = new Gsc009GrouplayerPersistenceJPA();
-					List<Object> retrievedDatasources = createSearchIdQuery(Constants.GROUP_LAYER_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,grouplayerPersistencejpa);
-					for(Object retrievedDatasource : retrievedDatasources) {
-						if(retrievedDatasource instanceof Gsc009GrouplayerEntity) {
-							gsc009Dao.delete(((Gsc009GrouplayerEntity) retrievedDatasource).getId());
-							deletedSelfId.add(((Gsc009GrouplayerEntity) retrievedDatasource).getId());
+					List<Object> retrievedGroupLayers = createSearchIdQuery(Constants.GROUP_LAYER_TABLE_NAME,predecessorIdName,Constants.JSON_COLUMN_NAME,id,grouplayerPersistencejpa);
+					for(Object retrievedGroup : retrievedGroupLayers) {
+						if(retrievedGroup instanceof Gsc009GrouplayerEntity) {
+							gsc009Dao.delete(((Gsc009GrouplayerEntity) retrievedGroup).getId());
+							
+							//need to handle deletion on entities that have this entity as a list within their json
+							// APPLICATIONS
+							String queryRemoveGroupsFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+									Constants.JSON_COLUMN_NAME,
+									GROUP_ID_ASSIGNMENT+((Gsc009GrouplayerEntity) retrievedGroup).getId()+GROUP_ID_ASSIGNMENT_END,
+									GROUP_PATH);
+							gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication,em);
+							
+							deletedSelfId.add(((Gsc009GrouplayerEntity) retrievedGroup).getId());
 						}
 					}
 				}

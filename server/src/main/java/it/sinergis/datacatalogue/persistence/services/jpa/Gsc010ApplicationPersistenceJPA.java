@@ -68,4 +68,10 @@ public class Gsc010ApplicationPersistenceJPA extends GenericJpaService<Gsc010App
 	public List<Gsc010ApplicationEntity> getApplications(final String query) {
 		return super.loadByNativeQuery(query);
 	}
+	
+	@Override
+	public int deleteFromList(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 }

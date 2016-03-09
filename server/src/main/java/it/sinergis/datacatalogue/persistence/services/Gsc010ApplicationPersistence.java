@@ -7,6 +7,8 @@ package it.sinergis.datacatalogue.persistence.services;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import it.sinergis.datacatalogue.bean.jpa.Gsc010ApplicationEntity;
 
 /**
@@ -97,5 +99,12 @@ public interface Gsc010ApplicationPersistence {
 	 * @return
 	 */
 	public List<Gsc010ApplicationEntity> getApplications(final String query);
+	
+	/**
+	 * Delete from each record of this table all the instances of parameter that appear in a list within the json field.
+	 * @param query native query
+	 * @return number of rows affected by modification
+	 */
+	public int deleteFromList(String query,EntityManager em);
 	
 }

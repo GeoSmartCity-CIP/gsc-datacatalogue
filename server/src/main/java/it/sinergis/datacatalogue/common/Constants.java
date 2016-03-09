@@ -17,7 +17,6 @@ public final class Constants {
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
-	
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 
 
@@ -70,6 +69,7 @@ public final class Constants {
 	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
 	public static final String GROUP_LAYER_ID_FIELD = "idgroup";
 	public static final String GROUP_LAYER = "grouplayers";
+	public static final String GROUPS = "groups";
 	
 	/** Function field names */
 	public static final String FUNC_NAME_FIELD = "functionname";
@@ -150,6 +150,10 @@ public final class Constants {
 	public static final String ER1002 = "ER1002";
 	public static final String ER1003 = "ER1003";
 	public static final String ER1004 = "ER1004";
+	public static final String ER1005 = "ER1005";
+	public static final String ER1006 = "ER1006";
+	public static final String ER1007 = "ER1007";
+	public static final String ER1008 = "ER1008";
 	
 	
 	/** STATUS MESSAGES*/
@@ -174,6 +178,7 @@ public final class Constants {
 	public static final String GROUP_LAYER_ASSIGNED = "GROUP_LAYER_ASSIGNED";
 	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
 	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
+	public static final String APPLICATION_LAYER_GROUP_ASSIGNED = "APPLICATION_LAYER_GROUP_ASSIGNED";
 	
 		
 	/** Services names. */
@@ -206,6 +211,7 @@ public final class Constants {
 	public static final String LIST_GROUP_LAYER = "LIST_GROUP_LAYER";
 	public static final String CREATE_APP = "CREATE_APP";
 	public static final String LIST_APP = "LIST_APP";
+	public static final String ASSIGN_TO_APP = "ASSIGN_TO_APP";
 	
 	/** Values. */
 	public static final String TRUE = "true";
