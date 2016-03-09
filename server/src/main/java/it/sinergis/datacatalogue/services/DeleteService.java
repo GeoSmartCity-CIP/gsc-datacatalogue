@@ -115,7 +115,9 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
+				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
 				transaction.rollback();
+				throw new DCException(Constants.ER16);
 			} finally {
 				em.close();
 			}
@@ -151,7 +153,7 @@ public class DeleteService extends ServiceCommons {
 				//TODO understand table relationships
 			}catch(Exception e) {
 				logger.error(e);
-				throw new DCException("ER01");
+				throw new DCException(Constants.ER01);
 			}
 		}		
 	}
@@ -175,7 +177,9 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
+				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
 				transaction.rollback();
+				throw new DCException(Constants.ER16);
 			} finally {
 				em.close();
 			}
@@ -197,7 +201,7 @@ public class DeleteService extends ServiceCommons {
 				deleteDataset(DATASOURCE_ID_NAME,deletedSelfId,null,em);
 			}catch(Exception e) {
 				logger.error(e);
-				throw new DCException("ER01");
+				throw new DCException(Constants.ER01);
 			}
 		}		
 	}
@@ -229,7 +233,9 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
+				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
 				transaction.rollback();
+				throw new DCException(Constants.ER16);
 			} finally {
 				em.close();
 			}
@@ -260,7 +266,7 @@ public class DeleteService extends ServiceCommons {
 				//Nothing apparently
 			}catch(Exception e) {
 				logger.error(e);
-				throw new DCException("ER01");
+				throw new DCException(Constants.ER01);
 			}
 		}		
 	}
@@ -284,7 +290,9 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
+				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
 				transaction.rollback();
+				throw new DCException(Constants.ER16);
 			} finally {
 				em.close();
 			}
@@ -306,13 +314,14 @@ public class DeleteService extends ServiceCommons {
 				deleteLayer(DATASET_ID_NAME,deletedSelfId,null,em);
 			}catch(Exception e) {
 				logger.error(e);
-				throw new DCException("ER01");
+				throw new DCException(Constants.ER01);
 			}
 		}
 	}
 	
 	public void deleteOrganization(String predecessorIdName, List<Long> predecessorsId,Long selfId) throws DCException {
 	
+		//Organization doesn't depend on any other entity (no else clause)
 		if(selfId != null) {
 			EntityManager em = null;
 			EntityTransaction transaction = null;
@@ -336,13 +345,13 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
+				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
 				transaction.rollback();
+				throw new DCException(Constants.ER16);
 			} finally {
 				em.close();
 			}
-		} else {
-			//Organization doesn't depend on any other entity
-		}		
+		}	
 	}
 	
 	/**

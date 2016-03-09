@@ -222,15 +222,22 @@ public class DatasetsService extends ServiceCommons {
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 
 			if (StringUtils.isNumeric(idDataset)) {
-				boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteDataset(null, null, Long.parseLong(idDataset) ,null);
+				
+				//boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
 				// TODO delete other tables referencing dataset
 
-				if (deleted) {
-					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
-				} else {
-					// Dataset to delete doesn't exist.
-					throw new DCException(Constants.ER702, req);
-				}
+				
+				logger.info("Group Layer succesfully deleted");
+				logger.info(req);
+				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
+//				if (deleted) {
+//					return createJsonStatus(
+//				} else {
+//					// Dataset to delete doesn't exist.
+//					throw new DCException(Constants.ER702, req);
+//				}
 			} else {
 				// Dataset id has to be numeric
 				throw new DCException(Constants.ER707, req);
