@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -216,31 +217,40 @@ public class GroupLayersService extends ServiceCommons {
 			ArrayNode grouplayerNodeList = JsonNodeFactory.instance.arrayNode();
 			for (Gsc009GrouplayerEntity grouoplayer : grouplayers) {
 				ObjectNode grouplayerBasic = (ObjectNode) mapper.readTree(grouoplayer.getJson());
-				
-				//get layers name from id
-				//get all layers
-				List<Gsc008LayerEntity> layers = layerPersistence.loadAll();
-				//build a map <layerid, layername>
-				Map<Long,String> layerIdToName = new HashMap<Long,String>();
-				for(Gsc008LayerEntity layer : layers) {
-					layerIdToName.put(layer.getId(), getFieldValueFromJsonText(layer.getJson(), Constants.LAYER_NAME_FIELD));
-				}
 				ArrayNode layersIdWithinGroup = (ArrayNode) grouplayerBasic.path(Constants.LAYERS);
-				ArrayNode layersIdAndNameWithinGroup = JsonNodeFactory.instance.arrayNode();
-				//for each layer in the json response
+				//get layers name from id
+				
+				//get all layers with the found ids
+				List<String> idList = new ArrayList<String>();				
 				for(int i = 0; i < layersIdWithinGroup.size(); i++) {
-					ObjectNode layerIdWithinGroup = (ObjectNode) layersIdWithinGroup.get(i);
-					Long layerId =  layerIdWithinGroup.get(Constants.LAYER_ID_FIELD).asLong();
-					//search for its name in the map and add it to the id value
-					String layerName = layerIdToName.get(layerId);
-					ObjectNode layerIdAndNameWithinGroup = JsonNodeFactory.instance.objectNode();
-					layerIdAndNameWithinGroup.put(Constants.LAYER_ID_FIELD,layerId);
-					layerIdAndNameWithinGroup.put(Constants.LAYER_NAME_FIELD,layerName);
-					//add the new object to the list
-					layersIdAndNameWithinGroup.add(layerIdAndNameWithinGroup);	
+					idList.add(((ObjectNode) layersIdWithinGroup.get(i)).get(Constants.LAYER_ID_FIELD).asText());
 				}
-				//replace the old layer list only containing ids with the new one containing names as well
-				grouplayerBasic.put(Constants.LAYERS, layersIdAndNameWithinGroup);
+				
+				String getLayersNameQuery = loadObjectFromIdList(Constants.LAYER_TABLE_NAME,idList);
+				if(StringUtils.isNotEmpty(getLayersNameQuery)) {
+					List<Gsc008LayerEntity> layers = layerPersistence.getLayers(getLayersNameQuery);
+					//build a map <layerid, layername>
+					Map<Long,String> layerIdToName = new HashMap<Long,String>();
+					for(Gsc008LayerEntity layer : layers) {
+						layerIdToName.put(layer.getId(), getFieldValueFromJsonText(layer.getJson(), Constants.LAYER_NAME_FIELD));
+					}
+					
+					ArrayNode layersIdAndNameWithinGroup = JsonNodeFactory.instance.arrayNode();
+					//for each layer in the json response
+					for(int i = 0; i < layersIdWithinGroup.size(); i++) {
+						ObjectNode layerIdWithinGroup = (ObjectNode) layersIdWithinGroup.get(i);
+						Long layerId =  layerIdWithinGroup.get(Constants.LAYER_ID_FIELD).asLong();
+						//search for its name in the map and add it to the id value
+						String layerName = layerIdToName.get(layerId);
+						ObjectNode layerIdAndNameWithinGroup = JsonNodeFactory.instance.objectNode();
+						layerIdAndNameWithinGroup.put(Constants.LAYER_ID_FIELD,layerId);
+						layerIdAndNameWithinGroup.put(Constants.LAYER_NAME_FIELD,layerName);
+						//add the new object to the list
+						layersIdAndNameWithinGroup.add(layerIdAndNameWithinGroup);	
+					}
+					//replace the old layer list only containing ids with the new one containing names as well
+					grouplayerBasic.put(Constants.LAYERS, layersIdAndNameWithinGroup);
+				}
 				
 				grouplayerBasic.put(Constants.ID, grouoplayer.getId());
 				grouplayerBasic.remove(Constants.DESCRIPTION_FIELD);
