@@ -275,7 +275,7 @@ public class GroupLayersService extends ServiceCommons {
 			List<Long> idlayers = getLayersIdFromRequest(requestLayers);
 			
 			//create the request
-			String query = createCheckLayersRequest(idlayers);
+			String query = createCheckLayersRequest(idlayers,grouplayer.getId());
 			//execute the request
 			Long resultNumber = layerPersistence.countInId(query);
 			//if at least one of the specified layers does not exist throw error
@@ -324,9 +324,18 @@ public class GroupLayersService extends ServiceCommons {
 		return layersId;
 	}
 	
-	private String createCheckLayersRequest(List<Long> ids) {
+	/**
+	 * Creates a query which
+	 * Checks that the layers to be added exist and belong to the same organization as the layerGroup thay are being added to
+	 * 
+	 * @param ids
+	 * @param organizationId
+	 * @return
+	 */
+	private String createCheckLayersRequest(List<Long> ids, Long organizationId) {
 		StringBuilder sb = new StringBuilder();
 		
+		//This condition counts the existing layers count matches the count on the layers that were passed as arguments
 		sb.append("select count(*) from ");
 		sb.append(Constants.LAYER_TABLE_NAME);
 		sb.append(" where ");
@@ -340,6 +349,34 @@ public class GroupLayersService extends ServiceCommons {
 			sb.append(ids.get(i));
 		}
 		sb.append(")");
+		
+		sb.append(" AND ");
+		sb.append(Constants.ID);
+		sb.append(" IN (");
+		//This condition checks that the id count only matches layers belonging to the same groupLayer organization 
+		//		select lyrT.id
+		//		from gscdatacatalogue.gsc_001_organization orgT 
+		//		inner join gscdatacatalogue.gsc_006_datasource dsT
+		//		on orgT.id = CAST((dsT.json->>'organization') AS integer)
+		//		inner join gscdatacatalogue.gsc_007_dataset dstT
+		//		on dsT.id = CAST((dstT.json->>'iddatasource') AS integer)
+		//		inner join gscdatacatalogue.gsc_008_layer lyrT
+		//		on dstT.id = CAST((lyrT.json->>'iddataset') AS integer)
+		//		where orgT.id = THIS_GROUP_ORGANIZATIONID
+		sb.append("select lyrT.id from ");
+		sb.append(Constants.ORGANIZATION_TABLE_NAME); 
+		sb.append(" orgT inner join ");
+		sb.append(Constants.DATASOURCE_TABLE_NAME);
+		sb.append(" dsT on orgT.id = CAST((dsT.json->>'organization') AS integer) inner join ");
+		sb.append(Constants.DATASETS_TABLE_NAME); 
+		sb.append(" dstT on dsT.id = CAST((dstT.json->>'iddatasource') AS integer) inner join ");
+		sb.append(Constants.LAYER_TABLE_NAME);
+		sb.append(" lyrT on dstT.id = CAST((lyrT.json->>'iddataset') AS integer) ");
+		sb.append(" where orgT.id = ");
+		sb.append(organizationId);
+		sb.append(")");
+
+		
 		return sb.toString();
 	}
 	
