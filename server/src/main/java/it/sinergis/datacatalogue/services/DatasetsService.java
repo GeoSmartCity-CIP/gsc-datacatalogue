@@ -225,19 +225,10 @@ public class DatasetsService extends ServiceCommons {
 				DeleteService deleteService = new DeleteService();
 				deleteService.deleteDataset(null, null, Long.parseLong(idDataset) ,null);
 				
-				//boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
-				// TODO delete other tables referencing dataset
-
-				
-				logger.info("Group Layer succesfully deleted");
+				logger.info("datasetr succesfully deleted");
 				logger.info(req);
 				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
-//				if (deleted) {
-//					return createJsonStatus(
-//				} else {
-//					// Dataset to delete doesn't exist.
-//					throw new DCException(Constants.ER702, req);
-//				}
+
 			} else {
 				// Dataset id has to be numeric
 				throw new DCException(Constants.ER707, req);

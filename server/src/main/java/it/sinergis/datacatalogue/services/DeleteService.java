@@ -84,6 +84,17 @@ public class DeleteService extends ServiceCommons {
 		gsc010Dao = PersistenceServiceProvider.getService(Gsc010ApplicationPersistence.class);
 	}
 	
+	public void deleteApplication(Long selfId) throws DCException {
+		//Application doesn't need to delete other tables, just itself.
+		
+		boolean deleted = gsc010Dao.delete(selfId);
+		
+		if(!deleted) {
+			logger.error("Error in the delete application occurred.");
+			throw new DCException(Constants.ER16);
+		}
+	}
+	
 	public void deleteLayer(String predecessorIdName, List<Long> predecessorsId,Long selfId,EntityManager em) throws DCException {
 		
 		if(selfId != null) {
@@ -115,7 +126,7 @@ public class DeleteService extends ServiceCommons {
 				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch(Exception e) {
-				logger.error("Error in the delete service occoured. Transaction has been rolled back.",e);
+				logger.error("Error in the delete service occurred. Transaction has been rolled back.",e);
 				transaction.rollback();
 				throw new DCException(Constants.ER16);
 			} finally {

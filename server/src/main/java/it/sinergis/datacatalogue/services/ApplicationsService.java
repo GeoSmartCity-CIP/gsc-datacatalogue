@@ -173,7 +173,7 @@ public class ApplicationsService extends ServiceCommons {
 						List<Long> idlayers = getIdFromRequest(requestLayers, Constants.LAYER_ID_FIELD);
 
 						// create the request
-						String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME);
+						String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME, idOrganization, true);
 						// execute the request
 						Long resultNumberLayers = gsc008Dao.countInId(queryLayers);
 						// if at least one of the specified layers does not
@@ -193,7 +193,7 @@ public class ApplicationsService extends ServiceCommons {
 						List<Long> idGroups = getIdFromRequest(requestGroups, Constants.GROUP_LAYER_ID_FIELD);
 
 						// create the request
-						String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME);
+						String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME, idOrganization, false);
 						// execute the request
 						Long resultNumberGroups = gsc008Dao.countInId(queryGroups);
 
@@ -240,7 +240,43 @@ public class ApplicationsService extends ServiceCommons {
 	}
 
 	public String deleteApplication(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.DELETE_APP, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
+
+			if (StringUtils.isNumeric(idApplication)) {
+				
+				Gsc010ApplicationEntity entityFound = gsc010Dao.load(Long.parseLong(idApplication));
+				if (entityFound == null) {
+					// No application found with given parameters.
+					throw new DCException(Constants.ER1004, req);
+				}
+				
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteApplication(Long.parseLong(idApplication));
+
+				logger.info("application succesfully deleted");
+				logger.info(req);
+				return createJsonStatus(Constants.STATUS_DONE, Constants.APPLICATION_DELETED, null, req);
+
+			} else {
+				// Application id has to be numeric
+				throw new DCException(Constants.ER1003, req);
+			}
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("delete application service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("delete service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String listApplication(String req) {
@@ -344,7 +380,8 @@ public class ApplicationsService extends ServiceCommons {
 							Gsc008LayerEntity entityFound = gsc008Dao.load(Long.parseLong(idLayerValue));
 
 							if (entityFound != null) {
-								((ObjectNode) next).put(Constants.LAYER_NAME_FIELD, getFieldValueFromJsonText(entityFound.getJson(), Constants.LAYER_NAME_FIELD));
+								((ObjectNode) next).put(Constants.LAYER_NAME_FIELD,
+										getFieldValueFromJsonText(entityFound.getJson(), Constants.LAYER_NAME_FIELD));
 								layersNodeWithLayerName.add(next);
 							} else {
 								logger.error("Layer with id: " + idLayerValue + " not found");
@@ -366,13 +403,15 @@ public class ApplicationsService extends ServiceCommons {
 
 					if (groupsElement.hasNext()) {
 						JsonNode next = groupsElement.next();
-						String idGroupValue = getFieldValueFromJsonText(next.toString(), Constants.GROUP_LAYER_ID_FIELD);
+						String idGroupValue = getFieldValueFromJsonText(next.toString(),
+								Constants.GROUP_LAYER_ID_FIELD);
 
 						if (StringUtils.isNumeric(idGroupValue)) {
 							Gsc009GrouplayerEntity entityFound = gsc009Dao.load(Long.parseLong(idGroupValue));
 
 							if (entityFound != null) {
-								((ObjectNode) next).put(Constants.GROUP_LAYER_NAME_FIELD, getFieldValueFromJsonText(entityFound.getJson(), Constants.GROUP_LAYER_NAME_FIELD));
+								((ObjectNode) next).put(Constants.GROUP_LAYER_NAME_FIELD, getFieldValueFromJsonText(
+										entityFound.getJson(), Constants.GROUP_LAYER_NAME_FIELD));
 								groupsNodeWithGroupName.add(next);
 							} else {
 								logger.error("Group layer with id: " + idGroupValue + " not found");
@@ -433,7 +472,7 @@ public class ApplicationsService extends ServiceCommons {
 		return listId;
 	}
 
-	private String createCheckRequest(List<Long> ids, String tableName) {
+	private String createCheckRequest(List<Long> ids, String tableName, String organizationID, boolean layer) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("select count(*) from ");
@@ -449,6 +488,31 @@ public class ApplicationsService extends ServiceCommons {
 			sb.append(ids.get(i));
 		}
 		sb.append(")");
+
+		if (layer) {
+			sb.append(" AND ");
+			sb.append(Constants.ID);
+			sb.append(" IN (");
+			sb.append("select lyrT.id from ");
+			sb.append(Constants.ORGANIZATION_TABLE_NAME);
+			sb.append(" orgT inner join ");
+			sb.append(Constants.DATASOURCE_TABLE_NAME);
+			sb.append(" dsT on orgT.id = CAST((dsT.json->>'organization') AS integer) inner join ");
+			sb.append(Constants.DATASETS_TABLE_NAME);
+			sb.append(" dstT on dsT.id = CAST((dstT.json->>'iddatasource') AS integer) inner join ");
+			sb.append(Constants.LAYER_TABLE_NAME);
+			sb.append(" lyrT on dstT.id = CAST((lyrT.json->>'iddataset') AS integer) ");
+			sb.append(" where orgT.id = ");
+			sb.append(organizationID);
+			sb.append(")");
+		} else {
+			sb.append(" AND ");
+			sb.append(Constants.JSON_COLUMN_NAME);
+			sb.append("->>'organization' = '");
+			sb.append(organizationID);
+			sb.append("'");
+		}
+		
 		return sb.toString();
 	}
 }

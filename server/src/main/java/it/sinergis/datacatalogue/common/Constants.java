@@ -180,6 +180,7 @@ public final class Constants {
 	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
 	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
 	public static final String APPLICATION_LAYER_GROUP_ASSIGNED = "APPLICATION_LAYER_GROUP_ASSIGNED";
+	public static final String APPLICATION_DELETED = "APPLICATION_DELETED";
 	
 		
 	/** Services names. */
@@ -213,6 +214,7 @@ public final class Constants {
 	public static final String CREATE_APP = "CREATE_APP";
 	public static final String LIST_APP = "LIST_APP";
 	public static final String ASSIGN_TO_APP = "ASSIGN_TO_APP";
+	public static final String DELETE_APP = "DELETE_APP";
 	
 	/** Values. */
 	public static final String TRUE = "true";
