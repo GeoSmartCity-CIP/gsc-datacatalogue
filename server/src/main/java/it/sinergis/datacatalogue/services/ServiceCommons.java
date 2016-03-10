@@ -168,7 +168,7 @@ public class ServiceCommons {
 			throw new DCException(Constants.ER01);
 		}
 	}
-	
+
 	/**
 	 * Returns the specific object inside a json
 	 * 
@@ -293,10 +293,11 @@ public class ServiceCommons {
 	 * @param jsonRequest
 	 * @return
 	 * @throws DCException
-	 * @throws IOException 
-	 * @throws JsonProcessingException 
+	 * @throws IOException
+	 * @throws JsonProcessingException
 	 */
-	protected void checkMandatoryParameters(String service, String jsonRequest) throws DCException, JsonProcessingException, IOException {
+	protected void checkMandatoryParameters(String service, String jsonRequest)
+			throws DCException, JsonProcessingException, IOException {
 		PropertyReader pr = new PropertyReader("service_parameters.properties");
 
 		String mandatoryParameters = pr.getValue(service);
@@ -305,89 +306,94 @@ public class ServiceCommons {
 
 		if (mandatoryParameters.length() > 0) {
 			for (String parameter : mandatoryParametersArray) {
-				
-				//if we have a list we may want to check one or more mandatory parameters within every object of the list
-				if(parameter.contains("-")) {
-					// - symbol splits the list name from the mandatory parameters inside it.
+
+				// if we have a list we may want to check one or more mandatory
+				// parameters within every object of the list
+				if (parameter.contains("-")) {
+					// - symbol splits the list name from the mandatory
+					// parameters inside it.
 					String[] listSplit = StringUtils.split(parameter, "-");
-					
-					checkParameter(jsonRequest, listSplit[0], mandatoryParameters,jsonRequest);
-					
-					// + symbol splits the parameter list if we have 2 or more mandatory parameters 
+
+					checkParameter(jsonRequest, listSplit[0], mandatoryParameters, jsonRequest);
+
+					// + symbol splits the parameter list if we have 2 or more
+					// mandatory parameters
 					String[] listParameterSplit = StringUtils.split(listSplit[1], "+");
-					
-					
-					ObjectMapper mapper = new ObjectMapper();		
+
+					ObjectMapper mapper = new ObjectMapper();
 					ObjectNode jsonObject = (ObjectNode) mapper.readTree(jsonRequest);
 					ArrayNode listNode = (ArrayNode) jsonObject.findValue(listSplit[0]);
-					//we allow the list to be empty []
-					for(int i = 0; i < listNode.size(); i++) {
+					// we allow the list to be empty []
+					for (int i = 0; i < listNode.size(); i++) {
 						JsonNode listElementNode = listNode.get(i);
 						String listElementNodeJson = mapper.writeValueAsString(listElementNode);
 						for (String listParameter : listParameterSplit) {
-							checkParameter(listElementNodeJson,listParameter,mandatoryParameters,jsonRequest);
+							checkParameter(listElementNodeJson, listParameter, mandatoryParameters, jsonRequest);
 						}
 					}
-				} else {			
-					checkParameter(jsonRequest, parameter,mandatoryParameters,jsonRequest);
+				} else {
+					checkParameter(jsonRequest, parameter, mandatoryParameters, jsonRequest);
 				}
 			}
 		}
 
 	}
-	
-	private void checkParameter(String jsonRequest,String parameter,String mandatoryParameters,String jsonRequestPrint) throws DCException {
+
+	private void checkParameter(String jsonRequest, String parameter, String mandatoryParameters,
+			String jsonRequestPrint) throws DCException {
 		String value = getFieldValueFromJsonText(jsonRequest, parameter);
 
 		if (value == null) {
-			
+
 			logger.error("Mandatory parameter is missing. Expected parameters: " + mandatoryParameters);
-			logger.error("parameter "+parameter+ " not found in "+ jsonRequest);
+			logger.error("parameter " + parameter + " not found in " + jsonRequest);
 			throw new DCException(Constants.ER04, jsonRequestPrint);
 		}
 	}
-	
+
 	/**
 	 * Preliminary checks on the request validity.
 	 * 
 	 * @param jsonRequest
 	 * @param serviceName
 	 * @throws DCException
-	 * @throws IOException 
-	 * @throws JsonProcessingException 
+	 * @throws IOException
+	 * @throws JsonProcessingException
 	 */
-	protected void preliminaryChecks(String jsonRequest,String serviceName) throws DCException, JsonProcessingException, IOException {
-		//checks if the json is syntatically correct.
+	protected void preliminaryChecks(String jsonRequest, String serviceName)
+			throws DCException, JsonProcessingException, IOException {
+		// checks if the json is syntatically correct.
 		checkJsonWellFormed(jsonRequest);
-		//checks if the request contains all the mandatory parameters
-		checkMandatoryParameters(serviceName,jsonRequest);
+		// checks if the request contains all the mandatory parameters
+		checkMandatoryParameters(serviceName, jsonRequest);
 	}
-	
+
 	/**
-	 * Given a jsonRequest and a key, this method remove the key from the request.
+	 * Given a jsonRequest and a key, this method remove the key from the
+	 * request.
 	 * 
 	 * @param json
 	 * @param key
 	 * @return
 	 */
-	protected String removeJsonField(String json, String key) throws DCException{
+	protected String removeJsonField(String json, String key) throws DCException {
 		try {
 			JsonNode rootNode = om.readTree(json);
 			JsonNode keyNode = rootNode.findValue(key);
-			
-			if (keyNode != null){
-				((ObjectNode) rootNode).remove(key);			
-			}			
+
+			if (keyNode != null) {
+				((ObjectNode) rootNode).remove(key);
+			}
 			return rootNode.toString();
-			
+
 		} catch (JsonProcessingException e) {
-			logger.error("Error removing the key "+ key + " from the given json");
-			throw new DCException(Constants.ER01, json);			
+			logger.error("Error removing the key " + key + " from the given json");
+			throw new DCException(Constants.ER01, json);
 		} catch (IOException e) {
-			throw new DCException(Constants.ER01, json);			
-		}			
+			throw new DCException(Constants.ER01, json);
+		}
 	}
-	
+
 	/**
 	 * Checks if the given parameter for organization matches the id of any
 	 * existing organization.
@@ -406,5 +412,28 @@ public class ServiceCommons {
 			DCException rpe = new DCException(Constants.ER15, req);
 			throw rpe;
 		}
+	}
+
+	protected String loadObjectFromIdList(String tableName, List<String> ids) {
+		StringBuilder sb = new StringBuilder();
+		
+		if (ids != null && !ids.isEmpty()) {
+			sb.append("SELECT * FROM ");
+			sb.append(tableName);
+			sb.append(" WHERE ");
+			sb.append(Constants.ID);
+			sb.append(" IN ( ");
+			for (int i = 0; i < ids.size(); i++) {
+				String id = ids.get(i);
+				sb.append("'");
+				sb.append(id);
+				sb.append("'");
+				if(i != ids.size() - 1) {
+					sb.append(",");
+				}
+			}
+			sb.append(")");
+		}
+		return sb.toString();
 	}
 }

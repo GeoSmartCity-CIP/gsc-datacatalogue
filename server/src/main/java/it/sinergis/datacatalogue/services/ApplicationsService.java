@@ -173,7 +173,8 @@ public class ApplicationsService extends ServiceCommons {
 						List<Long> idlayers = getIdFromRequest(requestLayers, Constants.LAYER_ID_FIELD);
 
 						// create the request
-						String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME, idOrganization, true);
+						String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME, idOrganization,
+								true);
 						// execute the request
 						Long resultNumberLayers = gsc008Dao.countInId(queryLayers);
 						// if at least one of the specified layers does not
@@ -193,7 +194,8 @@ public class ApplicationsService extends ServiceCommons {
 						List<Long> idGroups = getIdFromRequest(requestGroups, Constants.GROUP_LAYER_ID_FIELD);
 
 						// create the request
-						String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME, idOrganization, false);
+						String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME,
+								idOrganization, false);
 						// execute the request
 						Long resultNumberGroups = gsc008Dao.countInId(queryGroups);
 
@@ -249,13 +251,13 @@ public class ApplicationsService extends ServiceCommons {
 			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
 
 			if (StringUtils.isNumeric(idApplication)) {
-				
+
 				Gsc010ApplicationEntity entityFound = gsc010Dao.load(Long.parseLong(idApplication));
 				if (entityFound == null) {
 					// No application found with given parameters.
 					throw new DCException(Constants.ER1004, req);
 				}
-				
+
 				DeleteService deleteService = new DeleteService();
 				deleteService.deleteApplication(Long.parseLong(idApplication));
 
@@ -366,61 +368,95 @@ public class ApplicationsService extends ServiceCommons {
 				String appNameField = getFieldValueFromJsonText(entity.getJson(), Constants.APP_NAME_FIELD);
 				appMap.put(Constants.APP_NAME_FIELD, appNameField);
 
+				//List of layers
 				String layers = getObjectFromJsonText(entity.getJson(), Constants.LAYERS);
 				if (layers != null) {
 					ArrayNode layersNode = (ArrayNode) om.readTree(layers);
-					ArrayNode layersNodeWithLayerName = om.createArrayNode();
 					Iterator<JsonNode> layersElement = layersNode.elements();
 
-					if (layersElement.hasNext()) {
+					List<String> idLayersList = new ArrayList<String>();
+
+					//If the list of layers is not empty, I build a list of layers id
+					while (layersElement.hasNext()) {
 						JsonNode next = layersElement.next();
 						String idLayerValue = getFieldValueFromJsonText(next.toString(), Constants.LAYER_ID_FIELD);
 
 						if (StringUtils.isNumeric(idLayerValue)) {
-							Gsc008LayerEntity entityFound = gsc008Dao.load(Long.parseLong(idLayerValue));
+							idLayersList.add(idLayerValue);
 
-							if (entityFound != null) {
-								((ObjectNode) next).put(Constants.LAYER_NAME_FIELD,
-										getFieldValueFromJsonText(entityFound.getJson(), Constants.LAYER_NAME_FIELD));
-								layersNodeWithLayerName.add(next);
-							} else {
-								logger.error("Layer with id: " + idLayerValue + " not found");
-								throw new DCException(Constants.ER1008, req);
-							}
 						} else {
 							throw new DCException(Constants.ER12, req);
 						}
+					}
 
+					//I retrieve all layer entities from the id list
+					List<Gsc008LayerEntity> entitiesFound = gsc008Dao
+							.getLayers(loadObjectFromIdList(Constants.LAYER_TABLE_NAME, idLayersList));
+
+					ArrayNode layersNodeWithLayerName = om.createArrayNode();
+
+					//I build the json object idlayer:id,layername:name
+					if (entitiesFound != null && !entitiesFound.isEmpty()) {
+
+						for (Gsc008LayerEntity entityFound : entitiesFound) {
+
+							String layerName = getFieldValueFromJsonText(entityFound.getJson(),
+									Constants.LAYER_NAME_FIELD);
+							ObjectNode layerToInsert = om.createObjectNode();
+							layerToInsert.put(Constants.LAYER_ID_FIELD, entityFound.getId());
+							layerToInsert.put(Constants.LAYER_NAME_FIELD, layerName);
+							layersNodeWithLayerName.add(layerToInsert);
+						}
+					} else {
+						logger.error(
+								"There's no record in the layer table associated with one of the layer id assigned to the application.");
+						throw new DCException(Constants.ER1008, req);
 					}
 					appMap.put(Constants.LAYERS, om.readTree(om.writeValueAsString(layersNodeWithLayerName)));
 				}
 
+				//List of group layers
 				String groups = getObjectFromJsonText(entity.getJson(), Constants.GROUPS);
 				if (groups != null) {
 					ArrayNode groupsNode = (ArrayNode) om.readTree(groups);
-					ArrayNode groupsNodeWithGroupName = om.createArrayNode();
 					Iterator<JsonNode> groupsElement = groupsNode.elements();
 
-					if (groupsElement.hasNext()) {
+					List<String> idGroupsList = new ArrayList<String>();
+
+					//If the list of group layers is not empty, I build a list of layers id
+					while (groupsElement.hasNext()) {
 						JsonNode next = groupsElement.next();
 						String idGroupValue = getFieldValueFromJsonText(next.toString(),
 								Constants.GROUP_LAYER_ID_FIELD);
 
 						if (StringUtils.isNumeric(idGroupValue)) {
-							Gsc009GrouplayerEntity entityFound = gsc009Dao.load(Long.parseLong(idGroupValue));
-
-							if (entityFound != null) {
-								((ObjectNode) next).put(Constants.GROUP_LAYER_NAME_FIELD, getFieldValueFromJsonText(
-										entityFound.getJson(), Constants.GROUP_LAYER_NAME_FIELD));
-								groupsNodeWithGroupName.add(next);
-							} else {
-								logger.error("Group layer with id: " + idGroupValue + " not found");
-								throw new DCException(Constants.ER1007, req);
-							}
+							idGroupsList.add(idGroupValue);
 						} else {
 							throw new DCException(Constants.ER12, req);
 						}
+					}
 
+					//I retrieve all group layer entities from the id list
+					List<Gsc009GrouplayerEntity> entitiesFound = gsc009Dao
+							.getGroupLayers(loadObjectFromIdList(Constants.GROUP_LAYER_TABLE_NAME, idGroupsList));
+					ArrayNode groupsNodeWithGroupName = om.createArrayNode();
+
+					//I build the json object idgroup:id,groupname:name
+					if (entitiesFound != null && !entitiesFound.isEmpty()) {
+
+						for (Gsc009GrouplayerEntity entityFound : entitiesFound) {
+
+							String groupName = getFieldValueFromJsonText(entityFound.getJson(),
+									Constants.GROUP_LAYER_NAME_FIELD);
+							ObjectNode groupToInsert = om.createObjectNode();
+							groupToInsert.put(Constants.GROUP_LAYER_ID_FIELD, entityFound.getId());
+							groupToInsert.put(Constants.GROUP_LAYER_NAME_FIELD, groupName);
+							groupsNodeWithGroupName.add(groupToInsert);
+						}
+					} else {
+						logger.error(
+								"There's no record in the group layer table associated with one of the layer id assigned to the application.");
+						throw new DCException(Constants.ER1007, req);
 					}
 					appMap.put(Constants.GROUPS, om.readTree(om.writeValueAsString(groupsNodeWithGroupName)));
 				}
@@ -512,7 +548,7 @@ public class ApplicationsService extends ServiceCommons {
 			sb.append(organizationID);
 			sb.append("'");
 		}
-		
+
 		return sb.toString();
 	}
 }
