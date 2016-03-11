@@ -368,7 +368,7 @@ public class ApplicationsService extends ServiceCommons {
 				String appNameField = getFieldValueFromJsonText(entity.getJson(), Constants.APP_NAME_FIELD);
 				appMap.put(Constants.APP_NAME_FIELD, appNameField);
 
-				//List of layers
+				// List of layers
 				String layers = getObjectFromJsonText(entity.getJson(), Constants.LAYERS);
 				if (layers != null) {
 					ArrayNode layersNode = (ArrayNode) om.readTree(layers);
@@ -376,7 +376,8 @@ public class ApplicationsService extends ServiceCommons {
 
 					List<String> idLayersList = new ArrayList<String>();
 
-					//If the list of layers is not empty, I build a list of layers id
+					// If the list of layers is not empty, I build a list of
+					// layers id
 					while (layersElement.hasNext()) {
 						JsonNode next = layersElement.next();
 						String idLayerValue = getFieldValueFromJsonText(next.toString(), Constants.LAYER_ID_FIELD);
@@ -389,13 +390,13 @@ public class ApplicationsService extends ServiceCommons {
 						}
 					}
 
-					//I retrieve all layer entities from the id list
-					List<Gsc008LayerEntity> entitiesFound = gsc008Dao
-							.getLayers(loadObjectFromIdList(Constants.LAYER_TABLE_NAME, idLayersList));
+					// I retrieve all layer entities from the id list
+					String layerQuery = loadObjectFromIdList(Constants.LAYER_TABLE_NAME, idLayersList);
+					List<Gsc008LayerEntity> entitiesFound = StringUtils.isNotEmpty(layerQuery) ? gsc008Dao.getLayers(layerQuery) : null;
 
 					ArrayNode layersNodeWithLayerName = om.createArrayNode();
 
-					//I build the json object idlayer:id,layername:name
+					// I build the json object idlayer:id,layername:name
 					if (entitiesFound != null && !entitiesFound.isEmpty()) {
 
 						for (Gsc008LayerEntity entityFound : entitiesFound) {
@@ -407,15 +408,16 @@ public class ApplicationsService extends ServiceCommons {
 							layerToInsert.put(Constants.LAYER_NAME_FIELD, layerName);
 							layersNodeWithLayerName.add(layerToInsert);
 						}
-					} else {
-						logger.error(
-								"There's no record in the layer table associated with one of the layer id assigned to the application.");
-						throw new DCException(Constants.ER1008, req);
-					}
+					} 
+//					else {
+//						logger.error(
+//								"There's no record in the layer table associated with one of the layer id assigned to the application.");
+//						throw new DCException(Constants.ER1008, req);
+//					}
 					appMap.put(Constants.LAYERS, om.readTree(om.writeValueAsString(layersNodeWithLayerName)));
 				}
 
-				//List of group layers
+				// List of group layers
 				String groups = getObjectFromJsonText(entity.getJson(), Constants.GROUPS);
 				if (groups != null) {
 					ArrayNode groupsNode = (ArrayNode) om.readTree(groups);
@@ -423,7 +425,8 @@ public class ApplicationsService extends ServiceCommons {
 
 					List<String> idGroupsList = new ArrayList<String>();
 
-					//If the list of group layers is not empty, I build a list of layers id
+					// If the list of group layers is not empty, I build a list
+					// of layers id
 					while (groupsElement.hasNext()) {
 						JsonNode next = groupsElement.next();
 						String idGroupValue = getFieldValueFromJsonText(next.toString(),
@@ -436,12 +439,13 @@ public class ApplicationsService extends ServiceCommons {
 						}
 					}
 
-					//I retrieve all group layer entities from the id list
-					List<Gsc009GrouplayerEntity> entitiesFound = gsc009Dao
-							.getGroupLayers(loadObjectFromIdList(Constants.GROUP_LAYER_TABLE_NAME, idGroupsList));
+					// I retrieve all group layer entities from the id list
+					String groupQuery = loadObjectFromIdList(Constants.GROUP_LAYER_TABLE_NAME, idGroupsList);
+					List<Gsc009GrouplayerEntity> entitiesFound = StringUtils.isNotEmpty(groupQuery)
+							? gsc009Dao.getGroupLayers(groupQuery) : null;
 					ArrayNode groupsNodeWithGroupName = om.createArrayNode();
 
-					//I build the json object idgroup:id,groupname:name
+					// I build the json object idgroup:id,groupname:name
 					if (entitiesFound != null && !entitiesFound.isEmpty()) {
 
 						for (Gsc009GrouplayerEntity entityFound : entitiesFound) {
@@ -453,11 +457,12 @@ public class ApplicationsService extends ServiceCommons {
 							groupToInsert.put(Constants.GROUP_LAYER_NAME_FIELD, groupName);
 							groupsNodeWithGroupName.add(groupToInsert);
 						}
-					} else {
-						logger.error(
-								"There's no record in the group layer table associated with one of the layer id assigned to the application.");
-						throw new DCException(Constants.ER1007, req);
-					}
+					} 
+//					else {
+//						logger.error(
+//								"There's no record in the group layer table associated with one of the layer id assigned to the application.");
+//						throw new DCException(Constants.ER1007, req);
+//					}
 					appMap.put(Constants.GROUPS, om.readTree(om.writeValueAsString(groupsNodeWithGroupName)));
 				}
 
