@@ -5,7 +5,6 @@
 
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
-
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -18,12 +17,14 @@ import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
 import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
 
 /**
- * JPA implementation for basic persistence operations ( entity "Gsc010Application" )
+ * JPA implementation for basic persistence operations ( entity
+ * "Gsc010Application" )
  * 
  * @author Telosys Tools Generator
  *
  */
-public class Gsc010ApplicationPersistenceJPA extends GenericJpaService<Gsc010ApplicationEntity, Long> implements Gsc010ApplicationPersistence {
+public class Gsc010ApplicationPersistenceJPA extends GenericJpaService<Gsc010ApplicationEntity, Long>
+		implements Gsc010ApplicationPersistence {
 
 	/**
 	 * Constructor
@@ -33,34 +34,45 @@ public class Gsc010ApplicationPersistenceJPA extends GenericJpaService<Gsc010App
 	}
 
 	@Override
-	public Gsc010ApplicationEntity load( Long id ) {
-		return super.load( id );
+	public Gsc010ApplicationEntity load(Long id) {
+		return super.load(id);
 	}
 
 	@Override
-	public boolean delete( Long id ) {
-		return super.delete( id );
+	public boolean delete(Long id) {
+		return super.delete(id);
+	}
+
+	@Override
+	public boolean deleteNoTrans(Long id, EntityManager em) {
+		final Gsc010ApplicationEntity entity = em.find(Gsc010ApplicationEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
 	}
 
 	@Override
 	public boolean delete(Gsc010ApplicationEntity entity) {
-		if ( entity != null ) {
-			return super.delete( entity.getId() );
+		if (entity != null) {
+			return super.delete(entity.getId());
 		}
-		return false ;
+		return false;
 	}
 
 	@Override
 	public long countAll() {
-		// JPA operation definition 
+		// JPA operation definition
 		JpaOperation operation = new JpaOperation() {
 			@Override
 			public Object exectue(EntityManager em) throws PersistenceException {
 				Query query = em.createNamedQuery("Gsc010ApplicationEntity.countAll");
-				return query.getSingleResult() ;
+				return query.getSingleResult();
 			}
-		} ;
-		// JPA operation execution 
+		};
+		// JPA operation execution
 		return (Long) execute(operation);
 	}
 
@@ -68,10 +80,10 @@ public class Gsc010ApplicationPersistenceJPA extends GenericJpaService<Gsc010App
 	public List<Gsc010ApplicationEntity> getApplications(final String query) {
 		return super.loadByNativeQuery(query);
 	}
-	
+
 	@Override
-	public int deleteFromList(String query,EntityManager em) {
-		Query nativeQuery = em.createNativeQuery(query);					
+	public int deleteFromList(String query, EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);
 		return nativeQuery.executeUpdate();
 	}
 }

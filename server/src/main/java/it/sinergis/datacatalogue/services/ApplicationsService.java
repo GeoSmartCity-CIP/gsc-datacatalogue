@@ -259,7 +259,7 @@ public class ApplicationsService extends ServiceCommons {
 				}
 
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteApplication(Long.parseLong(idApplication));
+				deleteService.deleteApplication(null, null, Long.parseLong(idApplication), null);
 
 				logger.info("application succesfully deleted");
 				logger.info(req);
