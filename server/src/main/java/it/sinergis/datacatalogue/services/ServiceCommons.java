@@ -2,6 +2,7 @@ package it.sinergis.datacatalogue.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +31,14 @@ public class ServiceCommons {
 
 	/** Jackson object mapper. */
 	ObjectMapper om;
+	
+	/** Mail property reader. */
+	PropertyReader mailPropertyReader;
 
 	public ServiceCommons() {
 		logger = Logger.getLogger(this.getClass());
 		om = new ObjectMapper();
+		mailPropertyReader = new PropertyReader("mail.properties");
 	}
 
 	protected void checkJsonWellFormed(String jsonText) throws DCException {
@@ -218,6 +223,28 @@ public class ServiceCommons {
 			throw new DCException(Constants.ER01);
 		}
 	}
+	
+	/**
+	 * Returns true if the key field exists in the json string.
+	 * 
+	 * @param json
+	 * @param keyField
+	 * @return
+	 * @throws DCException
+	 */
+	protected boolean isParameterInJson(String json, String keyField) throws DCException {
+		try {
+			JsonNode rootNode = om.readTree(json);
+			JsonNode key = rootNode.findValue(keyField);
+			if (key == null) {
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			logger.error("unhandled error: ", e);
+			throw new DCException(Constants.ER01);
+		}
+	}
 
 	/**
 	 * Retrieves the row given params.
@@ -282,6 +309,30 @@ public class ServiceCommons {
 		} catch (IOException e) {
 			logger.error("IOException during the construction of status response", e);
 			throw new DCException(Constants.ER01, request);
+		}
+	}
+	
+	/**
+	 * Create JSON status message.
+	 * 
+	 * @param status
+	 * @param description
+	 * @return String
+	 * @throws DCException 
+	 */
+	protected String createJsonStatus(String status, String descriptionCode) throws DCException {
+		PropertyReader pr = new PropertyReader("messages.properties");
+
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			ObjectNode root = JsonNodeFactory.instance.objectNode();
+			root.put(Constants.STATUS_FIELD, status);
+			root.put(Constants.DESCRIPTION_FIELD, pr.getValue(descriptionCode));
+			return mapper.writeValueAsString(root);
+
+		} catch (IOException e) {
+			logger.error("IOException during the construction of status response", e);
+			throw new DCException(Constants.ER01);
 		}
 	}
 
@@ -393,10 +444,33 @@ public class ServiceCommons {
 			throw new DCException(Constants.ER01, json);
 		}
 	}
+	
+	/**
+	 * Given a jsonRequest and a map of keys and values adds all the given elements to the json.
+	 * The parameters will be added at the top level of json.
+	 * 
+	 * @param json
+	 * @param key
+	 * @return
+	 */
+	protected String addJsonFields(String json, Map<String,String> values) throws DCException {
+		try {
+			ObjectNode rootNode = (ObjectNode) om.readTree(json);
+			
+			for(Map.Entry<String, String> entry : values.entrySet()) {
+				rootNode.put(entry.getKey(),entry.getValue());
+			}
+			return om.writeValueAsString(rootNode);
+		} catch (Exception e) {
+			logger.error("Error while adding parameters to json.");
+			throw new DCException(Constants.ER01, json);
+		}
+	}
 
 	/**
 	 * Checks if the given parameter for organization matches the id of any
-	 * existing organization.
+	 * existing organization. 
+	 * Returns error if the organization id is not found.
 	 * 
 	 * @param orgId
 	 * @return
