@@ -109,4 +109,11 @@ public interface Gsc008LayerPersistence extends GenericPersistence{
 	 * @return list of organizations
 	 */
 	public  List<Gsc008LayerEntity> getLayers(String query);
+	
+	/**
+	 * count number of records within a certain id list
+	 * @param query native query
+	 * @return the count number
+	 */
+	public Long countInId(String query);
 }

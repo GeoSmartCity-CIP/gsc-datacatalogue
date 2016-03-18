@@ -6,11 +6,15 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
+import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
 import it.sinergis.datacatalogue.persistence.services.Gsc002UserPersistence;
@@ -60,6 +64,23 @@ public class Gsc002UserPersistenceJPA extends GenericJpaService<Gsc002UserEntity
 		} ;
 		// JPA operation execution 
 		return (Long) execute(operation);
+	}
+	
+	@Override
+	public List<Gsc002UserEntity> getUsers(String query) {
+		return super.loadByNativeQuery(query);	
+	}
+	
+	@Override
+	public Gsc002UserEntity getUser(String query) throws DCException {
+		List<Gsc002UserEntity> userList =  super.loadByNativeQuery(query);
+		if(userList.size() > 1) {
+			DCException ex = new DCException(Constants.ER20);
+			throw ex;
+		} else if(userList.size() == 0) {
+			return null;
+		}
+		return super.loadByNativeQuery(query).get(0);	
 	}
 
 }

@@ -6,6 +6,7 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,7 +14,10 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
+import it.sinergis.datacatalogue.persistence.PersistenceConfig;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
+import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironment;
+import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 
@@ -81,6 +85,20 @@ public class Gsc008LayerPersistenceJPA extends GenericJpaService<Gsc008LayerEnti
 		
 		return super.loadByNativeQuery(query);
 		
+	}
+
+	@Override
+	public Long countInId(String query) {
+		EntityManager em = null;
+		try {
+			JpaEnvironment jpaEnvironment = JpaEnvironments.getInstance().getJpaEnvironment(PersistenceConfig.JPA_PERSISTENCE_UNIT_NAME);
+			em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+			Query nativeQuery = em.createNativeQuery(query);					
+			return ((BigInteger) nativeQuery.getSingleResult()).longValue();
+		} finally {
+			// Ensure EntityManager is closed 
+			em.close();
+		}
 	}
 
 }

@@ -123,7 +123,6 @@ public class DatasetsService extends ServiceCommons {
 						dset = gsc007Dao.save(dset);
 
 						logger.info("Dataset succesfully created");
-						logger.info(req);
 						return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_CREATED, dset.getId(), req);
 					} else {
 						// Datasource doesn't exist
@@ -223,15 +222,13 @@ public class DatasetsService extends ServiceCommons {
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 
 			if (StringUtils.isNumeric(idDataset)) {
-				boolean deleted = gsc007Dao.delete(Long.parseLong(idDataset));
-				// TODO delete other tables referencing dataset
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteDataset(null, null, Long.parseLong(idDataset) ,null);
+				
+				logger.info("datasetr succesfully deleted");
+				logger.info(req);
+				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
 
-				if (deleted) {
-					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
-				} else {
-					// Dataset to delete doesn't exist.
-					throw new DCException(Constants.ER702, req);
-				}
 			} else {
 				// Dataset id has to be numeric
 				throw new DCException(Constants.ER707, req);

@@ -17,13 +17,13 @@ public final class Constants {
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
-	
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 
 
 	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
+	
 	public static final String DETAIL_FIELD = "detail";
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORG_NAME_FIELD = "organizationname";
@@ -35,7 +35,6 @@ public final class Constants {
 	public static final String ROLE_NAME_FIELD = "rolename";
 	public static final String ORG_FIELD = "organization";
 	public static final String STATUS_FIELD = "status";
-	public static final String ORGANIZATIONS_FIELD = "organizations";
 	public static final String NAME_FIELD = "name";
 	public static final String USERS_FIELD = "users";
 	public static final String ID_FIELD = "id";
@@ -54,6 +53,14 @@ public final class Constants {
 	public static final String APP_NAME_FIELD = "applicationname";
 	public static final String APPLICATION_ID = "idapplication";
 	public static final String APPLICATION_RESULT = "applications";
+	public static final String TO_BE_VERIFIED = "tobeverified";
+	public static final String VERIFIED = "verified";
+	public static final String UUID = "uuid";
+	public static final String CONFIRM_PASSWORD_FIELD = "confirmpassword";
+	/** List element header names. */
+	public static final String ORGANIZATIONS_FIELD = "organizations";
+	public static final String ROLES_FIELD = "roles";
+	public static final String FUNCTIONS_FIELD = "functions";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -70,10 +77,19 @@ public final class Constants {
 	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
 	public static final String GROUP_LAYER_ID_FIELD = "idgroup";
 	public static final String GROUP_LAYER = "grouplayers";
+	public static final String GROUPS = "groups";
 	
 	/** Function field names. */
 	public static final String FUNC_NAME_FIELD = "functionname";
 	public static final String FUNC_ID_FIELD = "idfunction";
+	
+	/** User field names */
+	public static final String USER_NAME_FIELD = "username";
+	public static final String USER_ID_FIELD = "iduser";
+	public static final String USER_EMAIL_FIELD = "email";
+	
+	/** E-mail constants. */
+	public static final String MAIL_SUBJECT = "Datacatalogue Complete Registration Process";
 	
 	/** Role field names. */
 	public static final String ROLE_ID_FIELD = "idrole";
@@ -90,7 +106,13 @@ public final class Constants {
 	public static final String ER12 = "ER12";
 	public static final String ER13 = "ER13";
 	public static final String ER14 = "ER14";
-	public static final String ER15 = "ER15";
+	public static final String ER15 = "ER15";	
+	public static final String ER16 = "ER16";
+	public static final String ER17 = "ER17";
+	public static final String ER18 = "ER18";
+	public static final String ER19 = "ER19";
+	public static final String ER20 = "ER20";
+	public static final String ER21 = "ER21";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -108,6 +130,18 @@ public final class Constants {
 	public static final String ER102 = "ER102";	
 	public static final String ER103 = "ER103";	
 	public static final String ER104 = "ER104";
+	
+	/** Users errors. */
+	public static final String ER201 = "ER201";	
+	public static final String ER202 = "ER202";	
+	public static final String ER203 = "ER203";	
+	public static final String ER204 = "ER204";	
+	public static final String ER205 = "ER205";
+	public static final String ER206 = "ER206";
+	public static final String ER207 = "ER207";
+	public static final String ER208 = "ER208";
+	public static final String ER209 = "ER209";
+	public static final String ER210 = "ER210";
 	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";	
@@ -153,6 +187,10 @@ public final class Constants {
 	public static final String ER1002 = "ER1002";
 	public static final String ER1003 = "ER1003";
 	public static final String ER1004 = "ER1004";
+	public static final String ER1005 = "ER1005";
+	public static final String ER1006 = "ER1006";
+	public static final String ER1007 = "ER1007";
+	public static final String ER1008 = "ER1008";
 	
 	/** Role errors. */
 	public static final String ER301 = "ER301";
@@ -180,7 +218,18 @@ public final class Constants {
 	public static final String GROUP_LAYER_ASSIGNED = "GROUP_LAYER_ASSIGNED";
 	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
 	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
-	
+	public static final String APPLICATION_LAYER_GROUP_ASSIGNED = "APPLICATION_LAYER_GROUP_ASSIGNED";
+	public static final String APPLICATION_DELETED = "APPLICATION_DELETED";
+	public static final String LOGIN_SUCCESFUL = "LOGIN_SUCCESFUL";
+	public static final String USER_REGISTERED = "USER_REGISTERED";
+	public static final String PASSWORD_SUCCESFULLY_CHANGED = "PASSWORD_SUCCESFULLY_CHANGED";
+	public static final String RETRIEVE_PASSWORD_MAIL_SENT = "RETRIEVE_PASSWORD_MAIL_SENT";
+	public static final String USER_PROFILE_UPDATED = "USER_PROFILE_UPDATED";
+	public static final String USER_LOCKED = "USER_LOCKED";
+	public static final String USER_UNLOCKED = "USER_UNLOCKED";
+	public static final String USER_UNREGISTERED = "USER_UNREGISTERED";
+	public static final String USER_DELETED = "USER_DELETED";
+	public static final String USER_EMAIL_VERIFIED = "USER_EMAIL_VERIFIED";
 		
 	/** Services names. */
 	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
@@ -212,6 +261,16 @@ public final class Constants {
 	public static final String LIST_GROUP_LAYER = "LIST_GROUP_LAYER";
 	public static final String CREATE_APP = "CREATE_APP";
 	public static final String LIST_APP = "LIST_APP";
+	public static final String ASSIGN_TO_APP = "ASSIGN_TO_APP";
+	public static final String DELETE_APP = "DELETE_APP";
+	public static final String LOGIN = "LOGIN";
+	public static final String REGISTER_USER = "REGISTER_USER";
+	public static final String REMIND_PASSWORD = "REMIND_PASSWORD";
+	public static final String CHANGE_PASSWORD = "CHANGE_PASSWORD";
+	public static final String UPDATE_USER = "UPDATE_USER";
+	public static final String LOCK_USER = "LOCK_USER";
+	public static final String UNREGISTER_USER = "UNREGISTER_USER";
+	public static final String VERIFY_MAIL = "VERIFY_MAIL";
 	public static final String CREATE_ROLE = "CREATE_ROLE";
 	public static final String DELETE_ROLE = "DELETE_ROLE";
 	
@@ -230,4 +289,16 @@ public final class Constants {
 	public static final String PASSWD = "passwd";
 	public static final String HOST = "host";
 	public static final String SHP_EXT = ".shp";
+	public static final String SHA1 = "SHA-1";
+	
+	/** MAIL PROPERTY FIELDS. */
+	public static final String HOST_NAME = "HOST_NAME";
+	public static final String PORT_NUMBER = "PORT_NUMBER";
+	public static final String SENDER_ADDRESS = "SENDER_ADDRESS";
+	public static final String MAIL_SMTP_HOST = "mail.smtp.host";
+	public static final String MAIL_SMTP_PORT = "mail.smtp.port";
+	
+	/** LOGIN parameters. */
+	public static final String ATTEMPTED_LOGINS = "attemptedlogins";
+	public static final String LOCK_TIME = "locktime";
 }

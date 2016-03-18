@@ -107,11 +107,76 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteLayerExample").value;
 		    	
-		    } else if (selected === 'listlyr'){
+		    } else if (selected === 'listlyr') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    			    		    
+		    } else if(selected === 'creategrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateGroupLayerExample").value;
 		    	
-		    } else if (selected === 'createrole'){
+		    } else if(selected === 'assignlyr'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignLayerExample").value;
+		    	
+		    } else if (selected === 'deletegrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteGroupLayerExample").value;
+		    	
+		    } else if (selected === 'listgrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListGroupLayerExample").value;
+		    
+			} else if (selected === 'createapp') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateAppExample").value;
+		    	
+		    } else if (selected === 'assigntoapp') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateAppExample").value;
+		    	
+		    } else if (selected === 'deleteapp') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteAppExample").value;
+		    	
+		    } else if (selected === 'listapp') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListAppExample").value;
+		    	
+		    } else if (selected === 'login') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserLoginExample").value;
+		    	
+		    } else if (selected === 'reguser') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserRegisterExample").value;
+		    	
+		    } else if (selected === 'remindpwd') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserRemindPasswordExample").value;
+		    	
+		    } else if (selected === 'changepwd') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserChangePasswordExample").value;
+		    	
+		    } else if (selected === 'updateuser') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUpdateProfileExample").value;
+		    	
+		    } else if (selected === 'lockuser') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserLockExample").value;
+		    	
+		    } else if (selected === 'unreguser') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUnregisterExample").value;
+		    	
+		    } else if (selected === 'verifymail') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserVerifyMailExample").value;
+		    	
+		    } 
+		    else if (selected === 'createrole'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateRoleExample").value;
 		    	
@@ -165,8 +230,25 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputAssignLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUpdateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserLoginExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLoginExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserRegisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserRegisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserRemindPasswordExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserRemindPasswordExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserChangePasswordExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserChangePasswordExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserUpdateProfileExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUpdateProfileExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserLockExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLockExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserUnregisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUnregisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputUserVerifyMailExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserVerifyMailExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
 <%
@@ -207,6 +289,22 @@ if (servizio==null) {
             <option value="updatelyr" <%= servizio.equals("updatelyr") ? "selected=\"selected\"" : ""%>>Layer - Update</option>
             <option value="deletelyr" <%= servizio.equals("deletelyr") ? "selected=\"selected\"" : ""%>>Layer - Delete</option>
             <option value="listlyr" <%= servizio.equals("listlyr") ? "selected=\"selected\"" : ""%>>Layer - List/Search</option>
+            <option value="creategrp" <%= servizio.equals("creategrp") ? "selected=\"selected\"" : ""%>>Layer Group - Create</option>
+            <option value="assignlyr" <%= servizio.equals("assignlyr") ? "selected=\"selected\"" : ""%>>Layer Group - Assign Layer</option>
+            <option value="deletegrp" <%= servizio.equals("deletegrp") ? "selected=\"selected\"" : ""%>>Layer Group - Delete</option>
+            <option value="listgrp" <%= servizio.equals("listgrp") ? "selected=\"selected\"" : ""%>>Layer Group - List/Search</option>
+            <option value="createapp" <%= servizio.equals("createapp") ? "selected=\"selected\"" : ""%>>Application - Create</option>
+            <option value="assigntoapp" <%= servizio.equals("assigntoapp") ? "selected=\"selected\"" : ""%>>Application - Update/Assign layers/group to application</option>
+            <option value="deleteapp" <%= servizio.equals("deleteapp") ? "selected=\"selected\"" : ""%>>Application - Delete</option>
+            <option value="listapp" <%= servizio.equals("listapp") ? "selected=\"selected\"" : ""%>>Application - List/Search</option>
+            <option value="login" <%= servizio.equals("login") ? "selected=\"selected\"" : ""%>>User - Login</option>
+            <option value="reguser" <%= servizio.equals("reguser") ? "selected=\"selected\"" : ""%>>User - Register</option>
+            <option value="remindpwd" <%= servizio.equals("remindpwd") ? "selected=\"selected\"" : ""%>>User - Remind Password</option>
+            <option value="changepwd" <%= servizio.equals("changepwd") ? "selected=\"selected\"" : ""%>>User - Change Password</option>
+            <option value="updateuser" <%= servizio.equals("updateuser") ? "selected=\"selected\"" : ""%>>User - Update Profile</option>
+            <option value="lockuser" <%= servizio.equals("lockuser") ? "selected=\"selected\"" : ""%>>User - Lock/Unlock</option>
+            <option value="unreguser" <%= servizio.equals("unreguser") ? "selected=\"selected\"" : ""%>>User - Unregister/Delete</option>
+            <option value="verifymail" <%= servizio.equals("verifymail") ? "selected=\"selected\"" : ""%>>User - Verify Mail</option>
             <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
             <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
             								

@@ -6,7 +6,7 @@ GeoSmartCity Data Catalogue is an applicatiton to catalog different data sources
 ## Modules:
 The application is divided into two distinct modules 
 
-* Server [services analysis] (https://github.com/GeoSmartCity-CIP/gsc-datacatalogue/wiki/GSC-Data-Catalogue-Services)
+* [Backend services] (https://github.com/GeoSmartCity-CIP/gsc-datacatalogue/wiki/GSC-Data-Catalogue-Services)
 * Client [client detail] (https://github.com/GeoSmartCity-CIP/gsc-datacatalogue/wiki/GSC-Data-Catalogue-Client)
 
 The server module contains all back-end services used by client packed as war

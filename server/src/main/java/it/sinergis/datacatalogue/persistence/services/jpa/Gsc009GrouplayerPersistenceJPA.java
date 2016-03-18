@@ -6,6 +6,8 @@
 package it.sinergis.datacatalogue.persistence.services.jpa;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -47,6 +49,18 @@ public class Gsc009GrouplayerPersistenceJPA extends GenericJpaService<Gsc009Grou
 		}
 		return false ;
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc009GrouplayerEntity entity = em.find(Gsc009GrouplayerEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public long countAll() {
@@ -62,4 +76,16 @@ public class Gsc009GrouplayerPersistenceJPA extends GenericJpaService<Gsc009Grou
 		return (Long) execute(operation);
 	}
 
+	@Override
+	public List<Gsc009GrouplayerEntity> getGroupLayers(String query) {
+		
+		return super.loadByNativeQuery(query);
+		
+	}
+
+	@Override
+	public int deleteFromList(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 }

@@ -17,12 +17,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
-import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
 
@@ -117,15 +115,17 @@ public class DatasourcesService extends ServiceCommons {
 			Gsc006DatasourceEntity datasource = getDatasourceObject(req);
 			Long requestedId = Long.parseLong(getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD));
 
-			// if no datasource with the specified name exists or if the only
-			// record found with the same name is the record to be updated
-			// itself -> update record
-			if (datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
-				// check if there's another datasource already saved with the
-				// same ID
-				Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
+			
+			// check if there's another datasource already saved with the
+			// same ID
+			Gsc006DatasourceEntity retrievedDatasource = getDatasourceObjectById(requestedId);
 
-				if (retrievedDatasource != null) {
+			if (retrievedDatasource != null) {
+				// if no datasource with the specified name exists or if the only
+				// record found with the same name is the record to be updated
+				// itself -> update record
+				if (datasource == null || datasource.getId().longValue() == requestedId.longValue()) {
+				
 					retrievedDatasource.setJson(updateDatasourceJson(req));
 					datasourcePersistence.save(retrievedDatasource);
 
@@ -133,13 +133,13 @@ public class DatasourcesService extends ServiceCommons {
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASOURCE_UPDATED, null, req);
 				} else {
-					DCException rpe = new DCException(Constants.ER602, req);
+					DCException rpe = new DCException(Constants.ER604, req);
 					return rpe.returnErrorString();
 				}
 
 				// otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER604, req);
+				DCException rpe = new DCException(Constants.ER602, req);
 				return rpe.returnErrorString();
 			}
 
@@ -177,7 +177,7 @@ public class DatasourcesService extends ServiceCommons {
 			// if results found -> delete record
 			if (datasource != null) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteDatasource(null, null, datasource.getId());
+				deleteService.deleteDatasource(null, null, datasource.getId(),null);
 
 				logger.info("Datasource succesfully deleted");
 				logger.info(req);
@@ -509,25 +509,5 @@ public class DatasourcesService extends ServiceCommons {
 			throw new DCException(Constants.ER01, newJson);
 		}
 
-	}
-
-	/**
-	 * Checks if the given parameter for organization matches the id of any
-	 * existing organization.
-	 * 
-	 * @param orgId
-	 * @return
-	 * @throws DCException
-	 * @throws NumberFormatException
-	 */
-	private void checkIdOrganizationValid(String req) throws NumberFormatException, DCException {
-		Long orgId = Long.parseLong(getKeyFromJsonText(req, Constants.ORG_FIELD));
-		Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider
-				.getService(Gsc001OrganizationPersistence.class);
-		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
-		if (orgEntity == null) {
-			DCException rpe = new DCException(Constants.ER607, req);
-			throw rpe;
-		}
 	}
 }

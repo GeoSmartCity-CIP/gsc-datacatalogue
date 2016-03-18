@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
+import it.sinergis.datacatalogue.exception.DCException;
 
 /**
  * Basic persistence operations for entity "Gsc002User"
@@ -17,7 +18,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc002UserPersistence {
+public interface Gsc002UserPersistence extends GenericPersistence {
 
 	/**
 	 * Deletes the given entity <br>
@@ -90,5 +91,22 @@ public interface Gsc002UserPersistence {
 	 * @return
 	 */
 	public long countAll();
+	
+	/**
+	 * Load organizations using native query
+	 * @param query native query
+	 * @return list of organizations
+	 */
+	public  List<Gsc002UserEntity> getUsers(String query);
+	
+	/**
+	 * Load single organization using native query.
+	 * Should be used only if sure there is only 1 record found.
+	 * If it finds more than one record error is thrown
+	 * 
+	 * @param query native query
+	 * @return list of organizations
+	 */
+	public Gsc002UserEntity getUser(String query) throws DCException;
 	
 }

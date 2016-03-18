@@ -7,6 +7,8 @@ package it.sinergis.datacatalogue.persistence.services;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import it.sinergis.datacatalogue.bean.jpa.Gsc009GrouplayerEntity;
 
 /**
@@ -17,7 +19,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc009GrouplayerEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc009GrouplayerPersistence {
+public interface Gsc009GrouplayerPersistence extends GenericPersistence{
 
 	/**
 	 * Deletes the given entity <br>
@@ -35,6 +37,14 @@ public interface Gsc009GrouplayerPersistence {
 	 */
 	public boolean delete(Long id) ;
 
+	/**
+	 * Deletes the entity by its Primary Key <br>
+	 * no Transactional operation ( no transaction involved )
+	 * @param id
+	 * @return true if found and deleted, false if not found
+	 */
+	public boolean deleteNoTrans(Long id,EntityManager em);
+	
 	/**
 	 * Inserts the given entity and commit <br>
 	 * Transactional operation ( begin transaction and commit )
@@ -90,5 +100,21 @@ public interface Gsc009GrouplayerPersistence {
 	 * @return
 	 */
 	public long countAll();
+	
+	/** NO-SQL METODS **/
+	
+	/**
+	 * Load grouplayers using native query
+	 * @param query native query
+	 * @return list of grouplayers
+	 */
+	public  List<Gsc009GrouplayerEntity> getGroupLayers(String query);
+	
+	/**
+	 * Delete from each record of this table all the instances of parameter that appear in a list within the json field.
+	 * @param query native query
+	 * @return number of rows affected by modification
+	 */
+	public int deleteFromList(String query,EntityManager em);
 	
 }
