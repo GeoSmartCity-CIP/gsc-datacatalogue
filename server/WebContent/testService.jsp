@@ -110,6 +110,14 @@
 		    } else if (selected === 'listlyr'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    	
+		    } else if (selected === 'createrole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateRoleExample").value;
+		    	
+		    } else if (selected === 'deleterole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteRoleExample").value;
 		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
@@ -157,6 +165,8 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUpdateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
 <%
@@ -197,6 +207,8 @@ if (servizio==null) {
             <option value="updatelyr" <%= servizio.equals("updatelyr") ? "selected=\"selected\"" : ""%>>Layer - Update</option>
             <option value="deletelyr" <%= servizio.equals("deletelyr") ? "selected=\"selected\"" : ""%>>Layer - Delete</option>
             <option value="listlyr" <%= servizio.equals("listlyr") ? "selected=\"selected\"" : ""%>>Layer - List/Search</option>
+            <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
+            <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
             								
 			<option value=""></option>
 		</select></td>

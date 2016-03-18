@@ -44,7 +44,7 @@ public class FunctionServiceTest extends ServiceCommons{
 	public static final String DELETE_ORG_REQ_1 = "{\"idorganization\":";	
 	//delete function request
 	public static final String DELETE_FUNC_REQ_1 = "{\"idfunction\":";
-	//lista functions request
+	//list functions request
 	public static final String LIST_FUNCTION_REQUEST_1 = "{\"organization\":\"$ID_ORG\"}";
 	//list functions request
 	public static final String LIST_FUNCTION_REQUEST_2 = "{\"organization\":\"$ID_ORG\",\"functionname\":\"TestFunction\"}";
