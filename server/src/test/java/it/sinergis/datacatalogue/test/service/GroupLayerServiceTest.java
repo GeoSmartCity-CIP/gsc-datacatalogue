@@ -53,10 +53,11 @@ public class GroupLayerServiceTest extends ServiceCommons
 	private Long lyr_id;
 	
 	/** SETUP REQUESTS. */
-	public static final String CREATE_ORG_REQ = "{\"organizationname\":\"TestOrgForGroup\",\"description\":\"Create org test\"}";
-	public static final String CREATE_DS_REQ = "{\"datasourcename\":\"DSShapeTestForGroup\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
-	public static final String CREATE_DST_REQ = "{\"datasetname\": \"datasetSHAPETestForGroup\",\"realname\": \"zone.shp\",\"description\": \"descrizione\",\"iddatasource\":";
-	public static final String CREATE_LYR_REQ = "{\"layername\":\"layerTestForGroup\",\"description\":\"unit test for layer creation\",\"iddataset\":";
+	public static final String CREATE_ORG_REQ = "{\"organizationname\":\"TestOrgForGroupLayer\",\"description\":\"Create org test\"}";
+	public static final String CREATE_DS_REQ = "{\"datasourcename\":\"DSShapeTestForGroupLayer\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\",\"organization\":";
+	public static final String CREATE_DST_REQ = "{\"datasetname\": \"datasetSHAPETestForGroupLayer\",\"realname\": \"zone.shp\",\"description\": \"descrizione\",\"iddatasource\":";
+	public static final String CREATE_LYR_REQ = "{\"layername\":\"layerTestForGroupLayer\",\"description\":\"unit test for layer creation\",\"iddataset\":";
+
 	/** CLEANUP REQUESTS. */
 	public static final String DELETE_ORG_REQ = "{\"idorganization\":";
 	//request end

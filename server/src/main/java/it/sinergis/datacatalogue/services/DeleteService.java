@@ -112,27 +112,12 @@ public class DeleteService extends ServiceCommons {
 						LAYER_PATH);
 				gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,em);
 				
-//				EntityTransaction innerTransaction = null;
-//				EntityManager innerEm = null;
-//				try {
-//					innerEm = jpaEnvironment.getEntityManagerFactory().createEntityManager();
-//					innerTransaction = jpaEnvironment.openTransaction(innerEm);
-//					gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,innerEm);
-//				} catch(Exception e) {
-//					logger.error("Error in the delete service occurred. Transaction has been rolled back.",e);
-//					innerTransaction.rollback();
-//					throw new DCException(Constants.ER16);
-//				} finally {
-//					innerEm.close();
-//				}
-				
-//				String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
-//						Constants.JSON_COLUMN_NAME,
-//						LAYER_ID_ASSIGNMENT+selfId+LAYER_ID_ASSIGNMENT_END,
-//						LAYER_PATH);
-//				gsc010Dao.deleteFromList(queryRemoveLayerFromApplication,em);
-				
-				//we need to explicitly handle deletion of tables that rely on this entity
+				String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+						Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT + selfId + LAYER_ID_ASSIGNMENT_END, LAYER_PATH);
+				gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
+
+				// we need to explicitly handle deletion of tables that rely on
+				// this entity
 				List<Long> predIds = new ArrayList<Long>();
 				predIds.add(selfId);
 				
@@ -162,28 +147,15 @@ public class DeleteService extends ServiceCommons {
 									Constants.JSON_COLUMN_NAME,
 									LAYER_ID_ASSIGNMENT+((Gsc008LayerEntity) retrievedLayer).getId()+LAYER_ID_ASSIGNMENT_END,
 									LAYER_PATH);
-							gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,em);
-							
-//							EntityTransaction innerTransaction = null;
-//							EntityManager innerEm = null;
-//							try {
-//								innerEm = jpaEnvironment.getEntityManagerFactory().createEntityManager();
-//								innerTransaction = jpaEnvironment.openTransaction(innerEm);
-//								gsc009Dao.deleteFromList(queryRemoveLayerFromGroups,innerEm);
-//							} catch(Exception e) {
-//								logger.error("Error in the delete service occurred. Transaction has been rolled back.",e);
-//								innerTransaction.rollback();
-//								throw new DCException(Constants.ER16);
-//							} finally {
-//								innerEm.close();
-//							}
-							
-//							String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
-//									Constants.JSON_COLUMN_NAME,
-//									LAYER_ID_ASSIGNMENT+((Gsc008LayerEntity) retrievedLayer).getId()+LAYER_ID_ASSIGNMENT_END,
-//									LAYER_PATH);
-//							gsc010Dao.deleteFromList(queryRemoveLayerFromApplication,em);
-							
+						gsc009Dao.deleteFromList(queryRemoveLayerFromGroups, em);
+
+							String queryRemoveLayerFromApplication = createDeleteFromListQuery(
+									Constants.APPLICATION_TABLE_NAME,
+									Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT
+											+ ((Gsc008LayerEntity) retrievedLayer).getId() + LAYER_ID_ASSIGNMENT_END,
+									LAYER_PATH);
+							gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
+
 							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
 						}
 					}
@@ -257,13 +229,12 @@ public class DeleteService extends ServiceCommons {
 				
 				//need to handle deletion on entities that have this entity as a list within their json
 				// APPLICATIONS
-//				String queryRemoveGroupsFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
-//						Constants.JSON_COLUMN_NAME,
-//						GROUP_ID_ASSIGNMENT+selfId+GROUP_ID_ASSIGNMENT_END,
-//						GROUP_PATH);
-//				gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication,em);
-				
-				//we need to explicitly handle deletion of tables that rely on this entity
+				String queryRemoveGroupsFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
+						Constants.JSON_COLUMN_NAME, GROUP_ID_ASSIGNMENT + selfId + GROUP_ID_ASSIGNMENT_END, GROUP_PATH);
+				gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication, em);
+
+				// we need to explicitly handle deletion of tables that rely on
+				// this entity				
 				List<Long> predIds = new ArrayList<Long>();
 				predIds.add(selfId);
 				
@@ -290,11 +261,12 @@ public class DeleteService extends ServiceCommons {
 							
 							//need to handle deletion on entities that have this entity as a list within their json
 							// APPLICATIONS
-//							String queryRemoveGroupsFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
-//									Constants.JSON_COLUMN_NAME,
-//									GROUP_ID_ASSIGNMENT+((Gsc009GrouplayerEntity) retrievedGroup).getId()+GROUP_ID_ASSIGNMENT_END,
-//									GROUP_PATH);
-							//gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication,em);
+							String queryRemoveGroupsFromApplication = createDeleteFromListQuery(
+									Constants.APPLICATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,
+									GROUP_ID_ASSIGNMENT + ((Gsc009GrouplayerEntity) retrievedGroup).getId()
+											+ GROUP_ID_ASSIGNMENT_END,
+									GROUP_PATH);
+							gsc010Dao.deleteFromList(queryRemoveGroupsFromApplication, em);
 							
 							deletedSelfId.add(((Gsc009GrouplayerEntity) retrievedGroup).getId());
 						}
