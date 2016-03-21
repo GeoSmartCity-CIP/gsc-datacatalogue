@@ -3,8 +3,8 @@ package it.sinergis.datacatalogue.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
-import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
+import org.apache.log4j.Logger;
+
 import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
@@ -12,22 +12,20 @@ import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc002UserPersistenceJPA;
 
-import org.apache.log4j.Logger;
-
 public class RolesService extends ServiceCommons{
 
 	/** Logger. */
 	private static Logger logger;
 	
 	/** Gsc003RolePersistence  DAO. */
-	Gsc003RolePersistence rolePersistence;
+	private Gsc003RolePersistence gsc003dao;
 		
 	/**
 	 * Constructor
 	 */	
 	public RolesService() {
 		logger = Logger.getLogger(this.getClass());		
-		rolePersistence = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
+		gsc003dao = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
 	}
 
 	/**
@@ -37,10 +35,12 @@ public class RolesService extends ServiceCommons{
 	 */	
 	public String createRole(String req){
 		try{
-			checkJsonWellFormed(req);
+			preliminaryChecks(req,Constants.CREATE_ROLE);
 			ArrayList<String> params = new ArrayList<String>();
 			params.add(Constants.ORG_FIELD);
 			params.add(Constants.ROLE_NAME_FIELD);
+			
+			checkIdOrganizationValid(req);
 			
 			//check if there's another role already saved with the same name
 			Gsc003RoleEntity role = getRoleObject(req);
@@ -50,15 +50,15 @@ public class RolesService extends ServiceCommons{
 				Gsc003RoleEntity newRole = new Gsc003RoleEntity();
 				newRole.setJson(req);
 				
-				rolePersistence.insert(newRole);
+				newRole = gsc003dao.save(newRole);
 				
 				logger.info("Role succesfully created");
 				logger.info(req);
-				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_CREATED,null,req);
+				return createJsonStatus(Constants.STATUS_DONE,Constants.ROLE_CREATED,newRole.getId(),req);
 				
 			//otherwise an error message will be return
 			} else {
-				DCException rpe = new DCException(Constants.ER101);
+				DCException rpe = new DCException(Constants.ER301, req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -67,7 +67,7 @@ public class RolesService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("create role service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01, req);
 			logger.error("createRole service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -76,19 +76,26 @@ public class RolesService extends ServiceCommons{
 	
 	/**
 	 * Delete a role from database	
-	 * @param req role's data (JSON format). Required JSON parameters : rolename and organization
+	 * @param req role's data (JSON format). Required JSON parameters : roleId
 	 * @return role's result (JSON format)
 	 */		
 	public String deleteRole(String req){
 		try{
-			checkJsonWellFormed(req);
+			preliminaryChecks(req,Constants.DELETE_ROLE);
+			
+			Long roleId = Long.parseLong(getFieldValueFromJsonText(req, Constants.ROLE_ID_FIELD));
 			
 			//check if there's another organization already saved with the same name
-			Gsc003RoleEntity role = getRoleObject(req);
+			Gsc003RoleEntity role = getRoleObjetctById(roleId);
 							
 			//if results found -> delete record
 			if(role != null) {
-				rolePersistence.delete(role);
+				
+				boolean deleteResult = gsc003dao.delete(role);
+				
+				if(!deleteResult){					
+					throw new DCException(Constants.ER01, req);					
+				}
 				
 				logger.info("Role succesfully deleted");
 				logger.info(req);
@@ -96,7 +103,7 @@ public class RolesService extends ServiceCommons{
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER103);
+				DCException rpe = new DCException(Constants.ER303, req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -105,7 +112,7 @@ public class RolesService extends ServiceCommons{
 			return rpe.returnErrorString();
 		} catch(Exception e) {
 			logger.error("delete role service error",e);
-			DCException rpe = new DCException(Constants.ER01);
+			DCException rpe = new DCException(Constants.ER01, req);
 			logger.error("deleteRole service: unhandled error "+ rpe.returnErrorString());
 			
 			return rpe.returnErrorString();
@@ -123,10 +130,10 @@ public class RolesService extends ServiceCommons{
 				String queryText = "'" + Constants.ORG_FIELD + "' = '"+ getKeyFromJsonText(req,Constants.ORG_FIELD) +"' AND '" + Constants.ROLE_NAME_FIELD + "' LIKE '"+getKeyFromJsonText(req,Constants.ROLE_NAME_FIELD)+"%'";
 				query = createQuery(queryText, Constants.ROLE_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 				
-				roles = rolePersistence.loadByNativeQuery(query);
+				roles = gsc003dao.loadByNativeQuery(query);
 			}
 			else
-				roles = rolePersistence.loadAll();
+				roles = gsc003dao.loadAll();
 									
 			logger.info("Roles found: " + roles.size());
 			
@@ -199,6 +206,16 @@ public class RolesService extends ServiceCommons{
 	}
 	
 	/**
+	 * Retrieves the Role identified by the id parameter.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private Gsc003RoleEntity getRoleObjetctById(Long id){
+		return (Gsc003RoleEntity) gsc003dao.load(id);
+	}
+	
+	/**
 	 * Retrieves the role given an organization and role name.
 	 * 
 	 * @param json
@@ -211,6 +228,6 @@ public class RolesService extends ServiceCommons{
 		params.add(Constants.ROLE_NAME_FIELD);
 		
 		//check if there's another role already saved with the same name
-		return (Gsc003RoleEntity) getRowObject(json, Constants.ROLE_TABLE_NAME, params, rolePersistence);
+		return (Gsc003RoleEntity) getRowObject(json, Constants.ROLE_TABLE_NAME, params, gsc003dao);
 	}		
 }

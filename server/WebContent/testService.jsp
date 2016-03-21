@@ -110,7 +110,7 @@
 		    } else if (selected === 'listlyr') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
-		    
+		    			    		    
 		    } else if(selected === 'creategrp'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateGroupLayerExample").value;
@@ -175,6 +175,14 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserVerifyMailExample").value;
 		    	
+		    } 
+		    else if (selected === 'createrole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateRoleExample").value;
+		    	
+		    } else if (selected === 'deleterole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteRoleExample").value;
 		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
@@ -238,6 +246,8 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUserLockExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLockExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUserUnregisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUnregisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUserVerifyMailExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserVerifyMailExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
@@ -295,7 +305,9 @@ if (servizio==null) {
             <option value="lockuser" <%= servizio.equals("lockuser") ? "selected=\"selected\"" : ""%>>User - Lock/Unlock</option>
             <option value="unreguser" <%= servizio.equals("unreguser") ? "selected=\"selected\"" : ""%>>User - Unregister/Delete</option>
             <option value="verifymail" <%= servizio.equals("verifymail") ? "selected=\"selected\"" : ""%>>User - Verify Mail</option>
-            											
+            <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
+            <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
+            								
 			<option value=""></option>
 		</select></td>
 	</tr>

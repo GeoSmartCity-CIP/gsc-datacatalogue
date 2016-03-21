@@ -35,7 +35,6 @@ public final class Constants {
 	public static final String ROLE_NAME_FIELD = "rolename";
 	public static final String ORG_FIELD = "organization";
 	public static final String STATUS_FIELD = "status";
-	public static final String ROLE_ID_FIELD = "idrole";
 	public static final String NAME_FIELD = "name";
 	public static final String USERS_FIELD = "users";
 	public static final String ID_FIELD = "id";
@@ -85,7 +84,7 @@ public final class Constants {
 	public static final String GROUP_LAYER = "grouplayers";
 	public static final String GROUPS = "groups";
 	
-	/** Function field names */
+	/** Function field names. */
 	public static final String FUNC_NAME_FIELD = "functionname";
 	public static final String FUNC_ID_FIELD = "idfunction";
 	
@@ -97,7 +96,11 @@ public final class Constants {
 	/** E-mail constants. */
 	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
 	public static final String SUB_CHANGE_PASSWORD = "Password Change Process";
-			
+	
+	
+	/** Role field names. */
+	public static final String ROLE_ID_FIELD = "idrole";
+	
 	/** ERRORS */
 	public static final String ER01 = "ER01";
 	public static final String ER02 = "ER02";
@@ -201,6 +204,9 @@ public final class Constants {
 	public static final String ER1007 = "ER1007";
 	public static final String ER1008 = "ER1008";
 	
+	/** Role errors. */
+	public static final String ER301 = "ER301";
+	public static final String ER303 = "ER303";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -236,7 +242,7 @@ public final class Constants {
 	public static final String USER_UNREGISTERED = "USER_UNREGISTERED";
 	public static final String USER_DELETED = "USER_DELETED";
 	public static final String USER_EMAIL_VERIFIED = "USER_EMAIL_VERIFIED";
-	
+		
 	/** Services names. */
 	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
 	public static final String UPDATE_ORGANIZATION = "UPDATE_ORGANIZATION";
@@ -277,6 +283,8 @@ public final class Constants {
 	public static final String LOCK_USER = "LOCK_USER";
 	public static final String UNREGISTER_USER = "UNREGISTER_USER";
 	public static final String VERIFY_MAIL = "VERIFY_MAIL";
+	public static final String CREATE_ROLE = "CREATE_ROLE";
+	public static final String DELETE_ROLE = "DELETE_ROLE";
 	
 	/** Values. */
 	public static final String TRUE = "true";
