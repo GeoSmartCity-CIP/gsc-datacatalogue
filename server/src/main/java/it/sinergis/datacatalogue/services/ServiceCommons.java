@@ -23,6 +23,7 @@ import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.GenericPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
+import it.sinergis.datacatalogue.persistence.services.util.MailUtils;
 
 public class ServiceCommons {
 
@@ -30,15 +31,15 @@ public class ServiceCommons {
 	private static Logger logger;
 
 	/** Jackson object mapper. */
-	ObjectMapper om;
+	protected ObjectMapper om;
 	
-	/** Mail property reader. */
-	PropertyReader mailPropertyReader;
+	/** MailUtils. */
+	protected MailUtils mailUtils;
 
 	public ServiceCommons() {
 		logger = Logger.getLogger(this.getClass());
 		om = new ObjectMapper();
-		mailPropertyReader = new PropertyReader("mail.properties");
+		mailUtils = new MailUtils();		
 	}
 
 	protected void checkJsonWellFormed(String jsonText) throws DCException {

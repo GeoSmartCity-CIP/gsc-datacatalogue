@@ -56,8 +56,13 @@ public final class Constants {
 	public static final String APPLICATION_RESULT = "applications";
 	public static final String TO_BE_VERIFIED = "tobeverified";
 	public static final String VERIFIED = "verified";
+	public static final String LOCKED = "locked";
 	public static final String UUID = "uuid";
 	public static final String CONFIRM_PASSWORD_FIELD = "confirmpassword";
+	public static final String NEW_PASSWORD_FIELD = "newpassword";
+	public static final String CONFIRM_NEW_PASSWORD_FIELD = "confirmnewpassword";
+	public static final String OLD_PASSWORD_FIELD = "oldpassword";
+	public static final String LOCK_FIELD = "lock";
 	/** List element header names. */
 	public static final String ORGANIZATIONS_FIELD = "organizations";
 	public static final String ROLES_FIELD = "roles";
@@ -90,7 +95,8 @@ public final class Constants {
 	public static final String USER_EMAIL_FIELD = "email";
 	
 	/** E-mail constants. */
-	public static final String MAIL_SUBJECT = "Datacatalogue Complete Registration Process";
+	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
+	public static final String SUB_CHANGE_PASSWORD = "Password Change Process";
 			
 	/** ERRORS */
 	public static final String ER01 = "ER01";
@@ -111,6 +117,7 @@ public final class Constants {
 	public static final String ER19 = "ER19";
 	public static final String ER20 = "ER20";
 	public static final String ER21 = "ER21";
+	public static final String ER22 = "ER22";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -140,6 +147,10 @@ public final class Constants {
 	public static final String ER208 = "ER208";
 	public static final String ER209 = "ER209";
 	public static final String ER210 = "ER210";
+	public static final String ER211 = "ER211";
+	public static final String ER212 = "ER212";
+	public static final String ER213 = "ER213";
+	public static final String ER214 = "ER214";
 	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";	

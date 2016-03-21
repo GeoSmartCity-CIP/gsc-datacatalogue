@@ -51,6 +51,18 @@ public class Gsc002UserPersistenceJPA extends GenericJpaService<Gsc002UserEntity
 		}
 		return false ;
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc002UserEntity entity = em.find(Gsc002UserEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public long countAll() {

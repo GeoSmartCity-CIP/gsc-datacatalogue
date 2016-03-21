@@ -9,19 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
-import javax.mail.BodyPart;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
-import javax.mail.internet.MimeMultipart;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -41,8 +31,6 @@ import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
 
 public class UsersService extends ServiceCommons {
 
-	private static String RESPONSE_JSON_STATUS_DONE = "{Status:'Done',Description:'Operation ok'}";
-	
 	/** Logger. */
 	private static Logger logger;
 
@@ -59,13 +47,22 @@ public class UsersService extends ServiceCommons {
 		logger = Logger.getLogger(this.getClass());
 		gsc002Dao = PersistenceServiceProvider.getService(Gsc002UserPersistence.class);
 		gsc003Dao = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
+		
 		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	}
 	
+	/**
+	 * This method is called by clicking on the link in the complete registration process.
+	 * If the link is correct the system will complete the user registration.
+	 * 
+	 * @param uuid
+	 * @param id
+	 * @return
+	 */
 	public String verifyMail(String uuid,String id) {
-		logger.debug("Verification service ...");
-		logger.debug("uuid="+ uuid);
-		logger.debug("id="+ id);
+		logger.info("Verification service ...");
+		logger.info("uuid="+ uuid);
+		logger.info("id="+ id);
 		try {
 			//get the record with the given id
 			Gsc002UserEntity retrievedUser = getUserObjectById(Long.parseLong(id));
@@ -91,6 +88,8 @@ public class UsersService extends ServiceCommons {
 					node.remove(Constants.UUID);
 					retrievedUser.setJson(om.writeValueAsString(node));
 					gsc002Dao.save(retrievedUser);
+					
+					logger.info("User email succesfully verified");
 					
 					return createJsonStatus(Constants.STATUS_DONE, Constants.USER_EMAIL_VERIFIED);
 				}
@@ -123,15 +122,13 @@ public class UsersService extends ServiceCommons {
 			// preliminary checks on the request parameters
 			preliminaryChecks(req, Constants.LOGIN);
 			
-			String username = getFieldValueFromJsonText(req, Constants.USERNAME_FIELD);
-			
 			//checks if there is a row having the inserted username 
-			user = getUserObjectByUsername(username);
+			user = getUserObject(req,true,false);
 			
 			//if no results are found throw exception
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER13,req);
+				DCException ex = new DCException(Constants.ER22,req);
 				throw ex;
 			}
 
@@ -145,8 +142,6 @@ public class UsersService extends ServiceCommons {
 					//check if the lockTime parameter time has expired. 
 					String lockTimeString = getFieldValueFromJsonText(user.getJson(), Constants.LOCK_TIME);
 					Date lockTime = sdf.parse(lockTimeString);
-//					//add 30 mins to current date
-//					Date thirtyMinsAhead = addMinutesToDate(new Date(), 30);
 					//If lock time has not expired throw an exception
 					//otherwise continue execution
 					if((new Date()).before(lockTime)) {
@@ -167,10 +162,17 @@ public class UsersService extends ServiceCommons {
 				}
 			}
 
-			//checks if the user registration is complete: status = 'verified', otherwise throw exception
-			if(!Constants.VERIFIED.equalsIgnoreCase(getFieldValueFromJsonText(user.getJson(),Constants.STATUS_FIELD))) {
-				logger.error("The user that is trying to login has not completed his/her registration yet by clicking on the link of the mail that has been sent to him/her");
-				DCException rpe = new DCException(Constants.ER208, req);
+			//checks if the user registration is complete: status = 'verified', otherwise throw exception+
+			String statusField = getFieldValueFromJsonText(user.getJson(),Constants.STATUS_FIELD);
+			if(!Constants.VERIFIED.equalsIgnoreCase(statusField)) {
+				DCException rpe = null;
+				if(statusField.equalsIgnoreCase(Constants.TO_BE_VERIFIED)) {
+					logger.error("The user that is trying to login has not completed his/her registration yet by clicking on the link of the mail that has been sent to him/her");
+					rpe = new DCException(Constants.ER208, req);
+				} else if(statusField.equalsIgnoreCase(Constants.LOCKED)) {
+					logger.error("Access denied: this user profile has been locked.");
+					rpe = new DCException(Constants.ER211, req);
+				}
 				throw rpe;
 			}
 			//checks if the password values correspond, otherwise throw exception
@@ -219,6 +221,9 @@ public class UsersService extends ServiceCommons {
 				user.setJson(om.writeValueAsString(json));
 				gsc002Dao.save(user);
 			}
+			
+			logger.info("User succesfully logged");
+			logger.info(req);
 			
 			return om.writeValueAsString(rootNode);
 			//return createJsonStatus(Constants.STATUS_DONE, Constants.LOGIN_SUCCESFUL, user.getId(), req);
@@ -307,11 +312,12 @@ public class UsersService extends ServiceCommons {
 				
 				//send verification mail with the link to the verifyEmail service (with the UUID parameter)
 				//the user can complete his registration by clicking the given link
-				String text = buildTextMessage(uuid,user.getId());
-				sendMail(Constants.MAIL_SUBJECT,text,getFieldValueFromJsonText(req, Constants.USER_EMAIL_FIELD));
+				String text = mailUtils.buildTextMessage(uuid,user.getId());
+				mailUtils.sendMail(Constants.SUB_COMPLETE_REGISTRATION,text,getFieldValueFromJsonText(req, Constants.USER_EMAIL_FIELD));
 
 				logger.info("User registration done. To complete the register process check your email and click on the given link.");
 				logger.info(req);
+				
 				return createJsonStatus(Constants.STATUS_DONE, Constants.USER_REGISTERED, user.getId(), req);
 
 				// otherwise an error message will be return
@@ -348,29 +354,325 @@ public class UsersService extends ServiceCommons {
 		}		
 	}
 
+	/**
+	 * This method allows users who forgot their password to get a new one.
+	 * The new password will be mailed to the provided email address.
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String remindPassword(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		Gsc002UserEntity user = null;
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.REMIND_PASSWORD);
+			
+			
+			String username = getFieldValueFromJsonText(req, Constants.USERNAME_FIELD);
+			String email = getFieldValueFromJsonText(req, Constants.USER_EMAIL_FIELD);
+			
+			// If both username and email are specified throw exception
+			if(username != null && email != null) {
+				logger.error("Bad request: cannot specify both username and email parameters.");
+				DCException rpe = new DCException(Constants.ER212, req);
+				throw rpe;
+			//if username is specified, look for the corresponding record and get its email address
+			} else if(username != null) {
+				user = getUserObject(req,true,false);
+				if(user == null) {
+					logger.error("The specified user does not exist.");
+					DCException ex = new DCException(Constants.ER22,req);
+					throw ex;
+				}
+				email = getFieldValueFromJsonText(user.getJson(),Constants.USER_EMAIL_FIELD);
+			
+			//if the email is not null get the user record corresponding to the specified mail
+			} else if(email != null) {
+				user = getUserObject(req,false,true);
+				if(user == null) {
+					logger.error("No user is associated to the specified mail.");
+					DCException ex = new DCException(Constants.ER214,req);
+					throw ex;
+				}
+			//if none of the two parameters were specified throw exception
+			} else {
+				logger.error("Bad request: it is mandatory to specify one among username and email parameters.");
+				DCException rpe = new DCException(Constants.ER213, req);
+				throw rpe;
+			}
+			
+			//generate random new password
+			String newPassword = RandomStringUtils.randomAlphanumeric(10);
+			//Send mail containing the new password
+			String text = "Your new password is:"+newPassword;
+			mailUtils.sendMail(Constants.SUB_CHANGE_PASSWORD,text,email);
+			//update the record with the new generated password (after encryption)
+			Map<String,String> values = new HashMap<String,String>();
+			values.put(Constants.PASSWORD_FIELD,encryptPassword(newPassword,Constants.SHA1));
+			String userJson = addJsonFields(user.getJson(), values);
+			user.setJson(userJson);
+			user = gsc002Dao.save(user);
+			
+			logger.info("new user password succesfully sent");
+			logger.info(req);
+			
+			return createJsonStatus(Constants.STATUS_DONE, Constants.RETRIEVE_PASSWORD_MAIL_SENT, user.getId(), req);
+			
+		} catch(Exception e) {
+			if(e instanceof DCException) {
+				return ((DCException) e).returnErrorString();	
+			} else if(e instanceof NumberFormatException) {
+				logger.error("inserted id parameter is not a number", e);
+				DCException rpe = new DCException(Constants.ER12, req);
+				return rpe.returnErrorString();
+			} else {
+				logger.error("register user service error", e);
+				DCException rpe = new DCException(Constants.ER01, req);
+				logger.error("register user service: unhandled error " + rpe.returnErrorString());
+				return rpe.returnErrorString();
+			}
+		}		
+			
 	}
 	
+	/**
+	 * Allows users to change their password.
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String changePassword(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.CHANGE_PASSWORD);
+			
+			//Check if the username exists
+			Gsc002UserEntity user = getUserObject(req,true,false);
+			if(user == null) {
+				logger.error("The specified user does not exist.");
+				DCException ex = new DCException(Constants.ER22,req);
+				throw ex;
+			}
+			
+			//check if new password and confirm new password are the same
+			if(!getFieldValueFromJsonText(req, Constants.NEW_PASSWORD_FIELD).equalsIgnoreCase(getFieldValueFromJsonText(req, Constants.CONFIRM_NEW_PASSWORD_FIELD))) {
+				logger.error("new password and confirm new password parameters do not match.");
+				DCException rpe = new DCException(Constants.ER210, req);
+				throw rpe;
+			}
+			
+			//check oldPassword is correct
+			String oldPasswordRetrieved = getFieldValueFromJsonText(user.getJson(), Constants.PASSWORD_FIELD);
+			String oldPasswordParameter = encryptPassword(getFieldValueFromJsonText(req, Constants.OLD_PASSWORD_FIELD), Constants.SHA1);
+			if(!oldPasswordRetrieved.equalsIgnoreCase(oldPasswordParameter)) {
+				logger.error("Access denied: incorrect password.");
+				DCException rpe = new DCException(Constants.ER209, req);
+				throw rpe;
+			}
+			
+			//UpdateRecord change old password to new encrypted one
+			ObjectNode jsonNode = (ObjectNode) om.readTree(user.getJson());
+			String encryptedNewPassword = encryptPassword(getFieldValueFromJsonText(req, Constants.NEW_PASSWORD_FIELD),Constants.SHA1);
+			jsonNode.put(Constants.PASSWORD_FIELD,encryptedNewPassword);
+			user.setJson(om.writeValueAsString(jsonNode));
+			gsc002Dao.save(user);
+			
+			logger.info("User password succesfully changed");
+			logger.info(req);
+			
+			return createJsonStatus(Constants.STATUS_DONE, Constants.PASSWORD_SUCCESFULLY_CHANGED, user.getId(), req);
+			
+		} catch(Exception e) {
+			if(e instanceof DCException) {
+				return ((DCException) e).returnErrorString();	
+			} else {
+				logger.error("register user service error", e);
+				DCException rpe = new DCException(Constants.ER01, req);
+				logger.error("register user service: unhandled error " + rpe.returnErrorString());
+				return rpe.returnErrorString();
+			}
+		}		
 	}
 	
+	/**
+	 * This method allows users to update his/her profile information. All previous content will be replaced
+	 * by the new one exception made for system information (status fields) and password which has its own modify method.
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String updateUser(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.UPDATE_USER);
+			
+			//Check if the username exists
+			Gsc002UserEntity user = getUserObject(req,true,false);
+			if(user == null) {
+				logger.error("The specified user does not exist.");
+				DCException ex = new DCException(Constants.ER22,req);
+				throw ex;
+			}
+			
+			//Check if all the specified organizations exist
+			ArrayNode orgs = (ArrayNode) om.readTree(req).path(Constants.ORGANIZATIONS_FIELD);
+			for(JsonNode org : orgs) {
+				checkIdOrganizationValid(om.writeValueAsString(org));
+			}
+			
+			//Update profile
+			//we assume that all the parameters given in the request are all the parameters we need.
+			//so we put everything we find in the new record
+			//adding password and status fields as found in the old one
+			ObjectNode jsonNode = (ObjectNode) om.readTree(req);
+			jsonNode.put(Constants.PASSWORD_FIELD,getFieldValueFromJsonText(user.getJson(), Constants.PASSWORD_FIELD));
+			jsonNode.put(Constants.STATUS_FIELD,getFieldValueFromJsonText(user.getJson(), Constants.STATUS_FIELD));
+			user.setJson(om.writeValueAsString(jsonNode));
+			gsc002Dao.save(user);
+			
+			logger.info("User succesfully updated");
+			logger.info(req);
+			
+			return createJsonStatus(Constants.STATUS_DONE, Constants.USER_PROFILE_UPDATED, user.getId(), req);
+			
+		} catch(Exception e) {
+			if(e instanceof DCException) {
+				return ((DCException) e).returnErrorString();	
+			} else if(e instanceof NumberFormatException) {
+				logger.error("inserted id parameter is not a number", e);
+				DCException rpe = new DCException(Constants.ER12, req);
+				return rpe.returnErrorString();
+			} else {
+				logger.error("register user service error", e);
+				DCException rpe = new DCException(Constants.ER01, req);
+				logger.error("register user service: unhandled error " + rpe.returnErrorString());
+				return rpe.returnErrorString();
+			}
+		}		
 	}
 	
+	/**
+	 * This method allows an administrator user to lock or unlock the user specified in the request.
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String lockUser(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.LOCK_USER);
+			
+			//Check if the username exists
+			Gsc002UserEntity user = getUserObject(req,true,false);
+			if(user == null) {
+				logger.error("The specified user does not exist.");
+				DCException ex = new DCException(Constants.ER22,req);
+				throw ex;
+			}
+			
+			//Lock the user (set status = locked)
+			ObjectNode jsonNode = (ObjectNode) om.readTree(user.getJson());
+			String lockField = getFieldValueFromJsonText(req, Constants.LOCK_FIELD);
+			if("true".equalsIgnoreCase(lockField)) {
+				jsonNode.put(Constants.STATUS_FIELD,Constants.LOCKED);
+			} else if("false".equalsIgnoreCase(lockField)) {
+				jsonNode.put(Constants.STATUS_FIELD,Constants.VERIFIED);
+			} else {
+				logger.error("Lock can only be either true or false.");
+				DCException ex = new DCException(Constants.ER204,req);
+				throw ex;
+			}
+			user.setJson(om.writeValueAsString(jsonNode));
+			gsc002Dao.save(user);
+			
+			String statusDescription = lockField.equalsIgnoreCase("true") ? Constants.USER_LOCKED : Constants.USER_UNLOCKED;
+			
+			logger.info("User succesfully locked/unlocked");
+			logger.info(req);
+			
+			return createJsonStatus(Constants.STATUS_DONE, statusDescription, user.getId(), req);
+			
+		} catch(Exception e) {
+			if(e instanceof DCException) {
+				return ((DCException) e).returnErrorString();	
+			} else if(e instanceof NumberFormatException) {
+				logger.error("inserted id parameter is not a number", e);
+				DCException rpe = new DCException(Constants.ER12, req);
+				return rpe.returnErrorString();
+			} else {
+				logger.error("register user service error", e);
+				DCException rpe = new DCException(Constants.ER01, req);
+				logger.error("register user service: unhandled error " + rpe.returnErrorString());
+				return rpe.returnErrorString();
+			}
+		}		
 	}
 	
+	/**
+	 * This methd allows any user to unregister himself from the system. If so the user must provide his own password 
+	 * in the request. Otherwise it can allow an administrator user to delete any other user. The administrator user
+	 * will not provide his credentials.
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String unregisterUser(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.UNREGISTER_USER);
+			
+			//Check if the username exists
+			Gsc002UserEntity user = getUserObject(req,true,false);
+			if(user == null) {
+				logger.error("The specified user does not exist.");
+				DCException ex = new DCException(Constants.ER22,req);
+				throw ex;
+			}
+			
+			//if the user is trying to unregister he will have to provide his own password
+			//if so check if the password corresponds to the retrieved user pass
+			//if the password parameter is not provided it means that the admin user is deleting the profile. If so no checks are performed.
+			String providedPassword = getFieldValueFromJsonText(req, Constants.PASSWORD_FIELD);
+			if(providedPassword != null) {
+				String retrievedPassword = getFieldValueFromJsonText(user.getJson(), Constants.PASSWORD_FIELD);
+				if(!encryptPassword(providedPassword, Constants.SHA1).equalsIgnoreCase(retrievedPassword)) {
+					logger.error("Access denied: incorrect password.");
+					DCException ex = new DCException(Constants.ER209,req);
+					throw ex;
+				}
+			}
+			
+			//delete the record
+			DeleteService deleteService = new DeleteService();
+			deleteService.deleteUser(user.getId());
+			
+			//how to check if it's the user unregistering or another user (admin) deleting--> check the password parameter
+			String statusDescription = providedPassword == null ? Constants.USER_DELETED : Constants.USER_UNREGISTERED;
+			
+			logger.info("User succesfully deleted/unregistered");
+			logger.info(req);
+			
+			return createJsonStatus(Constants.STATUS_DONE, statusDescription, user.getId(), req);
+		} catch(Exception e) {
+			if(e instanceof DCException) {
+				return ((DCException) e).returnErrorString();	
+			} else if(e instanceof NumberFormatException) {
+				logger.error("inserted id parameter is not a number", e);
+				DCException rpe = new DCException(Constants.ER12, req);
+				return rpe.returnErrorString();
+			} else {
+				logger.error("register user service error", e);
+				DCException rpe = new DCException(Constants.ER01, req);
+				logger.error("register user service: unhandled error " + rpe.returnErrorString());
+				return rpe.returnErrorString();
+			}
+		}		
 	}
 
 	
 	/**
 	 * Iterates on the organization list specified in the request.
+	 * For each of those throws an exception if it does not exist.
 	 * 
 	 * @param req
 	 * @throws JsonProcessingException
@@ -405,87 +707,7 @@ public class UsersService extends ServiceCommons {
 		return (Gsc002UserEntity) getRowObject(json, Constants.USER_TABLE_NAME, params,
 				gsc002Dao);
 	}
-	
-	public void sendMail(String subject, String text, String address)
-            throws DCException {
-        try {  
-            Multipart multipart = new MimeMultipart();
-            MimeMessage msg = buildMimeMessage(multipart, subject, text, address);        
-            msg.setContent(multipart);            
-            Transport.send(msg);           
-        }
-        catch (DCException dce) {
-            throw dce;
-        } catch(javax.mail.SendFailedException e) {
-        	if(e.getMessage().equalsIgnoreCase("Invalid addresses")) {
-        		logger.error("Registration unsuccessful: the specified email address does not exist.", e);
-                throw new DCException(Constants.ER17);
-        	}
-			logger.error("registration unsuccessful: error while sending verification mail.", e);
-            throw new DCException(Constants.ER18);
-		}
-        catch (Exception e) {
-            logger.error("Error sending mail", e);
-            throw new DCException(Constants.ER01);
-        }
-    }
-	
-	private MimeMessage buildMimeMessage(Multipart multipart, String subject, String text, String address) throws DCException {
-        
-		try {
 
-	        InternetAddress from = new InternetAddress(mailPropertyReader.getValue(Constants.SENDER_ADDRESS));
-	        Properties prop = new Properties();
-	        prop.put(Constants.MAIL_SMTP_HOST,mailPropertyReader.getValue(Constants.MAIL_SMTP_HOST));
-	        prop.put(Constants.MAIL_SMTP_PORT,mailPropertyReader.getValue(Constants.MAIL_SMTP_PORT));
-	        
-	        Session mailSession = Session.getDefaultInstance(prop);
-	        MimeMessage msg = new MimeMessage(mailSession);
-	        
-	        msg.setSubject(subject);
-	        msg.setFrom(from);
-	        msg.setSender(from);
-	        msg.setSentDate(new Date());
-	        
-	        msg.addRecipient(RecipientType.TO, new InternetAddress(address));
-	        
-	        BodyPart bodyPartText = new MimeBodyPart();
-	        
-	        ((MimeBodyPart) bodyPartText).setText(text,"UTF-8", "html");
-	        multipart.addBodyPart(bodyPartText);
-	        
-	        return msg;
-		} catch (Exception e) {
-			logger.error("Error building mime message", e);
-            throw new DCException(Constants.ER01);
-		}
-    }
-	
-	private String buildTextMessage(UUID uuid,Long rowId) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("'http://");
-		sb.append(mailPropertyReader.getValue(Constants.HOST_NAME));
-		sb.append(":");
-		sb.append(mailPropertyReader.getValue(Constants.PORT_NUMBER));
-		sb.append("/gsc-datacatalogue/datacatalogservlet?actionName=verifymail&uuid=");
-		sb.append(uuid);
-		sb.append("&id=");
-		sb.append(rowId);
-		
-		String link = sb.toString();
-		logger.debug("generated verification link = "+link);
-		
-		sb = new StringBuilder();
-		
-		sb.append("To complete registration click the following link: <a href=");
-		sb.append(link);
-		sb.append("'>Complete registration</a>");
-
-		return sb.toString();
-				
-		//return "To complete registration click the following link: <a href='http://localhost:8080/gsc-datacatalogue/datacatalogservlet?actionName=verifymail&uuid="+uuid+"&id="+rowId+"'>Complete registration</a>";
-	}
-	
 	/**
 	 * Retrieves the user given its Id.
 	 * 
@@ -498,21 +720,9 @@ public class UsersService extends ServiceCommons {
 	}
 	
 	/**
-	 * Retrieves the user given its Id.
+	 * If the user was created but an error occurred in the mail service delete the record
 	 * 
-	 * @param json
-	 * @return
-	 * @throws RPException
-	 */
-	private Gsc002UserEntity getUserObjectByUsername(String username) throws DCException {
-		String condition = "'"+Constants.USER_NAME_FIELD+"'='"+username+"'";
-		String query = createQuery(condition, Constants.USER_TABLE_NAME, Constants.JSON_COLUMN_NAME,
-				"select");
-		return (Gsc002UserEntity) gsc002Dao.getUser(query);
-	}
-	
-	/**
-	 * 
+	 * @param user
 	 */
 	private void undoCreation(Gsc002UserEntity user) {
 		//if the user was created but an error occurred in the mail service delete the record

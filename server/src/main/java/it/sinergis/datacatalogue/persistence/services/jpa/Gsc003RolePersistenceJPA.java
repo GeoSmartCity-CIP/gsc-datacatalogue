@@ -68,4 +68,10 @@ public class Gsc003RolePersistenceJPA extends GenericJpaService<Gsc003RoleEntity
 	public List<Gsc003RoleEntity> getRoles(String query) {
 		return super.loadByNativeQuery(query);	
 	}
+	
+	@Override
+	public int deleteFromList(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 }
