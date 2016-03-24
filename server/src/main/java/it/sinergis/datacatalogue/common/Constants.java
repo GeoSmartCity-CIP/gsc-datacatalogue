@@ -119,8 +119,6 @@ public final class Constants {
 	public static final String ER18 = "ER18";
 	public static final String ER19 = "ER19";
 	public static final String ER20 = "ER20";
-	public static final String ER21 = "ER21";
-	public static final String ER22 = "ER22";
 	
 	/** Dataset Errors. */
 	public static final String ER700 = "ER700";
@@ -154,6 +152,8 @@ public final class Constants {
 	public static final String ER212 = "ER212";
 	public static final String ER213 = "ER213";
 	public static final String ER214 = "ER214";
+	public static final String ER215 = "ER215";
+	public static final String ER216 = "ER216";
 	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";	

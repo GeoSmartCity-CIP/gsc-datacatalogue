@@ -128,7 +128,7 @@ public class UsersService extends ServiceCommons {
 			//if no results are found throw exception
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER22,req);
+				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
 
@@ -146,7 +146,7 @@ public class UsersService extends ServiceCommons {
 					//otherwise continue execution
 					if((new Date()).before(lockTime)) {
 						logger.error("User temporary locked due to multiple failed login attempts. Try again later:"+getFieldValueFromJsonText(user.getJson(), Constants.LOCK_TIME));
-						DCException ex = new DCException(Constants.ER21,req);
+						DCException ex = new DCException(Constants.ER215,req);
 						throw ex;
 					} else {
 						//delete lockTime and attemptedLogins parameters from the record
@@ -381,7 +381,7 @@ public class UsersService extends ServiceCommons {
 				user = getUserObject(req,true,false);
 				if(user == null) {
 					logger.error("The specified user does not exist.");
-					DCException ex = new DCException(Constants.ER22,req);
+					DCException ex = new DCException(Constants.ER216,req);
 					throw ex;
 				}
 				email = getFieldValueFromJsonText(user.getJson(),Constants.USER_EMAIL_FIELD);
@@ -450,7 +450,7 @@ public class UsersService extends ServiceCommons {
 			Gsc002UserEntity user = getUserObject(req,true,false);
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER22,req);
+				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
 			
@@ -510,9 +510,12 @@ public class UsersService extends ServiceCommons {
 			Gsc002UserEntity user = getUserObject(req,true,false);
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER22,req);
+				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
+			
+			//TODO does registration need to be completed?? (is that true for other services as well?)
+			//add error case to unit tests
 			
 			//Check if all the specified organizations exist
 			ArrayNode orgs = (ArrayNode) om.readTree(req).path(Constants.ORGANIZATIONS_FIELD);
@@ -566,7 +569,7 @@ public class UsersService extends ServiceCommons {
 			Gsc002UserEntity user = getUserObject(req,true,false);
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER22,req);
+				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
 			
@@ -625,7 +628,7 @@ public class UsersService extends ServiceCommons {
 			Gsc002UserEntity user = getUserObject(req,true,false);
 			if(user == null) {
 				logger.error("The specified user does not exist.");
-				DCException ex = new DCException(Constants.ER22,req);
+				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
 			
