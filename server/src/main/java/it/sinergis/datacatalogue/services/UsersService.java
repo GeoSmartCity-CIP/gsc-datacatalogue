@@ -513,10 +513,7 @@ public class UsersService extends ServiceCommons {
 				DCException ex = new DCException(Constants.ER216,req);
 				throw ex;
 			}
-			
-			//TODO does registration need to be completed?? (is that true for other services as well?)
-			//add error case to unit tests
-			
+
 			//Check if all the specified organizations exist
 			ArrayNode orgs = (ArrayNode) om.readTree(req).path(Constants.ORGANIZATIONS_FIELD);
 			for(JsonNode org : orgs) {

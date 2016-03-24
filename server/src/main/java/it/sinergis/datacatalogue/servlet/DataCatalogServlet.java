@@ -56,6 +56,7 @@ public class DataCatalogServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		addResponseHeaders(response);
 		PrintWriter writer = response.getWriter();
 		
 		try {
@@ -304,6 +305,17 @@ public class DataCatalogServlet extends HttpServlet {
         		writer.close();
             }
         }
+	}
+	
+	private void addResponseHeaders(HttpServletResponse hResp) {
+		hResp.setContentType("application/json;charset=UTF-8");
+		hResp.setHeader("Cache-control", "no-cache, no-store");
+		hResp.setHeader("Pragma", "no-cache");
+		hResp.setHeader("Expires", "-1");
+		hResp.setHeader("Access-Control-Allow-Origin", "*");
+		hResp.setHeader("Access-Control-Allow-Methods", "POST,GET");
+		hResp.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		hResp.setHeader("Access-Control-Max-Age", "86400");
 	}
 
 }
