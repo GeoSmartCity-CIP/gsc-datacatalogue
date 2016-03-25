@@ -217,13 +217,18 @@ public class GroupLayersService extends ServiceCommons {
 			ArrayNode grouplayerNodeList = JsonNodeFactory.instance.arrayNode();
 			for (Gsc009GrouplayerEntity grouoplayer : grouplayers) {
 				ObjectNode grouplayerBasic = (ObjectNode) mapper.readTree(grouoplayer.getJson());
-				ArrayNode layersIdWithinGroup = (ArrayNode) grouplayerBasic.path(Constants.LAYERS);
-				//get layers name from id
-				
-				//get all layers with the found ids
-				List<String> idList = new ArrayList<String>();				
-				for(int i = 0; i < layersIdWithinGroup.size(); i++) {
-					idList.add(((ObjectNode) layersIdWithinGroup.get(i)).get(Constants.LAYER_ID_FIELD).asText());
+				boolean hasLayers = isParameterInJson(grouoplayer.getJson(), Constants.LAYERS);
+				ArrayNode layersIdWithinGroup = JsonNodeFactory.instance.arrayNode();
+				List<String> idList = new ArrayList<String>();
+				if(hasLayers) {
+					layersIdWithinGroup = (ArrayNode) grouplayerBasic.path(Constants.LAYERS);
+					//get layers name from id
+					
+					//get all layers with the found ids
+									
+					for(int i = 0; i < layersIdWithinGroup.size(); i++) {
+						idList.add(((ObjectNode) layersIdWithinGroup.get(i)).get(Constants.LAYER_ID_FIELD).asText());
+					}
 				}
 				
 				String getLayersNameQuery = loadObjectFromIdList(Constants.LAYER_TABLE_NAME,idList);
@@ -316,7 +321,7 @@ public class GroupLayersService extends ServiceCommons {
 			List<Long> idlayers = getLayersIdFromRequest(requestLayers);
 			
 			//create the request
-			String query = createCheckLayersRequest(idlayers,grouplayer.getId());
+			String query = createCheckLayersRequest(idlayers,Long.parseLong(getFieldValueFromJsonText(grouplayer.getJson(),Constants.ORGANIZATION_FIELD)));
 			//execute the request
 			Long resultNumber = layerPersistence.countInId(query);
 			//if at least one of the specified layers does not exist throw error

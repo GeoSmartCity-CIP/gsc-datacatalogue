@@ -150,7 +150,7 @@ public class DeleteService extends ServiceCommons {
 							predecessorIdName, Constants.JSON_COLUMN_NAME, id, applicationPersistencejpa);
 					for (Object retrievedGroup : retrievedGroupLayers) {
 						if (retrievedGroup instanceof Gsc010ApplicationEntity) {
-							gsc010Dao.delete(((Gsc010ApplicationEntity) retrievedGroup).getId());
+							gsc010Dao.deleteNoTrans(((Gsc010ApplicationEntity) retrievedGroup).getId(),em);
 						}
 					}
 				}
@@ -176,12 +176,13 @@ public class DeleteService extends ServiceCommons {
 				// GROUPLAYERS, APPLICATIONS
 				String queryRemoveLayerFromGroups = createDeleteFromListQuery(Constants.GROUP_LAYER_TABLE_NAME,
 						Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT + selfId + ASSIGNMENT_END, LAYER_PATH);
-				gsc009Dao.deleteFromList(queryRemoveLayerFromGroups, em);
-
+				int deletedFromLayerGroups = gsc009Dao.deleteFromList(queryRemoveLayerFromGroups, em);
+				System.out.print("deleted from layergroups"+deletedFromLayerGroups+"\n");
 				String queryRemoveLayerFromApplication = createDeleteFromListQuery(Constants.APPLICATION_TABLE_NAME,
 						Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT + selfId + ASSIGNMENT_END, LAYER_PATH);
-				gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
-
+				int deletedFromApplication = gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
+				System.out.print("deleted from application"+deletedFromApplication+"\n");
+				
 				// we need to explicitly handle deletion of tables that rely on
 				// this entity
 				List<Long> predIds = new ArrayList<Long>();
@@ -206,7 +207,7 @@ public class DeleteService extends ServiceCommons {
 							Constants.JSON_COLUMN_NAME, id, layerPersistencejpa);
 					for (Object retrievedLayer : retrievedLayers) {
 						if (retrievedLayer instanceof Gsc008LayerEntity) {
-							gsc008Dao.delete(((Gsc008LayerEntity) retrievedLayer).getId());
+							gsc008Dao.deleteNoTrans(((Gsc008LayerEntity) retrievedLayer).getId(),em);
 
 							// need to handle deletion on entities that have
 							// this entity as a list within their json
@@ -216,15 +217,17 @@ public class DeleteService extends ServiceCommons {
 									Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT
 											+ ((Gsc008LayerEntity) retrievedLayer).getId() + ASSIGNMENT_END,
 									LAYER_PATH);
-							gsc009Dao.deleteFromList(queryRemoveLayerFromGroups, em);
-
+							int deletedFromLayerGroups = gsc009Dao.deleteFromList(queryRemoveLayerFromGroups, em);
+							System.out.print("deleted from layergroups"+deletedFromLayerGroups+"\n");
+							
 							String queryRemoveLayerFromApplication = createDeleteFromListQuery(
 									Constants.APPLICATION_TABLE_NAME,
 									Constants.JSON_COLUMN_NAME, LAYER_ID_ASSIGNMENT
 											+ ((Gsc008LayerEntity) retrievedLayer).getId() + ASSIGNMENT_END,
 									LAYER_PATH);
-							gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
-
+							int deletedFromApplication = gsc010Dao.deleteFromList(queryRemoveLayerFromApplication, em);
+							System.out.print("deleted from application"+deletedFromApplication+"\n");
+							
 							deletedSelfId.add(((Gsc008LayerEntity) retrievedLayer).getId());
 						}
 					}
@@ -274,7 +277,7 @@ public class DeleteService extends ServiceCommons {
 							predecessorIdName, Constants.JSON_COLUMN_NAME, id, datasourcePersistencejpa);
 					for (Object retrievedDatasource : retrievedDatasources) {
 						if (retrievedDatasource instanceof Gsc006DatasourceEntity) {
-							gsc006Dao.delete(((Gsc006DatasourceEntity) retrievedDatasource).getId());
+							gsc006Dao.deleteNoTrans(((Gsc006DatasourceEntity) retrievedDatasource).getId(),em);
 							deletedSelfId.add(((Gsc006DatasourceEntity) retrievedDatasource).getId());
 						}
 					}
@@ -332,7 +335,7 @@ public class DeleteService extends ServiceCommons {
 							predecessorIdName, Constants.JSON_COLUMN_NAME, id, grouplayerPersistencejpa);
 					for (Object retrievedGroup : retrievedGroupLayers) {
 						if (retrievedGroup instanceof Gsc009GrouplayerEntity) {
-							gsc009Dao.delete(((Gsc009GrouplayerEntity) retrievedGroup).getId());
+							gsc009Dao.deleteNoTrans(((Gsc009GrouplayerEntity) retrievedGroup).getId(),em);
 
 							// need to handle deletion on entities that have
 							// this entity as a list within their json
@@ -394,7 +397,7 @@ public class DeleteService extends ServiceCommons {
 							predecessorIdName, Constants.JSON_COLUMN_NAME, id, datasetPersistencejpa);
 					for (Object retrievedDataset : retrievedDatasets) {
 						if (retrievedDataset instanceof Gsc007DatasetEntity) {
-							gsc007Dao.delete(((Gsc007DatasetEntity) retrievedDataset).getId());
+							gsc007Dao.deleteNoTrans(((Gsc007DatasetEntity) retrievedDataset).getId(),em);
 							deletedSelfId.add(((Gsc007DatasetEntity) retrievedDataset).getId());
 						}
 					}
