@@ -306,9 +306,12 @@ public final class Constants {
 	/** MAIL PROPERTY FIELDS. */
 	public static final String HOST_NAME = "HOST_NAME";
 	public static final String PORT_NUMBER = "PORT_NUMBER";
-	public static final String SENDER_ADDRESS = "SENDER_ADDRESS";
+	//public static final String SENDER_ADDRESS = "SENDER_ADDRESS";
 	public static final String MAIL_SMTP_HOST = "mail.smtp.host";
 	public static final String MAIL_SMTP_PORT = "mail.smtp.port";
+	public static final String SENDER_MAIL_ADDRESS = "SENDER_MAIL_ADDRESS";
+	public static final String SENDER_MAIL_PASSWORD = "SENDER_MAIL_PASSWORD";
+	public static final String SMTP_AUTH = "mail.smtp.auth";
 	
 	/** LOGIN parameters. */
 	public static final String ATTEMPTED_LOGINS = "attemptedlogins";

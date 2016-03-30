@@ -313,6 +313,7 @@ public class UsersService extends ServiceCommons {
 				//send verification mail with the link to the verifyEmail service (with the UUID parameter)
 				//the user can complete his registration by clicking the given link
 				String text = mailUtils.buildTextMessage(uuid,user.getId());
+				
 				mailUtils.sendMail(Constants.SUB_COMPLETE_REGISTRATION,text,getFieldValueFromJsonText(req, Constants.USER_EMAIL_FIELD));
 
 				logger.info("User registration done. To complete the register process check your email and click on the given link.");

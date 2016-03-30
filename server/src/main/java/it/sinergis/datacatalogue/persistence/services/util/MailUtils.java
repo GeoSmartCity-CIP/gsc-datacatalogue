@@ -5,14 +5,16 @@ import java.util.Properties;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
+import javax.mail.Message;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeMessage.RecipientType;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
@@ -78,12 +80,26 @@ public class MailUtils {
         
 		try {
 
-	        InternetAddress from = new InternetAddress(mailPropertyReader.getValue(Constants.SENDER_ADDRESS));
+	        InternetAddress from = new InternetAddress(mailPropertyReader.getValue(Constants.SENDER_MAIL_ADDRESS));
 	        Properties prop = new Properties();
+
+	        Session mailSession = null;
 	        prop.put(Constants.MAIL_SMTP_HOST,mailPropertyReader.getValue(Constants.MAIL_SMTP_HOST));
-	        prop.put(Constants.MAIL_SMTP_PORT,mailPropertyReader.getValue(Constants.MAIL_SMTP_PORT));
+    		prop.put(Constants.MAIL_SMTP_PORT,mailPropertyReader.getValue(Constants.MAIL_SMTP_PORT));
+    		prop.put(Constants.SMTP_AUTH, "true");
+    		prop.put("mail.smtp.starttls.enable", "true");
+    		prop.put("mail.smtp.socketFactory.port", mailPropertyReader.getValue(Constants.MAIL_SMTP_PORT));
+			prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			prop.put("mail.smtp.socketFactory.fallback", "false");
+			mailSession = Session.getInstance(prop,new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(mailPropertyReader.getValue(Constants.SENDER_MAIL_ADDRESS),mailPropertyReader.getValue(Constants.SENDER_MAIL_PASSWORD));
+				}
+			});
+	        //prop.put(Constants.MAIL_SMTP_HOST,mailPropertyReader.getValue(Constants.MAIL_SMTP_HOST));
+	        //prop.put(Constants.MAIL_SMTP_PORT,mailPropertyReader.getValue(Constants.MAIL_SMTP_PORT));
 	        
-	        Session mailSession = Session.getDefaultInstance(prop);
+	        //Session mailSession = Session.getDefaultInstance(prop);
 	        MimeMessage msg = new MimeMessage(mailSession);
 	        
 	        msg.setSubject(subject);
@@ -119,7 +135,9 @@ public class MailUtils {
             Multipart multipart = new MimeMultipart();
             MimeMessage msg = buildMimeMessage(multipart, subject, text, address);        
             msg.setContent(multipart);            
-            Transport.send(msg);           
+            //Transport.send(msg);    
+            Transport.send(msg,msg.getRecipients(Message.RecipientType.TO));
+//            Transport.send(msg,msg.getRecipients(Message.RecipientType.TO),mailPropertyReader.getValue(Constants.SENDER_MAIL_ADDRESS), mailPropertyReader.getValue(Constants.SENDER_MAIL_PASSWORD));
         }
         catch (DCException dce) {
             throw dce;
