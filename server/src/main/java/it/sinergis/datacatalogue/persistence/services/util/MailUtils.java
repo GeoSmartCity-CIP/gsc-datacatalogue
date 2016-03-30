@@ -18,6 +18,11 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.common.PropertyReader;
 import it.sinergis.datacatalogue.exception.DCException;
@@ -41,17 +46,27 @@ public class MailUtils {
 	 * @param uuid
 	 * @param rowId
 	 * @return
+	 * @throws JsonProcessingException 
 	 */
-	public String buildTextMessage(UUID uuid,Long rowId) {
+	public String buildTextMessage(UUID uuid,Long rowId) throws JsonProcessingException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("'http://");
 		sb.append(mailPropertyReader.getValue(Constants.HOST_NAME));
 		sb.append(":");
 		sb.append(mailPropertyReader.getValue(Constants.PORT_NUMBER));
-		sb.append("/gsc-datacatalogue/datacatalogservlet?actionName=verifymail&uuid=");
-		sb.append(uuid);
-		sb.append("&id=");
-		sb.append(rowId);
+		sb.append("/gsc-datacatalogue/datacatalogservlet?actionName=verifymail&request=");
+//		sb.append("/gsc-datacatalogue/datacatalogservlet?actionName=verifymail&uuid=");
+//		sb.append(uuid);
+//		sb.append("&id=");
+//		sb.append(rowId);
+		
+		ObjectNode rootNode =  JsonNodeFactory.instance.objectNode();
+		rootNode.put(Constants.ID,rowId);
+		rootNode.put(Constants.UUID,uuid.toString());
+		ObjectMapper om = new ObjectMapper();
+		String jsonRequest = om.writeValueAsString(rootNode);
+
+		sb.append(jsonRequest);
 		
 		String link = sb.toString();
 		logger.debug("generated verification link = "+link);

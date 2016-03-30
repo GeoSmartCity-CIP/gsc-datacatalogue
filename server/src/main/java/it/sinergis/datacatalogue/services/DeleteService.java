@@ -438,7 +438,7 @@ public class DeleteService extends ServiceCommons {
 				deleteGroupLayer(ORGANIZATION_ID_NAME, predIds, null, em);
 				// APPLICATION
 				deleteApplication(ORGANIZATION_ID_NAME, predIds, null, em);
-				// TODO function, role, user
+				// TODO function, role, user??
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {

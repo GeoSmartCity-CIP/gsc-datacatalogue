@@ -169,12 +169,7 @@
 		    	
 		    } else if (selected === 'unreguser') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUnregisterExample").value;
-		    	
-		    } else if (selected === 'verifymail') {
-		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserVerifyMailExample").value;
-		    	
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUnregisterExample").value;	
 		    } 
 		    else if (selected === 'createrole'){
 		    	document.getElementById("text").style.display = "table-row";
@@ -245,7 +240,6 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUserUpdateProfileExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUpdateProfileExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUserLockExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLockExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputUserUnregisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUnregisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserVerifyMailExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserVerifyMailExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
@@ -304,7 +298,6 @@ if (servizio==null) {
             <option value="updateuser" <%= servizio.equals("updateuser") ? "selected=\"selected\"" : ""%>>User - Update Profile</option>
             <option value="lockuser" <%= servizio.equals("lockuser") ? "selected=\"selected\"" : ""%>>User - Lock/Unlock</option>
             <option value="unreguser" <%= servizio.equals("unreguser") ? "selected=\"selected\"" : ""%>>User - Unregister/Delete</option>
-            <option value="verifymail" <%= servizio.equals("verifymail") ? "selected=\"selected\"" : ""%>>User - Verify Mail</option>
             <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
             <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
             								

@@ -100,10 +100,11 @@ public class DataCatalogServlet extends HttpServlet {
             		serviceResp = service.unregisterUser(requestJson);
             	}
             	else if(action.equalsIgnoreCase("verifymail")){
-            		String uuid = request.getParameter("uuid");
-            		String id = request.getParameter("id");
+            		//String uuid = request.getParameter("uuid");
+            		//String id = request.getParameter("id");
             		UsersService service = new UsersService();
-            		serviceResp = service.verifyMail(uuid,id);
+            		//serviceResp = service.verifyMail(uuid,id);
+            		serviceResp = service.verifyMail(requestJson);
             	}
             	/* *******************************  ORGANIZATION ******************************* */
             	else if(action.equalsIgnoreCase("createorg")){

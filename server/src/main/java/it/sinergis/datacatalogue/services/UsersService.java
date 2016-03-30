@@ -51,6 +51,10 @@ public class UsersService extends ServiceCommons {
 		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	}
 	
+	public String verifyMail(String jsonRequest) throws DCException {
+		return verifyMail(getFieldValueFromJsonText(jsonRequest, Constants.UUID),getFieldValueFromJsonText(jsonRequest, Constants.ID));
+	}
+	
 	/**
 	 * This method is called by clicking on the link in the complete registration process.
 	 * If the link is correct the system will complete the user registration.
