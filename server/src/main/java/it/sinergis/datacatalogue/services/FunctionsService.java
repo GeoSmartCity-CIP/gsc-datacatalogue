@@ -151,12 +151,9 @@ public class FunctionsService extends ServiceCommons {
 			Gsc004FunctionEntity function = getFunctionObjetctById(functionId);
 			
 			if (function != null){
-				
-				boolean deleteResult = gsc004dao.delete(function);
-				
-				if (!deleteResult){
-					throw new DCException(Constants.ER01, req);
-				}
+
+				DeleteService deleteService = new DeleteService();
+				deleteService.deleteFunction(null, null, function.getId(),null);
 				
 				logger.info("function successfully deleted");
 				return createJsonStatus(Constants.STATUS_DONE, Constants.FUNCTION_DELETED, null, req);
@@ -204,9 +201,9 @@ public class FunctionsService extends ServiceCommons {
 				builderQuery.append(" AND ");
 				builderQuery.append("'");
 				builderQuery.append(Constants.FUNC_NAME_FIELD);
-				builderQuery.append("' = '");
+				builderQuery.append("'LIKE '%");
 				builderQuery.append(functionName);
-				builderQuery.append("'");
+				builderQuery.append("%'");
 			}
 			
 			String query = createQuery(builderQuery.toString(), Constants.FUNCTION_TABLE_NAME, Constants.JSON_COLUMN_NAME, "select");

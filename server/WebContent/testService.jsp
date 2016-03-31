@@ -85,15 +85,15 @@
 		    	
 		    } else if(selected === 'updatefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateFunctionExample").value;
 		    	
 		    } else if (selected === 'deletefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteFunctionExample").value;
 		    	
 		    } else if (selected === 'listfunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListFunctionExample").value;
 		    
 		    } else if(selected === 'createlyr'){
 		    	document.getElementById("text").style.display = "table-row";

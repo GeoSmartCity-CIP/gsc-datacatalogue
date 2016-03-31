@@ -8,6 +8,7 @@ import javax.persistence.EntityTransaction;
 
 import org.apache.log4j.Logger;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc004FunctionEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
@@ -23,11 +24,13 @@ import it.sinergis.datacatalogue.persistence.commons.jpa.JpaEnvironments;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc002UserPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc004FunctionPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
+import it.sinergis.datacatalogue.persistence.services.jpa.Gsc004FunctionPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc008LayerPersistenceJPA;
@@ -62,6 +65,9 @@ public class DeleteService extends ServiceCommons {
 	
 	/** Roles DAO. */
 	private Gsc003RolePersistence gsc003Dao;
+	
+	/** Functions DAO. */
+	private Gsc004FunctionPersistence gsc004Dao;
 
 	/** Datasource DAO. */
 	private Gsc006DatasourcePersistence gsc006Dao;
@@ -92,6 +98,7 @@ public class DeleteService extends ServiceCommons {
 		gsc001Dao = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class);
 		gsc002Dao = PersistenceServiceProvider.getService(Gsc002UserPersistence.class);
 		gsc003Dao = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
+		gsc004Dao = PersistenceServiceProvider.getService(Gsc004FunctionPersistence.class);
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
@@ -151,6 +158,45 @@ public class DeleteService extends ServiceCommons {
 					for (Object retrievedGroup : retrievedGroupLayers) {
 						if (retrievedGroup instanceof Gsc010ApplicationEntity) {
 							gsc010Dao.deleteNoTrans(((Gsc010ApplicationEntity) retrievedGroup).getId(),em);
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e);
+				throw new DCException(Constants.ER01);
+			}
+		}
+	}
+	
+	public void deleteFunction(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
+
+		//TODO probably functions connect to the permission table: delete all the records in that table 
+		
+		if (selfId != null) {
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+			
+				gsc004Dao.deleteNoTrans(selfId, em);
+
+				jpaEnvironment.commitTransaction(transaction);
+			} catch (Exception e) {
+				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
+				transaction.rollback();
+				throw new DCException(Constants.ER16);
+			} finally {
+				em.close();
+			}
+		} else {
+			try {
+				for (Long id : predecessorsId) {
+					Gsc004FunctionPersistenceJPA functionPersistenceJPA = new Gsc004FunctionPersistenceJPA();
+					List<Object> retrievedFunctions = createSearchIdQuery(Constants.FUNCTION_TABLE_NAME,
+							predecessorIdName, Constants.JSON_COLUMN_NAME, id, functionPersistenceJPA);
+					for (Object retrievedFunction : retrievedFunctions) {
+						if (retrievedFunction instanceof Gsc004FunctionEntity) {
+							gsc004Dao.deleteNoTrans(((Gsc004FunctionEntity) retrievedFunction).getId(),em);
 						}
 					}
 				}
@@ -438,7 +484,9 @@ public class DeleteService extends ServiceCommons {
 				deleteGroupLayer(ORGANIZATION_ID_NAME, predIds, null, em);
 				// APPLICATION
 				deleteApplication(ORGANIZATION_ID_NAME, predIds, null, em);
-				// TODO function, role, user??
+				// FUNCTION
+				deleteFunction(ORGANIZATION_ID_NAME, predIds, null, em);
+				// TODO role, user??
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
