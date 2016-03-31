@@ -334,20 +334,63 @@ public class OrganizationsService extends ServiceCommons{
 	 * @throws DCException
 	 */
 	private JsonNode createUserListNode(Gsc001OrganizationEntity org,String query,Gsc002UserPersistenceJPA userJpa) throws DCException {
-		ObjectNode usersNodeList = JsonNodeFactory.instance.objectNode();
-		//FIXME check back when users entity is done
-		//Select user of current organization								
-		String queryText = "'" + Constants.ORGANIZATION_FIELD + "' = '"+getKeyFromJsonText(org.getJson(),Constants.ORG_NAME_FIELD)+"'";
-		query = createQuery(queryText, Constants.USER_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
-		List<Gsc002UserEntity> users = userJpa.loadByNativeQuery(query);
+		ArrayNode usersNodeList = JsonNodeFactory.instance.arrayNode();
+
+		query = createUserSearchWithinOrganizationQuery(org.getId());
+		
+		List<Gsc002UserEntity> users = userJpa.getUsers(query);
 		
 		if (users.size()> 0) {					
 			for(int j = 0; j< users.size();j++) {
 				Gsc002UserEntity user = users.get(j);
-				usersNodeList.put(Constants.ID, user.getId());
+				ObjectNode node = JsonNodeFactory.instance.objectNode();
+				node.put(Constants.ID, user.getId());
+				usersNodeList.add(node);
 			}			
 		}
 		return usersNodeList;
+	}
+	
+	/**
+	 * This query will be used to retrieve all the users id of users belonging to an organization.
+	 * 
+	 * An example of the created query could be:
+	 * 
+	 *  select * from gscdatacatalogue.gsc_002_user usr 
+	 *  where usr.id IN (
+	 *		Select id from gscdatacatalogue.gsc_002_user usr,
+	 *		jsonb_array_elements(usr.json->'organizations') org 
+	 *		where org.json->>'organization' = '1'
+	 *	)
+	 * 
+	 * 
+	 * 
+	 * @param id
+	 */
+	private String createUserSearchWithinOrganizationQuery(Long id) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("select * from "); 
+		sb.append(Constants.USER_TABLE_NAME);
+		sb.append(" usr ");
+		sb.append("where usr.id IN ( Select id from ");
+		sb.append(Constants.USER_TABLE_NAME);
+		sb.append(" usr, ");
+		sb.append("jsonb_array_elements(usr.");
+		sb.append(Constants.JSON_COLUMN_NAME);
+		sb.append("->'");
+		sb.append(Constants.ORGANIZATIONS_FIELD);
+		sb.append("') org where org.");
+		sb.append(Constants.JSON_COLUMN_NAME);
+		sb.append("->>");
+		sb.append("'");
+		sb.append(Constants.ORGANIZATION_FIELD);
+		sb.append("' = '");
+		sb.append(id);
+		sb.append("')");
+		
+		return sb.toString();
 	}
 	
 }
