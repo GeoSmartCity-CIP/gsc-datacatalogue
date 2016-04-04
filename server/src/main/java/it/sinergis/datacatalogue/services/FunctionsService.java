@@ -192,6 +192,13 @@ public class FunctionsService extends ServiceCommons {
 			String functionName = getFieldValueFromJsonText(req, Constants.FUNC_NAME_FIELD);
 			
 			StringBuilder builderQuery = new StringBuilder();
+			
+			//if adminRecords parameter is true add all admin functions to the result list
+			boolean searchAdminRecords = isParameterInJson(req,Constants.INCLUDE_ADMIN_RECORDS);
+			if(searchAdminRecords && "true".equalsIgnoreCase(getKeyFromJsonText(req,Constants.INCLUDE_ADMIN_RECORDS))) {
+				builderQuery.append("(");
+			}
+			
 			builderQuery.append("'");
 			builderQuery.append(Constants.ORG_FIELD);
 			builderQuery.append("' = '");
@@ -205,7 +212,11 @@ public class FunctionsService extends ServiceCommons {
 				builderQuery.append(functionName);
 				builderQuery.append("%'");
 			}
-			
+			if(searchAdminRecords && "true".equalsIgnoreCase(getKeyFromJsonText(req,Constants.INCLUDE_ADMIN_RECORDS))) {
+				builderQuery.append(") OR '");
+				builderQuery.append(Constants.ORG_FIELD);
+				builderQuery.append("' IS NULL");
+			}
 			String query = createQuery(builderQuery.toString(), Constants.FUNCTION_TABLE_NAME, Constants.JSON_COLUMN_NAME, "select");
 			
 			logger.debug("Executing query: " + query);
