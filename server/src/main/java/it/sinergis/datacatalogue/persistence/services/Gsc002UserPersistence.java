@@ -119,4 +119,11 @@ public interface Gsc002UserPersistence extends GenericPersistence {
 	 */
 	public Gsc002UserEntity getUser(String query) throws DCException;
 	
+	/**
+	 * count number of records within a certain id list
+	 * @param query native query
+	 * @return the count number
+	 */
+	public Long countInId(String query);
+	
 }

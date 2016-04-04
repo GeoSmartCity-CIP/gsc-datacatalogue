@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
-import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc004FunctionEntity;
 import it.sinergis.datacatalogue.persistence.commons.jpa.GenericJpaService;
 import it.sinergis.datacatalogue.persistence.commons.jpa.JpaOperation;

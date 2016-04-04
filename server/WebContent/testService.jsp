@@ -175,9 +175,18 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateRoleExample").value;
 		    	
-		    } else if (selected === 'deleterole'){
+		    } 
+		    else if (selected === 'deleterole'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteRoleExample").value;
+		    } 
+		    else if (selected === 'listrole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListRoleExample").value;
+		    } 
+		    else if (selected === 'assignrole'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignRoleExample").value;
 		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
@@ -242,6 +251,8 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputUserUnregisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUnregisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputAssignRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
@@ -300,6 +311,8 @@ if (servizio==null) {
             <option value="unreguser" <%= servizio.equals("unreguser") ? "selected=\"selected\"" : ""%>>User - Unregister/Delete</option>
             <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
             <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
+            <option value="listrole" <%= servizio.equals("listrole") ? "selected=\"selected\"" : ""%>>Role - List/Search</option>
+            <option value="assignrole" <%= servizio.equals("assignrole") ? "selected=\"selected\"" : ""%>>Role - Assign users</option>
             								
 			<option value=""></option>
 		</select></td>

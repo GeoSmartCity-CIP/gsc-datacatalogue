@@ -62,6 +62,7 @@ public final class Constants {
 	public static final String CONFIRM_NEW_PASSWORD_FIELD = "confirmnewpassword";
 	public static final String OLD_PASSWORD_FIELD = "oldpassword";
 	public static final String LOCK_FIELD = "lock";
+	public static final String INCLUDE_ADMIN_RECORDS = "includeadminrecords";
 	/** List element header names. */
 	public static final String ORGANIZATIONS_FIELD = "organizations";
 	public static final String ROLES_FIELD = "roles";
@@ -206,7 +207,9 @@ public final class Constants {
 	
 	/** Role errors. */
 	public static final String ER301 = "ER301";
+	public static final String ER302 = "ER302";
 	public static final String ER303 = "ER303";
+	public static final String ER304 = "ER304";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -214,6 +217,7 @@ public final class Constants {
 	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";
 	public static final String ROLE_CREATED = "ROLE_CREATED";
 	public static final String ROLE_DELETED = "ROLE_DELETED";
+	public static final String USERS_ASSIGNED_TO_ROLE = "USERS_ASSIGNED_TO_ROLE";
 	public static final String DATASETS_CREATED = "DATASETS_CREATED";
 	public static final String DATASETS_DELETED = "DATASETS_DELETED";
 	public static final String DATASETS_UPDATED = "DATASETS_UPDATED";
@@ -285,6 +289,7 @@ public final class Constants {
 	public static final String VERIFY_MAIL = "VERIFY_MAIL";
 	public static final String CREATE_ROLE = "CREATE_ROLE";
 	public static final String DELETE_ROLE = "DELETE_ROLE";
+	public static final String ASSIGN_USERS_TO_ROLE = "ASSIGN_USERS_TO_ROLE";
 	
 	/** Values. */
 	public static final String TRUE = "true";

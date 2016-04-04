@@ -49,6 +49,18 @@ public class Gsc003RolePersistenceJPA extends GenericJpaService<Gsc003RoleEntity
 		}
 		return false ;
 	}
+	
+	@Override
+	public boolean deleteNoTrans( Long id ,EntityManager em) {
+		final Gsc003RoleEntity entity = em.find(Gsc003RoleEntity.class, id);
+		if (entity != null) {
+			em.remove(entity);
+			return Boolean.TRUE ;
+		}
+		else {
+			return Boolean.FALSE ;
+		}
+	}
 
 	@Override
 	public long countAll() {
@@ -74,4 +86,5 @@ public class Gsc003RolePersistenceJPA extends GenericJpaService<Gsc003RoleEntity
 		Query nativeQuery = em.createNativeQuery(query);					
 		return nativeQuery.executeUpdate();
 	}
+	
 }

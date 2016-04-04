@@ -8,6 +8,7 @@ import javax.persistence.EntityTransaction;
 
 import org.apache.log4j.Logger;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc004FunctionEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
@@ -30,6 +31,7 @@ import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
+import it.sinergis.datacatalogue.persistence.services.jpa.Gsc003RolePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc004FunctionPersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc006DatasourcePersistenceJPA;
 import it.sinergis.datacatalogue.persistence.services.jpa.Gsc007DatasetPersistenceJPA;
@@ -168,6 +170,45 @@ public class DeleteService extends ServiceCommons {
 		}
 	}
 	
+	public void deleteRole(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
+		
+		//TODO probably roles connect to the permission table: delete all the records in that table 
+		
+		if (selfId != null) {
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+			
+				gsc003Dao.deleteNoTrans(selfId, em);
+
+				jpaEnvironment.commitTransaction(transaction);
+			} catch (Exception e) {
+				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
+				transaction.rollback();
+				throw new DCException(Constants.ER16);
+			} finally {
+				em.close();
+			}
+		} else {
+			try {
+				for (Long id : predecessorsId) {
+					Gsc003RolePersistenceJPA rolesPersistenceJPA = new Gsc003RolePersistenceJPA();
+					List<Object> retrievedRoles = createSearchIdQuery(Constants.ROLE_TABLE_NAME,
+							predecessorIdName, Constants.JSON_COLUMN_NAME, id, rolesPersistenceJPA);
+					for (Object retrievedRole : retrievedRoles) {
+						if (retrievedRole instanceof Gsc003RoleEntity) {
+							gsc003Dao.deleteNoTrans(((Gsc003RoleEntity) retrievedRole).getId(),em);
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e);
+				throw new DCException(Constants.ER01);
+			}
+		}
+	}
+	
 	public void deleteFunction(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
 
 		//TODO probably functions connect to the permission table: delete all the records in that table 
@@ -235,6 +276,7 @@ public class DeleteService extends ServiceCommons {
 				predIds.add(selfId);
 
 				// TODO understand table relationships to delete cascade
+				//TODO probably layers connect to the permission table: delete all the records in that table 
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
@@ -279,7 +321,8 @@ public class DeleteService extends ServiceCommons {
 					}
 				}
 				// CASCADE DELETIONS
-				// TODO understand table relationships
+				// TODO understand table relationships to delete cascade
+				//TODO probably layers connect to the permission table: delete all the records in that table 
 			} catch (Exception e) {
 				logger.error(e);
 				throw new DCException(Constants.ER01);
@@ -361,9 +404,6 @@ public class DeleteService extends ServiceCommons {
 				List<Long> predIds = new ArrayList<Long>();
 				predIds.add(selfId);
 
-				// XXX
-				// Nothing apparently
-
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
 				logger.error("Error in the delete service occoured. Transaction has been rolled back.", e);
@@ -397,9 +437,6 @@ public class DeleteService extends ServiceCommons {
 						}
 					}
 				}
-				// CASCADE DELETIONS
-				// XXX
-				// Nothing apparently
 			} catch (Exception e) {
 				logger.error(e);
 				throw new DCException(Constants.ER01);
@@ -486,7 +523,9 @@ public class DeleteService extends ServiceCommons {
 				deleteApplication(ORGANIZATION_ID_NAME, predIds, null, em);
 				// FUNCTION
 				deleteFunction(ORGANIZATION_ID_NAME, predIds, null, em);
-				// TODO role, user??
+				// ROLE
+				deleteRole(ORGANIZATION_ID_NAME, predIds, null, em);
+				// TODO delete org from list in the user!!
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {

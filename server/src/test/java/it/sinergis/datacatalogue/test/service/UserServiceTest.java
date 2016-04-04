@@ -72,7 +72,7 @@ public class UserServiceTest extends ServiceCommons {
 	/** org. service. */
 	private OrganizationsService org_service = new OrganizationsService();
 	
-	/** org. service. */
+	/** user service. */
 	private UsersService user_service = new UsersService();
 	
 	/** Dao users. */

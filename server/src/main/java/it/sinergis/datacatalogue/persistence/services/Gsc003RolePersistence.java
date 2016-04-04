@@ -38,6 +38,14 @@ public interface Gsc003RolePersistence extends GenericPersistence {
 	public boolean delete(Long id) ;
 
 	/**
+	 * Deletes the entity by its Primary Key <br>
+	 * no Transactional operation ( no transaction involved )
+	 * @param id
+	 * @return true if found and deleted, false if not found
+	 */
+	public boolean deleteNoTrans(Long id,EntityManager em);
+	
+	/**
 	 * Inserts the given entity and commit <br>
 	 * Transactional operation ( begin transaction and commit )
 	 * @param gsc003Role

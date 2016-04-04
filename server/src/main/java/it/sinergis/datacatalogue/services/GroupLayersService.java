@@ -328,7 +328,7 @@ public class GroupLayersService extends ServiceCommons {
 			//if the countnumber is less than the id list size one or more records was not found
 			if(resultNumber < idlayers.size()) {
 				logger.error(
-						"Incorrect parameters: one of the requested layers cannot be assigned to the group because it does not exist.");
+						"Incorrect parameters: one of the requested layers cannot be assigned to the group because it does not exist or it's not associated with the same organization.");
 				throw new DCException(Constants.ER906, req);
 			}
 
@@ -350,9 +350,9 @@ public class GroupLayersService extends ServiceCommons {
 			DCException rpe = new DCException(Constants.ER12, req);
 			return rpe.returnErrorString();
 		} catch (Exception e) {
-			logger.error("list layers service error", e);
+			logger.error("assign layers  to group service error", e);
 			DCException rpe = new DCException(Constants.ER01, req);
-			logger.error("list layers service: unhandled error " + rpe.returnErrorString());
+			logger.error("assign layers  to group service: unhandled error " + rpe.returnErrorString());
 
 			return rpe.returnErrorString();
 		}
