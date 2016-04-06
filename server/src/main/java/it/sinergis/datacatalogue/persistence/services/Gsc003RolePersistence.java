@@ -101,6 +101,12 @@ public interface Gsc003RolePersistence extends GenericPersistence {
 	 */
 	public long countAll();
 	
+	/**
+	 * execute search
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public List<Gsc003RoleEntity> loadByNativeQuery(final String query);
 	
 	/**

@@ -18,7 +18,7 @@ public final class Constants {
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
-
+	public static final String PERMISSION_TABLE_NAME  = "gsc_005_permission";
 
 	public static final String JSON_COLUMN_NAME = "json";	
 
@@ -177,6 +177,14 @@ public final class Constants {
 	public static final String ER404 = "ER404";
 	public static final String ER405 = "ER405";
 	
+	/** permission errors codes. */
+	public static final String ER501 = "ER501";
+	public static final String ER502 = "ER502";
+	public static final String ER503 = "ER503";
+	public static final String ER504 = "ER504";
+	public static final String ER505 = "ER505";
+	public static final String ER506 = "ER506";
+	
 	/** Layers errors. */
 	public static final String ER801 = "ER801";
 	public static final String ER802 = "ER802";
@@ -246,6 +254,7 @@ public final class Constants {
 	public static final String USER_UNREGISTERED = "USER_UNREGISTERED";
 	public static final String USER_DELETED = "USER_DELETED";
 	public static final String USER_EMAIL_VERIFIED = "USER_EMAIL_VERIFIED";
+	public static final String PERMISSION_ASSIGNED = "PERMISSION_ASSIGNED";
 		
 	/** Services names. */
 	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
@@ -290,6 +299,8 @@ public final class Constants {
 	public static final String CREATE_ROLE = "CREATE_ROLE";
 	public static final String DELETE_ROLE = "DELETE_ROLE";
 	public static final String ASSIGN_USERS_TO_ROLE = "ASSIGN_USERS_TO_ROLE";
+	public static final String ASSIGN_PERMISSION = "ASSIGN_PERMISSION";
+	public static final String LIST_PERMISSION = "LIST_PERMISSION";
 	
 	/** Values. */
 	public static final String TRUE = "true";

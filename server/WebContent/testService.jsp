@@ -188,6 +188,14 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignRoleExample").value;
 		    }
+		    else if (selected === 'assignperm'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignPermissionExample").value;
+		    } 
+		    else if (selected === 'listperm'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListPermissionExample").value;
+		    }
 	    	//document.getElementById("submitButton").style.display = "table-row";
 	    	//document.getElementById("response").style.display = "table-row";
 	    	
@@ -253,6 +261,8 @@ body,tr,td {
 <input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputListRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 <input type="hidden" id="hiddenJSONinputAssignRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputListPermissionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListPermissionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<input type="hidden" id="hiddenJSONinputAssignPermissionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignPermissionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
@@ -313,6 +323,8 @@ if (servizio==null) {
             <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
             <option value="listrole" <%= servizio.equals("listrole") ? "selected=\"selected\"" : ""%>>Role - List/Search</option>
             <option value="assignrole" <%= servizio.equals("assignrole") ? "selected=\"selected\"" : ""%>>Role - Assign users</option>
+            <option value="listperm" <%= servizio.equals("listperm") ? "selected=\"selected\"" : ""%>>Permission - List</option>
+            <option value="assignperm" <%= servizio.equals("assignperm") ? "selected=\"selected\"" : ""%>>Permission - Assign</option>
             								
 			<option value=""></option>
 		</select></td>

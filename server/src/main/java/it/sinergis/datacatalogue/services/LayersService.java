@@ -25,7 +25,7 @@ public class LayersService extends ServiceCommons {
 	/** Logger. */
 	private static Logger logger;
 
-	/** Gsc001Datasource DAO. */
+	/** Gsc008Layers DAO. */
 	Gsc008LayerPersistence layerPersistence;
 
 	/**

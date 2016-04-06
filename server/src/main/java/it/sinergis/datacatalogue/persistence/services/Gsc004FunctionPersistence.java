@@ -109,4 +109,10 @@ public interface Gsc004FunctionPersistence {
 	 */
 	public List<Gsc004FunctionEntity> getFunction(final String query);
 	
+	/**
+	 * count number of records within a certain id list
+	 * @param query native query
+	 * @return the count number
+	 */
+	public Long countInId(String query);
 }

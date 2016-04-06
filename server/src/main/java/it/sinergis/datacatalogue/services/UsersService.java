@@ -23,11 +23,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc003RoleEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc005PermissionEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc002UserPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc005PermissionPersistence;
 
 public class UsersService extends ServiceCommons {
 
@@ -40,6 +42,9 @@ public class UsersService extends ServiceCommons {
 	/** Dao users. */
 	private Gsc003RolePersistence gsc003Dao;
 	
+	/** Dao users. */
+	private Gsc005PermissionPersistence gsc005Dao;
+	
 	SimpleDateFormat sdf;
 
 	public UsersService() {
@@ -47,6 +52,7 @@ public class UsersService extends ServiceCommons {
 		logger = Logger.getLogger(this.getClass());
 		gsc002Dao = PersistenceServiceProvider.getService(Gsc002UserPersistence.class);
 		gsc003Dao = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
+		gsc005Dao = PersistenceServiceProvider.getService(Gsc005PermissionPersistence.class);
 		
 		sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	}
@@ -194,21 +200,41 @@ public class UsersService extends ServiceCommons {
 			//get the organization list for the user
 			ArrayNode organizations = (ArrayNode) om.readTree(user.getJson()).path(Constants.ORGANIZATIONS_FIELD);
 
-			//TODO
 			//get the list of roles for the user
 			ArrayNode rolesNodeList = JsonNodeFactory.instance.arrayNode();
 			//FIXME temporary query see structure of roles first. Then build query in a separate method.
-			List<Gsc003RoleEntity> roleEntityList = gsc003Dao.getRoles("Select * from gsc_003_role r where r.id IN (select id from gsc_003_role r, jsonb_array_elements(r.json->'users') obj where obj->>'iduser' = '1')");
+			
+			List<Gsc003RoleEntity> roleEntityList = gsc003Dao.getRoles(getQueryText(user.getId()));
+					
+			//for each role get its functions
 			for(Gsc003RoleEntity roleEntity : roleEntityList) {
 				ObjectNode roleNode = JsonNodeFactory.instance.objectNode();
 				roleNode.put(Constants.ROLE_ID_FIELD,roleEntity.getId());
-				//TODO
-				//for each of those roles get all the functions
+
+				String queryText = "'" +Constants.ROLE_ID_FIELD+ "' = '" +roleEntity.getId() +"'";
+				String query = createQuery(queryText, Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, "select");
+				List<Gsc005PermissionEntity> permissionList = gsc005Dao.loadByNativeQuery(query);
+				
 				ArrayNode functionsNodeList = JsonNodeFactory.instance.arrayNode();
-				ObjectNode functions = JsonNodeFactory.instance.objectNode();
-				//TODO
-				//add functions to the roles list element
-				roleNode.put(Constants.FUNCTIONS_FIELD, functions);
+				
+				for(Gsc005PermissionEntity permission : permissionList) {
+					ArrayNode functionsPerEntity = (ArrayNode) (om.readTree(permission.getJson()).path(Constants.FUNCTIONS_FIELD));
+					for (int i=0;i<functionsPerEntity.size();i++) {
+						ObjectNode functionNode = (ObjectNode) functionsPerEntity.get(i);
+						functionNode.get(Constants.FUNC_ID_FIELD).asLong();
+						
+						ObjectNode info = JsonNodeFactory.instance.objectNode();
+						JsonNode layerId = functionNode.get(Constants.LAYER_ID_FIELD);
+						if(layerId != null) {
+							info.put(Constants.LAYER_ID_FIELD,functionNode.get(Constants.LAYER_ID_FIELD).asText());
+						}
+						info.put(Constants.FUNC_ID_FIELD,functionNode.get(Constants.FUNC_ID_FIELD).asText());
+						
+						functionsNodeList.add(info);
+					}
+				}
+				
+				roleNode.put(Constants.FUNCTIONS_FIELD, functionsNodeList);
 				rolesNodeList.add(roleNode);
 			}
 			rootNode.put(Constants.USER_ID_FIELD, user.getId());
@@ -797,5 +823,26 @@ public class UsersService extends ServiceCommons {
 			//no need to throw another exception here since we re already on the catch block of the login method
 			logger.error("Unable to update the failed login count...");
 		}
+	}
+	
+	/**
+	 * Creates queries strings such as
+	 * 
+	 * "Select * from gsc_003_role r where r.id IN (select id from gsc_003_role r, jsonb_array_elements(r.json->'users') obj where obj->>'iduser' = '1');
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private String getQueryText(Long id) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Select * from ");
+		sb.append(Constants.ROLE_TABLE_NAME);
+		sb.append(" r where r.id IN (select id from ");
+		sb.append(Constants.ROLE_TABLE_NAME);
+		sb.append(", jsonb_array_elements(r.json->'users') obj where obj->>'iduser' = '");
+		sb.append(id);
+		sb.append("')");
+		
+		return sb.toString();
 	}
 }

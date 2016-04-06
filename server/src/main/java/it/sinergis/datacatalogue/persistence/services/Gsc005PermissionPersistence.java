@@ -17,7 +17,7 @@ import it.sinergis.datacatalogue.bean.jpa.Gsc005PermissionEntity;
  * @author Telosys Tools Generator
  *
  */
-public interface Gsc005PermissionPersistence {
+public interface Gsc005PermissionPersistence extends GenericPersistence {
 
 	/**
 	 * Deletes the given entity <br>
@@ -90,5 +90,13 @@ public interface Gsc005PermissionPersistence {
 	 * @return
 	 */
 	public long countAll();
+	
+	/**
+	 * execute search
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public List<Gsc005PermissionEntity> loadByNativeQuery(final String query);
 	
 }
