@@ -61,5 +61,11 @@ public class Gsc005PermissionPersistenceJPA extends GenericJpaService<Gsc005Perm
 		// JPA operation execution 
 		return (Long) execute(operation);
 	}
+	
+	@Override
+	public int executeNativeQuery(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 
 }

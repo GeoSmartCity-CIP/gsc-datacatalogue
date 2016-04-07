@@ -630,7 +630,6 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
 			System.out.println("TEST ENDED: listDataOriginShape()");
 		}
@@ -669,7 +668,6 @@ public class DatasourceServiceTest extends ServiceCommons
 			Assert.fail();
 		} finally {
 			//cleanup (delete the just inserted records)
-			//TODO FIXME later on the delete org should handle the ds deletion as well
 			deleteOrgRecord(create_org_id);
 			System.out.println("TEST ENDED: listDataOriginShape()");
 		}

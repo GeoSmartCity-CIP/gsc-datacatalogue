@@ -278,7 +278,7 @@ public class PermissionServiceTest extends ServiceCommons {
 //	/**
 //	 *  This test is a list permission error test.
 //	 *  The response will be checked, and it should contain an error.
-//	 *  //XXX no peculiar error to show
+//	 *  //no peculiar error to show
 //	 *  
 //	 */
 //	@Test

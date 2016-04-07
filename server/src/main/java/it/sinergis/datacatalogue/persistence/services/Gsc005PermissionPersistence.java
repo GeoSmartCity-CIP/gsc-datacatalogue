@@ -7,6 +7,8 @@ package it.sinergis.datacatalogue.persistence.services;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import it.sinergis.datacatalogue.bean.jpa.Gsc005PermissionEntity;
 
 /**
@@ -99,4 +101,12 @@ public interface Gsc005PermissionPersistence extends GenericPersistence {
 	 */
 	public List<Gsc005PermissionEntity> loadByNativeQuery(final String query);
 	
+	/**
+	 * Execute native delete or update query.
+	 * 
+	 * @param query
+	 * @param em
+	 * @return
+	 */
+	public int executeNativeQuery(String query,EntityManager em);
 }

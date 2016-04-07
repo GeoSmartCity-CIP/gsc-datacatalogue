@@ -401,26 +401,6 @@ public class RolesService extends ServiceCommons{
 		}
 		sb.append(")");
 		
-		//XXX no need to cross check this. A user belongs to some organizations, then he may have roles for other orgs, with no consequences (he shouldn't be able to use his privileges
-		//on the other organization).
-		//if org id == null the role is an admin one. no need for further controls //XXX check if ok
-//		if(organizationId != null) {
-//			sb.append(" AND ");
-//			sb.append(Constants.ID);
-//			sb.append(" IN (");
-//			//This condition checks that the id count only matches users belonging to the same roles organization 
-//			sb.append("select roleT.id from ");
-//			sb.append(Constants.ORGANIZATION_TABLE_NAME); 
-//			sb.append(" orgT inner join ");
-//			sb.append(Constants.ROLE_TABLE_NAME);
-//			sb.append(" roleT on orgT.id = CAST((roleT.json->>'organization') AS integer) ");
-//			sb.append(" where orgT.id = ");
-//			sb.append(organizationId);
-//		}
-//		sb.append(")");
-
-
-		
 		return sb.toString();
 	}
 }

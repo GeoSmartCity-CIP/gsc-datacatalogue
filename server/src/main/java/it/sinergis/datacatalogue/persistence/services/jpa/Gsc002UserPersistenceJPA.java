@@ -112,5 +112,11 @@ public class Gsc002UserPersistenceJPA extends GenericJpaService<Gsc002UserEntity
 			em.close();
 		}
 	}
+	
+	@Override
+	public int executeNativeQuery(String query,EntityManager em) {
+		Query nativeQuery = em.createNativeQuery(query);					
+		return nativeQuery.executeUpdate();
+	}
 
 }

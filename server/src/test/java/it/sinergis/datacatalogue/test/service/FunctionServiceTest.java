@@ -520,53 +520,6 @@ public class FunctionServiceTest extends ServiceCommons{
 		}
 	}
 	
-	
-	//XXX not working, possibly not a useful test case (because matching is done with %LIKE%)
-//	/**
-//	 * Try to search an unexisting function.
-//	 * Expected status: error.
-//	 */
-//	@Test
-//	public void searchUnexistingFunctionTestFail(){
-//		System.out.println("TEST STARTED: searchUnexistingFunctionTestFail()");
-//		Long orgId = null;
-//		Long funcId = null;
-//		try{
-//			//create the test organization
-//			String createOrgResp = org_service.createOrganization(CREATE_ORG_REQ_1);
-//			orgId = getRecordId(createOrgResp);
-//			System.out.println(createOrgResp);
-//						
-//			//create a test function linked to the same organization
-//			String createFuncResp = func_service.createFunction(CREATE_FUNCTION_REQ_2.replace("$ID_ORG", orgId.toString()));
-//			System.out.println("CreateFunction Response: "+createFuncResp);
-//			
-//			//get the new function ID
-//			funcId = getRecordId(createFuncResp);
-//			
-//			//check if the createFuncResp is a well formed JSON object.	
-//			checkJsonWellFormed(createFuncResp);
-//			
-//			//list the specified function linked to the created organization
-//			String listFuncResponse = func_service.listFunction(LIST_FUNCTION_REQUEST_2.replace("$ID_ORG", orgId.toString()));
-//			System.out.println("ListFunction Response: "+listFuncResponse);
-//			
-//			//check if the listFuncResponse is a well formed JSON object.
-//			checkJsonWellFormed(listFuncResponse);
-//			
-//			Assert.assertTrue(listFuncResponse.contains("\"status\":\"error\""));
-//			
-//		}catch (Exception e){
-//			Assert.fail(e.getMessage());
-//		}finally{
-//			//delete the test organization created
-//			org_service.deleteOrganization(DELETE_ORG_REQ_1+orgId+REQ_END);						
-//			//delete the test function created
-//			func_service.deleteFunction(DELETE_FUNC_REQ_1+funcId+REQ_END);
-//			System.out.println("TEST ENDED: searchUnexistingFunctionTestFail()");
-//		}
-//	}
-	
 	/**
 	 * Try to search all the functions for an unexisting organization.
 	 * Expected status: error.

@@ -126,4 +126,13 @@ public interface Gsc002UserPersistence extends GenericPersistence {
 	 */
 	public Long countInId(String query);
 	
+	/**
+	 * Execute native delete or update query.
+	 * 
+	 * @param query
+	 * @param em
+	 * @return
+	 */
+	public int executeNativeQuery(String query,EntityManager em);
+	
 }

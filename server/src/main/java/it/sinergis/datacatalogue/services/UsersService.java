@@ -201,9 +201,7 @@ public class UsersService extends ServiceCommons {
 			ArrayNode organizations = (ArrayNode) om.readTree(user.getJson()).path(Constants.ORGANIZATIONS_FIELD);
 
 			//get the list of roles for the user
-			ArrayNode rolesNodeList = JsonNodeFactory.instance.arrayNode();
-			//FIXME temporary query see structure of roles first. Then build query in a separate method.
-			
+			ArrayNode rolesNodeList = JsonNodeFactory.instance.arrayNode();			
 			List<Gsc003RoleEntity> roleEntityList = gsc003Dao.getRoles(getQueryText(user.getId()));
 					
 			//for each role get its functions

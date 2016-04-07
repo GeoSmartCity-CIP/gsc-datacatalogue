@@ -26,6 +26,7 @@ import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersiste
 import it.sinergis.datacatalogue.persistence.services.Gsc002UserPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc003RolePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc004FunctionPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc005PermissionPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
@@ -53,6 +54,13 @@ public class DeleteService extends ServiceCommons {
 	
 	public final String USERS_PATH = "'users'";
 	public final String USERS_ID_ASSIGNMENT = "'iduser' = '";
+
+	public final String ORGANIZATIONS_PATH = "'organizations'";
+	public final String ORGANIZATIONS_ID_ASSIGNMENT = "'organization' = '";
+	
+	public final String FUNCTIONS_PATH = "'functions'";
+	public final String FUNCTIONS_ID_ASSIGNMENT = "'idfunction' = '";
+	public final String LAYERS_ID_ASSIGNMENT = "'idlayer' = '";
 	
 	public final String ASSIGNMENT_END = "'";
 
@@ -71,6 +79,9 @@ public class DeleteService extends ServiceCommons {
 	/** Functions DAO. */
 	private Gsc004FunctionPersistence gsc004Dao;
 
+	/** Permission DAO. */
+	private Gsc005PermissionPersistence gsc005Dao;
+	
 	/** Datasource DAO. */
 	private Gsc006DatasourcePersistence gsc006Dao;
 
@@ -101,6 +112,7 @@ public class DeleteService extends ServiceCommons {
 		gsc002Dao = PersistenceServiceProvider.getService(Gsc002UserPersistence.class);
 		gsc003Dao = PersistenceServiceProvider.getService(Gsc003RolePersistence.class);
 		gsc004Dao = PersistenceServiceProvider.getService(Gsc004FunctionPersistence.class);
+		gsc005Dao = PersistenceServiceProvider.getService(Gsc005PermissionPersistence.class);
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
@@ -172,8 +184,6 @@ public class DeleteService extends ServiceCommons {
 	
 	public void deleteRole(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
 		
-		//TODO probably roles connect to the permission table: delete all the records in that table 
-		
 		if (selfId != null) {
 			EntityTransaction transaction = null;
 			try {
@@ -181,7 +191,12 @@ public class DeleteService extends ServiceCommons {
 				transaction = jpaEnvironment.openTransaction(em);
 			
 				gsc003Dao.deleteNoTrans(selfId, em);
-
+				
+				// need to handle deletion of PERMISSIONS for this role
+				String clause = "'"+Constants.ROLE_ID_FIELD+"' = '"+selfId+"'";
+				String query = createQuery(clause, Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, "delete");
+				gsc005Dao.executeNativeQuery(query, em);
+				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
 				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
@@ -199,8 +214,15 @@ public class DeleteService extends ServiceCommons {
 					for (Object retrievedRole : retrievedRoles) {
 						if (retrievedRole instanceof Gsc003RoleEntity) {
 							gsc003Dao.deleteNoTrans(((Gsc003RoleEntity) retrievedRole).getId(),em);
+							
+							// need to handle deletion of PERMISSIONS for this role
+							String clause = "'"+Constants.ROLE_ID_FIELD+"' = '"+((Gsc003RoleEntity) retrievedRole).getId() +"'";
+							String query = createQuery(clause, Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, "delete");
+							gsc005Dao.executeNativeQuery(query, em);
 						}
 					}
+					
+					
 				}
 			} catch (Exception e) {
 				logger.error(e);
@@ -211,8 +233,6 @@ public class DeleteService extends ServiceCommons {
 	
 	public void deleteFunction(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
 
-		//TODO probably functions connect to the permission table: delete all the records in that table 
-		
 		if (selfId != null) {
 			EntityTransaction transaction = null;
 			try {
@@ -221,6 +241,12 @@ public class DeleteService extends ServiceCommons {
 			
 				gsc004Dao.deleteNoTrans(selfId, em);
 
+				//delete function records in the permission table
+				String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, FUNCTIONS_ID_ASSIGNMENT+selfId+ASSIGNMENT_END,FUNCTIONS_PATH);
+				gsc005Dao.executeNativeQuery(updateQuery, em);
+				//if no functions are left delete the record
+				gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
+				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
 				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
@@ -238,6 +264,12 @@ public class DeleteService extends ServiceCommons {
 					for (Object retrievedFunction : retrievedFunctions) {
 						if (retrievedFunction instanceof Gsc004FunctionEntity) {
 							gsc004Dao.deleteNoTrans(((Gsc004FunctionEntity) retrievedFunction).getId(),em);
+							
+							//delete function records in the permission table
+							String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, FUNCTIONS_ID_ASSIGNMENT+((Gsc004FunctionEntity) retrievedFunction).getId()+ASSIGNMENT_END,FUNCTIONS_PATH);
+							gsc005Dao.executeNativeQuery(updateQuery, em);
+							//if no functions are left delete the record
+							gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
 						}
 					}
 				}
@@ -275,8 +307,11 @@ public class DeleteService extends ServiceCommons {
 				List<Long> predIds = new ArrayList<Long>();
 				predIds.add(selfId);
 
-				// TODO understand table relationships to delete cascade
-				//TODO probably layers connect to the permission table: delete all the records in that table 
+				//delete layer records in the permission table
+				String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, LAYERS_ID_ASSIGNMENT+selfId+ASSIGNMENT_END,FUNCTIONS_PATH);
+				gsc005Dao.executeNativeQuery(updateQuery, em);
+				//if no functions are left delete the record
+				gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
@@ -320,9 +355,15 @@ public class DeleteService extends ServiceCommons {
 						}
 					}
 				}
-				// CASCADE DELETIONS
-				// TODO understand table relationships to delete cascade
-				//TODO probably layers connect to the permission table: delete all the records in that table 
+				
+				for(Long id : deletedSelfId) {
+					//delete layer records in the permission table
+					String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, LAYERS_ID_ASSIGNMENT+id+ASSIGNMENT_END,FUNCTIONS_PATH);
+					gsc005Dao.executeNativeQuery(updateQuery, em);
+					//if no functions are left delete the record
+					gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
+				}
+				
 			} catch (Exception e) {
 				logger.error(e);
 				throw new DCException(Constants.ER01);
@@ -525,7 +566,10 @@ public class DeleteService extends ServiceCommons {
 				deleteFunction(ORGANIZATION_ID_NAME, predIds, null, em);
 				// ROLE
 				deleteRole(ORGANIZATION_ID_NAME, predIds, null, em);
-				// TODO delete org from list in the user!!
+				
+				// Delete org from list in the user
+				String query = createDeleteFromListQuery(Constants.USER_TABLE_NAME,Constants.JSON_COLUMN_NAME,ORGANIZATIONS_ID_ASSIGNMENT + selfId + ASSIGNMENT_END,ORGANIZATIONS_PATH);
+				gsc002Dao.executeNativeQuery(query, em);
 
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
@@ -571,7 +615,7 @@ public class DeleteService extends ServiceCommons {
 	 * Generic query creation for deletion of elements within json arrays
 	 * 
 	 * @param tablename
-	 *            the table containing the json to be update
+	 *            the table containing the json to be updated
 	 * @param jsonColumnName
 	 *            the name of the json column in that table
 	 * @param idElement
@@ -596,6 +640,25 @@ public class DeleteService extends ServiceCommons {
 		sb.append(" from rownumber where rownumber.obj->>" + idElement + " AND rownumber.id = t.id)");
 		sb.append("from rownumber where rownumber.id = t.id AND rownumber.obj->>" + idElement);
 		System.out.println(sb.toString());
+		return sb.toString();
+	}
+	
+	/**
+	 * Creates a query which deletes all the records in the permission table where the function list is empty.
+	 * 
+	 * @param ids
+	 * @param organizationId
+	 * @return
+	 */
+	private String createCleanupPermissionsQuery() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("delete from ");
+		sb.append(Constants.PERMISSION_TABLE_NAME);
+		sb.append(" t where t.id IN (");
+		sb.append("select t.id from ");
+		sb.append(Constants.PERMISSION_TABLE_NAME);
+		sb.append(" t where jsonb_array_length(t.json->'functions') = 0)");
 		return sb.toString();
 	}
 }

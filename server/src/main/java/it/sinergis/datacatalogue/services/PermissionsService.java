@@ -199,9 +199,6 @@ public class PermissionsService extends ServiceCommons{
 				}
 			}
 			
-
-			//check what name refers to??? XXX
-			
 			//check if the function/layers specified exist in the corresponding tables
 			
 			//create the requests
