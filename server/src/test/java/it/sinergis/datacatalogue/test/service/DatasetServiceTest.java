@@ -9,8 +9,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.services.DatasetsService;
 import it.sinergis.datacatalogue.services.DatasourcesService;
+import it.sinergis.datacatalogue.services.OrganizationsService;
 import it.sinergis.datacatalogue.services.ServiceCommons;
 
 /**
@@ -21,13 +23,36 @@ import it.sinergis.datacatalogue.services.ServiceCommons;
  */
 public class DatasetServiceTest extends ServiceCommons {
 
-	final String ID_ORGANIZATION = "28";
-	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"" + ID_ORGANIZATION
-			+ "\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\"}";
+	/** org. service. */
+	private OrganizationsService org_service = new OrganizationsService();
+	
+	public static final String CREATE_ORG_REQ = "{\"organizationname\":\"TestOrgForRoleService\",\"description\":\"Create org test\"}";
+	public static final String DELETE_ORG_REQ = "{\"idorganization\":\"%ID_ORG%\"}";
 
+	final String CREATE_DATASOURCE_SHAPE = "{\"datasourcename\":\"DSShapeTest\",\"organization\":\"%ID_ORG%\",\"type\":\"SHAPE\",\"description\":\"SHAPE file\",\"updated\":\"true\",\"path\":\"T:\\\\MDeMeo\\\\dati\\\\bologna\\\\shape\\\\\"}";
+
+	private String createOrgRecord(String req) {
+		return org_service.createOrganization(req);
+	}
+	
+	private void deleteOrgRecord(Long id) {
+		org_service.deleteOrganization(DELETE_ORG_REQ.replaceAll("%ID_ORG%",id.toString()));
+	}
+	
+	private Long doSetup() throws NumberFormatException, DCException {
+		//create an organization record
+		String create_org_response = createOrgRecord(CREATE_ORG_REQ);
+		System.out.println("CREATE_ORG_RESPONSE:");
+		System.out.println(create_org_response);
+		
+		return Long.parseLong(getFieldValueFromJsonText(create_org_response,Constants.ID_FIELD));
+	}
+	
 	@Test
 	public void testDasetsServiceShape() throws Exception {
 
+		Long org_id = null;
+		
 		String idDatasource = "";
 		// For this test we assume the organization exists with the given ID, if
 		// it doesn't the test will return success.
@@ -38,8 +63,10 @@ public class DatasetServiceTest extends ServiceCommons {
 			System.out.println("-------");
 			System.out.println("Test datasets service start");
 			System.out.println("-------");
+			
+			org_id = doSetup();
 
-			String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE);
+			String jsonDS = datasourceDS.createDatasource(CREATE_DATASOURCE_SHAPE.replace("%ID_ORG%",org_id.toString()));
 			idDatasource = getFieldValueFromJsonText(jsonDS, Constants.ID);
 			Assert.assertTrue("Datasource created with id: " + idDatasource, idDatasource != null);
 
@@ -101,6 +128,9 @@ public class DatasetServiceTest extends ServiceCommons {
 				String jsonDatasourceDeleted = datasourceDS.deleteDatasource(deleteDatasourceJSON);
 				Assert.assertTrue(getFieldValueFromJsonText(jsonDatasourceDeleted, Constants.STATUS_FIELD)
 						.equalsIgnoreCase(Constants.STATUS_DONE));
+				
+				//cleanup (delete the just inserted records)
+				deleteOrgRecord(org_id);
 			}
 
 		}
