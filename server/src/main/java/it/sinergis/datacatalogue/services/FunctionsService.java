@@ -159,7 +159,7 @@ public class FunctionsService extends ServiceCommons {
 				return createJsonStatus(Constants.STATUS_DONE, Constants.FUNCTION_DELETED, null, req);
 				
 			}else{
-				throw new DCException(Constants.ER403, req);
+				throw new DCException(Constants.ER402, req);
 			}
 			
 		}catch(DCException rpe){
@@ -247,7 +247,7 @@ public class FunctionsService extends ServiceCommons {
 				logger.info(root.toString());
 				return root.toString();
 			}else{
-				throw new DCException(Constants.ER404, req);
+				throw new DCException(Constants.ER13, req);
 			}
 			
 		}catch(DCException rpe){

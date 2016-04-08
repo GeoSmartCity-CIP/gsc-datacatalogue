@@ -9,39 +9,45 @@
 <title>Test Page</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script>
+
+	function prettyPrint() {
+	    var ugly = document.getElementById('textArea').value;
+	    var obj = JSON.parse(ugly);
+	    var pretty = JSON.stringify(obj, undefined, 4);
+	    document.getElementById('textArea').value = pretty;
+	}
 	
 	function showFields(keepRequest) {
 	    var select = document.getElementById("servizioSelect");
 	    
 	    if(select && !keepRequest) {
-	    	document.getElementById("responseJSONId").value = "";
 	    	
 		    var selected = select.options[select.selectedIndex].value;
 		    
 		    if(selected === 'createorg' ){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").title = "Insert a JSON organization.";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateOrgExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateOrgExample").value;
 		    	
 		    } else if(selected === 'updateorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateOrgExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateOrgExample").value;
 		    	
 		    } else if(selected === 'deleteorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteOrgExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteOrgExample").value;
 		    	
 		    } else if(selected === 'listorg'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListOrgExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListOrgExample").value;
 		    	
 		    } else if(selected === 'createdataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDatasetExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateDatasetExample").value;
 		    	
 		    } else if(selected === 'listdataset'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDatasetExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListDatasetExample").value;
 		    	
 		    } else if(selected === 'deletedataset'){
 		    	document.getElementById("text").style.display = "table-row";
@@ -61,146 +67,144 @@
 		    	
 		    }  else if(selected === 'createdatasrc' ){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateDataSourceExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateDataSourceExample").value;
 		    	
 		    } else if(selected === 'updatedatasrc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateDataSourceExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateDataSourceExample").value;
 		    	
 		    } else if(selected === 'deletedatasrc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteDataSourceExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteDataSourceExample").value;
 		    	
 		    } else if(selected === 'listdatasrc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDataSourceExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListDataSourceExample").value;
 		    	
 		    } else if(selected === 'listdataorigin'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListDataOriginExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListDataOriginExample").value;
 		    	
 		    } else if(selected === 'createfunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateFunctionExample").value;
 		    	
 		    } else if(selected === 'updatefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateFunctionExample").value;
 		    	
 		    } else if (selected === 'deletefunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteFunctionExample").value;
 		    	
 		    } else if (selected === 'listfunc'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListFunctionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListFunctionExample").value;
 		    
 		    } else if(selected === 'createlyr'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateLayerExample").value;
 		    	
 		    } else if(selected === 'updatelyr'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateLayerExample").value;
 		    	
 		    } else if (selected === 'deletelyr'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteLayerExample").value;
 		    	
 		    } else if (selected === 'listlyr') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListLayerExample").value;
 		    			    		    
 		    } else if(selected === 'creategrp'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateGroupLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateGroupLayerExample").value;
 		    	
 		    } else if(selected === 'assignlyr'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idAssignLayerExample").value;
 		    	
 		    } else if (selected === 'deletegrp'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteGroupLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteGroupLayerExample").value;
 		    	
 		    } else if (selected === 'listgrp'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListGroupLayerExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListGroupLayerExample").value;
 		    
 			} else if (selected === 'createapp') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateAppExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateAppExample").value;
 		    	
 		    } else if (selected === 'assigntoapp') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUpdateAppExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateAppExample").value;
 		    	
 		    } else if (selected === 'deleteapp') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteAppExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteAppExample").value;
 		    	
 		    } else if (selected === 'listapp') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListAppExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListAppExample").value;
 		    	
 		    } else if (selected === 'login') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserLoginExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserLoginExample").value;
 		    	
 		    } else if (selected === 'reguser') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserRegisterExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserRegisterExample").value;
 		    	
 		    } else if (selected === 'remindpwd') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserRemindPasswordExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserRemindPasswordExample").value;
 		    	
 		    } else if (selected === 'changepwd') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserChangePasswordExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserChangePasswordExample").value;
 		    	
 		    } else if (selected === 'updateuser') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUpdateProfileExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserUpdateProfileExample").value;
 		    	
 		    } else if (selected === 'lockuser') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserLockExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idUserLockExample").value;
 		    	
 		    } else if (selected === 'unreguser') {
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputUserUnregisterExample").value;	
+		    	document.getElementById("textArea").value = document.getElementById("idUserUnregisterExample").value;	
 		    } 
 		    else if (selected === 'createrole'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputCreateRoleExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idCreateRoleExample").value;
 		    	
 		    } 
 		    else if (selected === 'deleterole'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputDeleteRoleExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idDeleteRoleExample").value;
 		    } 
 		    else if (selected === 'listrole'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListRoleExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListRoleExample").value;
 		    } 
 		    else if (selected === 'assignrole'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignRoleExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idAssignRoleExample").value;
 		    }
 		    else if (selected === 'assignperm'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputAssignPermissionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idAssignPermissionExample").value;
 		    } 
 		    else if (selected === 'listperm'){
 		    	document.getElementById("text").style.display = "table-row";
-		    	document.getElementById("textArea").value = document.getElementById("hiddenJSONinputListPermissionExample").value;
+		    	document.getElementById("textArea").value = document.getElementById("idListPermissionExample").value;
 		    }
-	    	//document.getElementById("submitButton").style.display = "table-row";
-	    	//document.getElementById("response").style.display = "table-row";
-	    	
-	    	//document.getElementById('responseJSONId').value = JSON.stringify(JSON.parse(document.getElementById('responseJSONId').value), null, 2);
-	    }
+		    
+		    prettyPrint();
+   		}
 	};
 </script>
 <STYLE type="text/css">
@@ -218,51 +222,56 @@ body,tr,td {
 		</b></td>
 	</tr>
 </table>
-<% PropertyReader pr = new PropertyReader("testservices.properties"); %>
-<input type="hidden" id="hiddenJSONinputCreateOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUpdateOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListOrgExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListOrgExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONdeleteDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONdeleteDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONupdateDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONupdateDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONlistColsDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONlistColsDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONupdateColsDatasetExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONupdateColsDatasetExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUpdateDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListDataSourceExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDataSourceExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListDataOriginExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListDataOriginExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUpdateFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListFunctionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListFunctionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUpdateLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputAssignLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListGroupLayerExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListGroupLayerExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUpdateAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUpdateAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListAppExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListAppExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserLoginExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLoginExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserRegisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserRegisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserRemindPasswordExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserRemindPasswordExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserChangePasswordExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserChangePasswordExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserUpdateProfileExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUpdateProfileExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserLockExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserLockExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputUserUnregisterExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputUserUnregisterExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputCreateRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputCreateRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputDeleteRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputDeleteRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputAssignRoleExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignRoleExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputListPermissionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputListPermissionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
-<input type="hidden" id="hiddenJSONinputAssignPermissionExample" value="<%  out.print(StringEscapeUtils.escapeHtml4(pr.getValue("JSONinputAssignPermissionExample").replace("\\","\\\\").replaceAll("\\p{Cntrl}", "")));%>"></input>
+<%!
+public String handleEscaping(String jsonExample){
+	PropertyReader pr = new PropertyReader("testservices.properties");
+	return StringEscapeUtils.escapeHtml4(pr.getValue(jsonExample)).replace("\\","\\\\").replaceAll("\\p{Cntrl}", "");
+}
+%>
+<input type="hidden" id="idCreateOrgExample" value="<%out.print(handleEscaping("createOrgExample"));%>"></input>
+<input type="hidden" id="idUpdateOrgExample" value="<%out.print(handleEscaping("updateOrgExample"));%>"></input>
+<input type="hidden" id="idDeleteOrgExample" value="<%out.print(handleEscaping("deleteOrgExample"));%>"></input>
+<input type="hidden" id="idListOrgExample" value="<%out.print(handleEscaping("listOrgExample"));%>"></input>
+<input type="hidden" id="idCreateDatasetExample" value="<%out.print(handleEscaping("createDatasetExample"));%>"></input>
+<input type="hidden" id="idListDatasetExample" value="<%out.print(handleEscaping("listDatasetExample"));%>"></input>
+<input type="hidden" id="hiddenJSONdeleteDatasetExample" value="<%out.print(handleEscaping("deleteDatasetExample"));%>"></input>
+<input type="hidden" id="hiddenJSONupdateDatasetExample" value="<%out.print(handleEscaping("updateDatasetExample"));%>"></input>
+<input type="hidden" id="hiddenJSONlistColsDatasetExample" value="<%out.print(handleEscaping("listColsDatasetExample"));%>"></input>
+<input type="hidden" id="hiddenJSONupdateColsDatasetExample" value="<%out.print(handleEscaping("updateColsDatasetExample"));%>"></input>
+<input type="hidden" id="idCreateDataSourceExample" value="<%out.print(handleEscaping("createDataSourceExample"));%>"></input>
+<input type="hidden" id="idUpdateDataSourceExample" value="<%out.print(handleEscaping("updateDataSourceExample"));%>"></input>
+<input type="hidden" id="idDeleteDataSourceExample" value="<%out.print(handleEscaping("deleteDataSourceExample"));%>"></input>
+<input type="hidden" id="idListDataSourceExample" value="<%out.print(handleEscaping("listDataSourceExample"));%>"></input>
+<input type="hidden" id="idListDataOriginExample" value="<%out.print(handleEscaping("listDataOriginExample"));%>"></input>
+<input type="hidden" id="idCreateFunctionExample" value="<%out.print(handleEscaping("createFunctionExample"));%>"></input>
+<input type="hidden" id="idUpdateFunctionExample" value="<%out.print(handleEscaping("updateFunctionExample"));%>"></input>
+<input type="hidden" id="idDeleteFunctionExample" value="<%out.print(handleEscaping("deleteFunctionExample"));%>"></input>
+<input type="hidden" id="idListFunctionExample" value="<%out.print(handleEscaping("listFunctionExample"));%>"></input>
+<input type="hidden" id="idCreateLayerExample" value="<%out.print(handleEscaping("createLayerExample"));%>"></input>
+<input type="hidden" id="idUpdateLayerExample" value="<%out.print(handleEscaping("updateLayerExample"));%>"></input>
+<input type="hidden" id="idDeleteLayerExample" value="<%out.print(handleEscaping("deleteLayerExample"));%>"></input>
+<input type="hidden" id="idListLayerExample" value="<%out.print(handleEscaping("listLayerExample"));%>"></input>
+<input type="hidden" id="idCreateGroupLayerExample" value="<%out.print(handleEscaping("createGroupLayerExample"));%>"></input>
+<input type="hidden" id="idAssignLayerExample" value="<%out.print(handleEscaping("assignLayerExample"));%>"></input>
+<input type="hidden" id="idDeleteGroupLayerExample" value="<%out.print(handleEscaping("deleteGroupLayerExample"));%>"></input>
+<input type="hidden" id="idListGroupLayerExample" value="<%out.print(handleEscaping("listGroupLayerExample"));%>"></input>
+<input type="hidden" id="idCreateAppExample" value="<%out.print(handleEscaping("createAppExample"));%>"></input>
+<input type="hidden" id="idUpdateAppExample" value="<%out.print(handleEscaping("updateAppExample"));%>"></input>
+<input type="hidden" id="idDeleteAppExample" value="<%out.print(handleEscaping("deleteAppExample"));%>"></input>
+<input type="hidden" id="idListAppExample" value="<%out.print(handleEscaping("listAppExample"));%>"></input>
+<input type="hidden" id="idUserLoginExample" value="<%out.print(handleEscaping("userLoginExample"));%>"></input>
+<input type="hidden" id="idUserRegisterExample" value="<%out.print(handleEscaping("userRegisterExample"));%>"></input>
+<input type="hidden" id="idUserRemindPasswordExample" value="<%out.print(handleEscaping("userRemindPasswordExample"));%>"></input>
+<input type="hidden" id="idUserChangePasswordExample" value="<%out.print(handleEscaping("userChangePasswordExample"));%>"></input>
+<input type="hidden" id="idUserUpdateProfileExample" value="<%out.print(handleEscaping("userUpdateProfileExample"));%>"></input>
+<input type="hidden" id="idUserLockExample" value="<%out.print(handleEscaping("userLockExample"));%>"></input>
+<input type="hidden" id="idUserUnregisterExample" value="<%out.print(handleEscaping("userUnregisterExample"));%>"></input>
+<input type="hidden" id="idCreateRoleExample" value="<%out.print(handleEscaping("createRoleExample"));%>"></input>
+<input type="hidden" id="idDeleteRoleExample" value="<%out.print(handleEscaping("deleteRoleExample"));%>"></input>
+<input type="hidden" id="idListRoleExample" value="<%out.print(handleEscaping("listRoleExample"));%>"></input>
+<input type="hidden" id="idAssignRoleExample" value="<%out.print(handleEscaping("assignRoleExample"));%>"></input>
+<input type="hidden" id="idListPermissionExample" value="<%out.print(handleEscaping("listPermissionExample"));%>"></input>
+<input type="hidden" id="idAssignPermissionExample" value="<%out.print(handleEscaping("assignPermissionExample"));%>"></input>
 
 
 <form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
@@ -295,7 +304,7 @@ if (servizio==null) {
             <option value="listdatasrc" <%= servizio.equals("listdatasrc") ? "selected=\"selected\"" : ""%>>Datasource - List/Search</option>
             <option value="deletedatasrc" <%= servizio.equals("deletedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Delete</option>
             <option value="updatedatasrc" <%= servizio.equals("updatedatasrc") ? "selected=\"selected\"" : ""%>>Datasource - Update</option>
-            <option value="listdataorigin" <%= servizio.equals("listdataorigin") ? "selected=\"selected\"" : ""%>>Datasource - List Data Origih</option>
+            <option value="listdataorigin" <%= servizio.equals("listdataorigin") ? "selected=\"selected\"" : ""%>>Datasource - List Data Origin</option>
             <option value="createfunc" <%= servizio.equals("createfunc") ? "selected=\"selected\"" : ""%>>Function - Create</option>
             <option value="updatefunc" <%= servizio.equals("updatefunc") ? "selected=\"selected\"" : ""%>>Function - Update</option>
             <option value="deletefunc" <%= servizio.equals("deletefunc") ? "selected=\"selected\"" : ""%>>Function - Delete</option>
@@ -340,12 +349,6 @@ if (servizio==null) {
 		<INPUT type="submit" value="Submit">
 		</td>
 	</tr>
-  	<tr id="response">
-		<td>Response</td>
-		<td><pre><textarea name="responseJSON" id="responseJSONId" cols="120" rows="15"><%
-			if (request.getAttribute("responseJSON") != null)
-				out.print(request.getAttribute("responseJSON"));%></textarea></pre></td>
-	</tr> 
 </table>
 <%
 servizio=(String)request.getAttribute("actionName");

@@ -238,7 +238,7 @@ public class PermissionsService extends ServiceCommons{
 			} else {
 				//this block should never be active, but throw exception anyway if so.
 				logger.error("State error: a role can only have 1 record in the permission table, but it looks like there is more than one. Cannot assign until problem is solved.");
-				throw new DCException(Constants.ER505, req);
+				throw new DCException(Constants.ER01, req);
 			}
 			permission.setJson(req);
 			gsc005dao.save(permission);
@@ -289,7 +289,7 @@ public class PermissionsService extends ServiceCommons{
 			} else {
 				//this block should never be active, but throw exception anyway if so.
 				logger.error("State error: a role can only have 1 record in the permission table, but it looks like there is more than one. Cannot assign until problem is solved.");
-				throw new DCException(Constants.ER505, req);
+				throw new DCException(Constants.ER01, req);
 			}
 			
 			//build the response object
@@ -307,7 +307,7 @@ public class PermissionsService extends ServiceCommons{
 					//preliminary checks should avoid to be in this block
 					//but we throw exception anyway
 					logger.error("Corrupted record found: functionid is mandatory in each element of the function array.");
-					throw new DCException(Constants.ER506, req);
+					throw new DCException(Constants.ER01, req);
 				}
 				
 				JsonNode layerId = functionNode.get(Constants.LAYER_ID_FIELD);

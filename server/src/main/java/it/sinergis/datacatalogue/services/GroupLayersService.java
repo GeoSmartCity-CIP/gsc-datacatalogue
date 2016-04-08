@@ -309,7 +309,7 @@ public class GroupLayersService extends ServiceCommons {
 			if(grouplayer == null) {
 				logger.error(
 						"Incorrect parameters: requested group layer does not exist.");
-				throw new DCException(Constants.ER905, req);
+				throw new DCException(Constants.ER902, req);
 			}
 			
 			ObjectMapper mapper = new ObjectMapper();		

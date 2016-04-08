@@ -130,12 +130,12 @@ public class DatasetsService extends ServiceCommons {
 					}
 				} else {
 					// Datasource id has to be numeric
-					throw new DCException(Constants.ER706, req);
+					throw new DCException(Constants.ER12, req);
 				}
 
 			} else {
 				// dataset with the same name already exists
-				throw new DCException(Constants.ER700, req);
+				throw new DCException(Constants.ER704, req);
 			}
 
 		} catch (DCException rpe) {
@@ -160,7 +160,7 @@ public class DatasetsService extends ServiceCommons {
 
 			Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
 			if (entityFound == null) {
-				throw new DCException(Constants.ER703, req);
+				throw new DCException(Constants.ER702, req);
 			} else {
 
 				// Before updating we have to be sure that dataset name
@@ -193,7 +193,7 @@ public class DatasetsService extends ServiceCommons {
 						}
 					} else {
 						// Datasource id has to be numeric
-						throw new DCException(Constants.ER706, req);
+						throw new DCException(Constants.ER12, req);
 					}
 				} else {
 					// Update failed, dataset with the same name already exists
@@ -231,7 +231,7 @@ public class DatasetsService extends ServiceCommons {
 
 			} else {
 				// Dataset id has to be numeric
-				throw new DCException(Constants.ER707, req);
+				throw new DCException(Constants.ER12, req);
 			}
 
 		} catch (DCException rpe) {
@@ -265,12 +265,12 @@ public class DatasetsService extends ServiceCommons {
 					Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
 					if (entityFound == null) {
 						// No dataset found with given parameters.
-						throw new DCException(Constants.ER701, req);
+						throw new DCException(Constants.ER702, req);
 					}
 					dsets.add(entityFound);
 				} else {
 					// Dataset id has to be numeric
-					throw new DCException(Constants.ER707, req);
+					throw new DCException(Constants.ER12, req);
 				}
 			} else {
 				// We build the query appending parameters
@@ -286,7 +286,7 @@ public class DatasetsService extends ServiceCommons {
 						builderQuery.append("'");
 					} else {
 						// Datasource id has to be numeric
-						throw new DCException(Constants.ER706, req);
+						throw new DCException(Constants.ER12, req);
 					}
 				}
 
@@ -396,7 +396,7 @@ public class DatasetsService extends ServiceCommons {
 				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
 				if (entityFound == null) {
 					// No dataset found with given parameters.
-					throw new DCException(Constants.ER701, req);
+					throw new DCException(Constants.ER702, req);
 				} else {
 
 					Map<String, Object> mapColumns = new HashMap<>();
@@ -412,7 +412,7 @@ public class DatasetsService extends ServiceCommons {
 				}
 			} else {
 				// Dataset id has to be numeric
-				throw new DCException(Constants.ER707, req);
+				throw new DCException(Constants.ER12, req);
 			}
 
 		} catch (DCException rpe) {
@@ -440,7 +440,7 @@ public class DatasetsService extends ServiceCommons {
 				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
 				if (entityFound == null) {
 					// No dataset found with given parameters.
-					throw new DCException(Constants.ER701, req);
+					throw new DCException(Constants.ER702, req);
 				} else {
 					// we don't check columns, we just replace the columns value
 					// with the one sent by the client
@@ -458,7 +458,7 @@ public class DatasetsService extends ServiceCommons {
 				}
 			} else {
 				// Dataset id has to be numeric
-				throw new DCException(Constants.ER707, req);
+				throw new DCException(Constants.ER12, req);
 			}
 
 		} catch (DCException rpe) {

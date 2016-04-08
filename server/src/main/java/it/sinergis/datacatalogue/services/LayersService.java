@@ -178,7 +178,7 @@ public class LayersService extends ServiceCommons {
 
 				// otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER805,req);
+				DCException rpe = new DCException(Constants.ER803,req);
 				return rpe.returnErrorString();
 			}
 

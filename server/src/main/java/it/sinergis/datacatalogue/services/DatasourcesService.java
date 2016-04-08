@@ -133,7 +133,7 @@ public class DatasourcesService extends ServiceCommons {
 					logger.info(req);
 					return createJsonStatus(Constants.STATUS_DONE, Constants.DATASOURCE_UPDATED, null, req);
 				} else {
-					DCException rpe = new DCException(Constants.ER604, req);
+					DCException rpe = new DCException(Constants.ER601, req);
 					return rpe.returnErrorString();
 				}
 
@@ -185,7 +185,7 @@ public class DatasourcesService extends ServiceCommons {
 
 				// otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER603,req);
+				DCException rpe = new DCException(Constants.ER602,req);
 				return rpe.returnErrorString();
 			}
 

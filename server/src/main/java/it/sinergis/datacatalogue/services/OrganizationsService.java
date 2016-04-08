@@ -114,7 +114,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise throw exception
 			} else {
-				DCException rpe = new DCException(Constants.ER104,req);
+				DCException rpe = new DCException(Constants.ER101,req);
 				return rpe.returnErrorString();				
 			}
 			
@@ -160,7 +160,7 @@ public class OrganizationsService extends ServiceCommons{
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER103);
+				DCException rpe = new DCException(Constants.ER102);
 				return rpe.returnErrorString();				
 			}
 			

@@ -19,7 +19,7 @@ public final class Constants {
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 	public static final String PERMISSION_TABLE_NAME  = "gsc_005_permission";
-
+	
 	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
@@ -120,23 +120,10 @@ public final class Constants {
 	public static final String ER18 = "ER18";
 	public static final String ER19 = "ER19";
 	public static final String ER20 = "ER20";
-	
-	/** Dataset Errors. */
-	public static final String ER700 = "ER700";
-	public static final String ER701 = "ER701";
-	public static final String ER702 = "ER702";
-	public static final String ER703 = "ER703";
-	public static final String ER704 = "ER704";
-	public static final String ER705 = "ER705";
-	public static final String ER706 = "ER706";
-	public static final String ER707 = "ER707";
-	public static final String ER708 = "ER708";
 
 	/** Organization Errors. */
 	public static final String ER101 = "ER101";	
 	public static final String ER102 = "ER102";	
-	public static final String ER103 = "ER103";	
-	public static final String ER104 = "ER104";
 	
 	/** Users errors. */
 	public static final String ER201 = "ER201";	
@@ -156,11 +143,26 @@ public final class Constants {
 	public static final String ER215 = "ER215";
 	public static final String ER216 = "ER216";
 	
+	/** Role errors. */
+	public static final String ER301 = "ER301";
+	public static final String ER302 = "ER302";
+	public static final String ER304 = "ER304";
+	
+	/** Function Errors. */
+	public static final String ER401 = "ER401";
+	public static final String ER402 = "ER402";
+	public static final String ER404 = "ER404";
+	public static final String ER405 = "ER405";
+	
+	/** permission errors codes. */
+	public static final String ER501 = "ER501";
+	public static final String ER502 = "ER502";
+	public static final String ER503 = "ER503";
+	public static final String ER504 = "ER504";
+	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";	
-	public static final String ER602 = "ER602";	
-	public static final String ER603 = "ER603";	
-	public static final String ER604 = "ER604";
+	public static final String ER602 = "ER602";		
 	public static final String ER605 = "ER605";
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
@@ -170,27 +172,17 @@ public final class Constants {
 	public static final String ER611 = "ER611";
 	public static final String ER612 = "ER612";
 	
-	/** Function Errors. */
-	public static final String ER401 = "ER401";
-	public static final String ER402 = "ER402";
-	public static final String ER403 = "ER403";
-	public static final String ER404 = "ER404";
-	public static final String ER405 = "ER405";
-	
-	/** permission errors codes. */
-	public static final String ER501 = "ER501";
-	public static final String ER502 = "ER502";
-	public static final String ER503 = "ER503";
-	public static final String ER504 = "ER504";
-	public static final String ER505 = "ER505";
-	public static final String ER506 = "ER506";
+	/** Dataset Errors. */
+	public static final String ER702 = "ER702";
+	public static final String ER704 = "ER704";
+	public static final String ER705 = "ER705";
+	public static final String ER708 = "ER708";
 	
 	/** Layers errors. */
 	public static final String ER801 = "ER801";
 	public static final String ER802 = "ER802";
 	public static final String ER803 = "ER803";
 	public static final String ER804 = "ER804";
-	public static final String ER805 = "ER805";
 	public static final String ER806 = "ER806";
 	public static final String ER807 = "ER807";
 	
@@ -199,25 +191,15 @@ public final class Constants {
 	public static final String ER902 = "ER902";
 	public static final String ER903 = "ER903";
 	public static final String ER904 = "ER904";
-	public static final String ER905 = "ER905";
 	public static final String ER906 = "ER906";
 	
 	/** Application errors. */
 	public static final String ER1000 = "ER1000";
-	public static final String ER1001 = "ER1001";
 	public static final String ER1002 = "ER1002";
-	public static final String ER1003 = "ER1003";
-	public static final String ER1004 = "ER1004";
 	public static final String ER1005 = "ER1005";
 	public static final String ER1006 = "ER1006";
 	public static final String ER1007 = "ER1007";
 	public static final String ER1008 = "ER1008";
-	
-	/** Role errors. */
-	public static final String ER301 = "ER301";
-	public static final String ER302 = "ER302";
-	public static final String ER303 = "ER303";
-	public static final String ER304 = "ER304";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
@@ -322,7 +304,6 @@ public final class Constants {
 	/** MAIL PROPERTY FIELDS. */
 	public static final String HOST_NAME = "HOST_NAME";
 	public static final String PORT_NUMBER = "PORT_NUMBER";
-	//public static final String SENDER_ADDRESS = "SENDER_ADDRESS";
 	public static final String MAIL_SMTP_HOST = "mail.smtp.host";
 	public static final String MAIL_SMTP_PORT = "mail.smtp.port";
 	public static final String SENDER_MAIL_ADDRESS = "SENDER_MAIL_ADDRESS";

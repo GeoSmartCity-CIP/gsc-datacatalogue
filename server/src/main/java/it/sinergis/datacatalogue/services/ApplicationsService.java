@@ -91,7 +91,7 @@ public class ApplicationsService extends ServiceCommons {
 					}
 				} else {
 					// Organization id has to be numeric
-					throw new DCException(Constants.ER1001, req);
+					throw new DCException(Constants.ER12, req);
 				}
 
 			} else {
@@ -156,7 +156,7 @@ public class ApplicationsService extends ServiceCommons {
 
 				if (entityFound == null) {
 					// No application found with given parameters.
-					throw new DCException(Constants.ER1004, req);
+					throw new DCException(Constants.ER1002, req);
 				}
 
 				if (StringUtils.isNumeric(idOrganization)) {
@@ -222,12 +222,12 @@ public class ApplicationsService extends ServiceCommons {
 
 				} else {
 					// Organization id has to be numeric
-					throw new DCException(Constants.ER1001, req);
+					throw new DCException(Constants.ER12, req);
 				}
 
 			} else {
 				// Application id has to be numeric
-				throw new DCException(Constants.ER1003, req);
+				throw new DCException(Constants.ER12, req);
 			}
 
 		} catch (DCException rpe) {
@@ -255,7 +255,7 @@ public class ApplicationsService extends ServiceCommons {
 				Gsc010ApplicationEntity entityFound = gsc010Dao.load(Long.parseLong(idApplication));
 				if (entityFound == null) {
 					// No application found with given parameters.
-					throw new DCException(Constants.ER1004, req);
+					throw new DCException(Constants.ER1002, req);
 				}
 
 				DeleteService deleteService = new DeleteService();
@@ -267,7 +267,7 @@ public class ApplicationsService extends ServiceCommons {
 
 			} else {
 				// Application id has to be numeric
-				throw new DCException(Constants.ER1003, req);
+				throw new DCException(Constants.ER12, req);
 			}
 
 		} catch (DCException rpe) {
@@ -301,12 +301,12 @@ public class ApplicationsService extends ServiceCommons {
 					Gsc010ApplicationEntity entityFound = gsc010Dao.load(Long.parseLong(idApplication));
 					if (entityFound == null) {
 						// No application found with given parameters.
-						throw new DCException(Constants.ER1004, req);
+						throw new DCException(Constants.ER1002, req);
 					}
 					appEntities.add(entityFound);
 				} else {
 					// Application id has to be numeric
-					throw new DCException(Constants.ER1003, req);
+					throw new DCException(Constants.ER12, req);
 				}
 			} else {
 				// We build the query appending parameters
@@ -322,7 +322,7 @@ public class ApplicationsService extends ServiceCommons {
 						builderQuery.append("'");
 					} else {
 						// Organization id has to be numeric
-						throw new DCException(Constants.ER1001, req);
+						throw new DCException(Constants.ER12, req);
 					}
 				}
 

@@ -114,7 +114,7 @@ public class RolesService extends ServiceCommons{
 				
 			//otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER303, req);
+				DCException rpe = new DCException(Constants.ER302, req);
 				return rpe.returnErrorString();				
 			}
 			
