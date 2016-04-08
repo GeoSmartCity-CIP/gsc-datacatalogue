@@ -291,7 +291,7 @@ public class ApplicationsService extends ServiceCommons {
 			// Retrieving input parameters
 			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
 			String applicationName = getFieldValueFromJsonText(req, Constants.APP_NAME_FIELD);
-			String organization = getFieldValueFromJsonText(req, Constants.ORGANIZATION_FIELD);
+			String organization = getFieldValueFromJsonText(req, Constants.ORG_FIELD);
 
 			// idApplication has priority in the research
 			if (StringUtils.isNotEmpty(idApplication)) {
@@ -316,7 +316,7 @@ public class ApplicationsService extends ServiceCommons {
 
 					if (StringUtils.isNumeric(organization)) {
 						builderQuery.append("'");
-						builderQuery.append(Constants.ORGANIZATION_FIELD);
+						builderQuery.append(Constants.ORG_FIELD);
 						builderQuery.append("' = '");
 						builderQuery.append(organization);
 						builderQuery.append("'");

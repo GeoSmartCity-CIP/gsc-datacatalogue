@@ -283,7 +283,7 @@ public class RolesService extends ServiceCommons{
 			List<Long> idusers = getUsersIdFromRequest(requestUsers);
 			
 			//create the request
-			String query = createCheckUsersRequest(idusers,Long.parseLong(getFieldValueFromJsonText(role.getJson(),Constants.ORGANIZATION_FIELD)));
+			String query = createCheckUsersRequest(idusers,Long.parseLong(getFieldValueFromJsonText(role.getJson(),Constants.ORG_FIELD)));
 			//execute the request
 			Long resultNumber = gsc002dao.countInId(query);
 			//if at least one of the specified users does not exist throw error

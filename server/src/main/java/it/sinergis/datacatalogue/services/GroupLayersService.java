@@ -321,7 +321,7 @@ public class GroupLayersService extends ServiceCommons {
 			List<Long> idlayers = getLayersIdFromRequest(requestLayers);
 			
 			//create the request
-			String query = createCheckLayersRequest(idlayers,Long.parseLong(getFieldValueFromJsonText(grouplayer.getJson(),Constants.ORGANIZATION_FIELD)));
+			String query = createCheckLayersRequest(idlayers,Long.parseLong(getFieldValueFromJsonText(grouplayer.getJson(),Constants.ORG_FIELD)));
 			//execute the request
 			Long resultNumber = layerPersistence.countInId(query);
 			//if at least one of the specified layers does not exist throw error
@@ -436,7 +436,7 @@ public class GroupLayersService extends ServiceCommons {
 	private Gsc009GrouplayerEntity getGroupLayerObject(String json) throws DCException {
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.GROUP_LAYER_NAME_FIELD);
-		params.add(Constants.ORGANIZATION_FIELD);
+		params.add(Constants.ORG_FIELD);
 		return (Gsc009GrouplayerEntity) getRowObject(json, Constants.GROUP_LAYER_TABLE_NAME, params,
 				groupLayerPersistence);
 	}

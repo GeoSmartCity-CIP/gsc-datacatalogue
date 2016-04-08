@@ -463,7 +463,7 @@ public class DatasourcesService extends ServiceCommons {
 	private Gsc006DatasourceEntity getDatasourceObject(String json) throws DCException {
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.DATASOURCE_NAME_FIELD);
-		params.add(Constants.ORGANIZATION_FIELD);
+		params.add(Constants.ORG_FIELD);
 		return (Gsc006DatasourceEntity) getRowObject(json, Constants.DATASOURCE_TABLE_NAME, params,
 				datasourcePersistence);
 	}

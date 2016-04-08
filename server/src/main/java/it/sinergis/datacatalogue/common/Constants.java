@@ -7,8 +7,9 @@ public final class Constants {
 	public static final String STATUS_ERROR = "error";
 	public static final String REQUEST = "request";
 	public static final String ID = "id";
+	public static final String JSON_COLUMN_NAME = "json";	
 	
-	/** TABLES PARAMETERS*/
+	/** TABLE NAME PARAMETERS*/
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
 	public static final String USER_TABLE_NAME = "gsc_002_user";
 	public static final String ROLE_TABLE_NAME = "gsc_003_role";	
@@ -19,60 +20,41 @@ public final class Constants {
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
 	public static final String PERMISSION_TABLE_NAME  = "gsc_005_permission";
-	
-	public static final String JSON_COLUMN_NAME = "json";	
 
 	/** JSON FIELDS NAMES */
-	
 	public static final String DETAIL_FIELD = "detail";
-	public static final String ORG_ID_FIELD = "idorganization";
-	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String DESCRIPTION_FIELD = "description";
 	public static final String SCHEMA_FIELD = "schema";
-	public static final String USERNAME_FIELD = "username";
-	public static final String PASSWORD_FIELD = "password";
-	public static final String ORGANIZATION_FIELD = "organization";
-	public static final String ROLE_NAME_FIELD = "rolename";
-	public static final String ORG_FIELD = "organization";
 	public static final String STATUS_FIELD = "status";
 	public static final String NAME_FIELD = "name";
-	public static final String USERS_FIELD = "users";
 	public static final String ID_FIELD = "id";
+	public static final String INCLUDE_ADMIN_RECORDS = "includeadminrecords";
+	
+	/** Organization field names */
+	public static final String ORG_NAME_FIELD = "organizationname";
+	public static final String ORG_ID_FIELD = "idorganization";
+	public static final String ORGANIZATIONS_FIELD = "organizations";
+	public static final String ORG_FIELD = "organization";
+	
+	/** Dataset field names */
 	public static final String DSET_ID_FIELD = "iddataset";
 	public static final String DSET_NAME_FIELD = "datasetname";
 	public static final String DSET_REALNAME_FIELD = "realname";
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
-	public static final String NAME = "name";
-	public static final String TYPE = "type";
-	public static final String ALIAS = "alias";
-	public static final String VISIBILITY = "visibility";
-	public static final String COLUMNS = "columns";	
-	public static final String DATA_ORIGIN = "dataorigin";	
-	public static final String APP_NAME_FIELD = "applicationname";
-	public static final String APPLICATION_ID = "idapplication";
-	public static final String APPLICATION_RESULT = "applications";
-	public static final String TO_BE_VERIFIED = "tobeverified";
-	public static final String VERIFIED = "verified";
-	public static final String LOCKED = "locked";
-	public static final String UUID = "uuid";
-	public static final String CONFIRM_PASSWORD_FIELD = "confirmpassword";
-	public static final String NEW_PASSWORD_FIELD = "newpassword";
-	public static final String CONFIRM_NEW_PASSWORD_FIELD = "confirmnewpassword";
-	public static final String OLD_PASSWORD_FIELD = "oldpassword";
-	public static final String LOCK_FIELD = "lock";
-	public static final String INCLUDE_ADMIN_RECORDS = "includeadminrecords";
-	/** List element header names. */
-	public static final String ORGANIZATIONS_FIELD = "organizations";
-	public static final String ROLES_FIELD = "roles";
-	public static final String FUNCTIONS_FIELD = "functions";
 	
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
 	public static final String DATASOURCE_ID_FIELD = "iddatasource";
 	public static final String DATASOURCE_NAME_FIELD = "datasourcename";
 	public static final String DATASOURCE_FIELD = "datasource";
+	public static final String NAME = "name";
+	public static final String TYPE = "type";
+	public static final String ALIAS = "alias";
+	public static final String VISIBILITY = "visibility";
+	public static final String COLUMNS = "columns";	
+	public static final String DATA_ORIGIN = "dataorigin";	
 	
 	/** Layer field names. */
 	public static final String LAYER_NAME_FIELD = "layername";
@@ -88,20 +70,39 @@ public final class Constants {
 	/** Function field names. */
 	public static final String FUNC_NAME_FIELD = "functionname";
 	public static final String FUNC_ID_FIELD = "idfunction";
+	public static final String FUNCTIONS_FIELD = "functions";
 	
 	/** User field names */
 	public static final String USER_NAME_FIELD = "username";
 	public static final String USER_ID_FIELD = "iduser";
 	public static final String USER_EMAIL_FIELD = "email";
-	
-	/** E-mail constants. */
-	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
-	public static final String SUB_CHANGE_PASSWORD = "Password Change Process";
-	
+	public static final String USERS_FIELD = "users";
+	public static final String USERNAME_FIELD = "username";
+	public static final String PASSWORD_FIELD = "password";
+	public static final String CONFIRM_PASSWORD_FIELD = "confirmpassword";
+	public static final String NEW_PASSWORD_FIELD = "newpassword";
+	public static final String CONFIRM_NEW_PASSWORD_FIELD = "confirmnewpassword";
+	public static final String OLD_PASSWORD_FIELD = "oldpassword";
+	public static final String LOCK_FIELD = "lock";
+	public static final String TO_BE_VERIFIED = "tobeverified";
+	public static final String VERIFIED = "verified";
+	public static final String LOCKED = "locked";
+	public static final String UUID = "uuid";
 	
 	/** Role field names. */
 	public static final String ROLE_ID_FIELD = "idrole";
+	public static final String ROLES_FIELD = "roles";
+	public static final String ROLE_NAME_FIELD = "rolename";
 	
+	/** Application field names. */
+	public static final String APP_NAME_FIELD = "applicationname";
+	public static final String APPLICATION_ID = "idapplication";
+	public static final String APPLICATION_RESULT = "applications";
+
+	/** E-mail constants. */
+	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
+	public static final String SUB_CHANGE_PASSWORD = "Password Change Process";
+
 	/** ERRORS */
 	public static final String ER01 = "ER01";
 	public static final String ER02 = "ER02";

@@ -385,7 +385,7 @@ public class OrganizationsService extends ServiceCommons{
 		sb.append(Constants.JSON_COLUMN_NAME);
 		sb.append("->>");
 		sb.append("'");
-		sb.append(Constants.ORGANIZATION_FIELD);
+		sb.append(Constants.ORG_FIELD);
 		sb.append("' = '");
 		sb.append(id);
 		sb.append("')");

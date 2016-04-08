@@ -271,7 +271,7 @@ public class FunctionsService extends ServiceCommons {
 	private Gsc004FunctionEntity getFunctionObjectByUniqueKey(String json) throws DCException {
 
 		String functionName = getFieldValueFromJsonText(json, Constants.FUNC_NAME_FIELD);
-		String organizationId = getFieldValueFromJsonText(json, Constants.ORGANIZATION_FIELD);		
+		String organizationId = getFieldValueFromJsonText(json, Constants.ORG_FIELD);		
 
 		try {
 			StringBuilder builderQuery = new StringBuilder();
@@ -282,7 +282,7 @@ public class FunctionsService extends ServiceCommons {
 			builderQuery.append("'");		
 			builderQuery.append(" AND ");
 			builderQuery.append("'");
-			builderQuery.append(Constants.ORGANIZATION_FIELD);
+			builderQuery.append(Constants.ORG_FIELD);
 			builderQuery.append("' = '");
 			builderQuery.append(organizationId);
 			builderQuery.append("'");
