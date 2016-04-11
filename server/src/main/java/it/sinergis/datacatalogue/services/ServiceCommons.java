@@ -473,10 +473,10 @@ public class ServiceCommons {
 	 * existing organization. 
 	 * Returns error if the organization id is not found.
 	 * 
-	 * @param orgId
-	 * @return
-	 * @throws DCException
+	 * @param req
+	 * @param fullRequest
 	 * @throws NumberFormatException
+	 * @throws DCException
 	 */
 	protected void checkIdOrganizationValid(String req) throws NumberFormatException, DCException {
 		Long orgId = Long.parseLong(getKeyFromJsonText(req, Constants.ORG_FIELD));
@@ -485,6 +485,23 @@ public class ServiceCommons {
 		Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
 		if (orgEntity == null) {
 			DCException rpe = new DCException(Constants.ER15, req);
+			throw rpe;
+		}
+	}
+	
+	/**
+	 * Used when the org id is within a list
+	 * 
+	 * @param req
+	 * @param fullRequest
+	 * @throws NumberFormatException
+	 * @throws DCException
+	 */
+	protected void checkIdOrganizationValid(String req,String fullRequest) throws NumberFormatException, DCException {
+		try {
+			checkIdOrganizationValid(req);
+		} catch(Exception e) {
+			DCException rpe = new DCException(Constants.ER15, fullRequest);
 			throw rpe;
 		}
 	}

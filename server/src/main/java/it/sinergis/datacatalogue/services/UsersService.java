@@ -712,7 +712,7 @@ public class UsersService extends ServiceCommons {
 	private void checkIdOrganizationsValid(String req) throws JsonProcessingException, IOException, NumberFormatException, DCException {
 		ArrayNode orgs = (ArrayNode) om.readTree(req).path(Constants.ORGANIZATIONS_FIELD);
 		for(JsonNode org : orgs) {
-			checkIdOrganizationValid(om.writeValueAsString(org));
+			checkIdOrganizationValid(om.writeValueAsString(org),req);
 		}
 	}
 	
