@@ -196,9 +196,6 @@ public class UsersService extends ServiceCommons {
 			
 			//create response
 			ObjectNode rootNode = JsonNodeFactory.instance.objectNode();
-			
-			//get the organization list for the user
-			ArrayNode organizations = (ArrayNode) om.readTree(user.getJson()).path(Constants.ORGANIZATIONS_FIELD);
 
 			//get the list of roles for the user
 			ArrayNode rolesNodeList = JsonNodeFactory.instance.arrayNode();			
@@ -237,8 +234,14 @@ public class UsersService extends ServiceCommons {
 			}
 			rootNode.put(Constants.USER_ID_FIELD, user.getId());
 			rootNode.put(Constants.USERNAME_FIELD, getFieldValueFromJsonText(user.getJson(),Constants.USERNAME_FIELD));
-			rootNode.put(Constants.ORGANIZATIONS_FIELD,organizations);
-			rootNode.put(Constants.ROLES_FIELD,rolesNodeList);
+			
+			//if the user is not an admin (admins have no organizations)
+			//get the organization list for the user
+			if(isParameterInJson(user.getJson(), Constants.ORGANIZATIONS_FIELD)) {
+				ArrayNode organizations = (ArrayNode) om.readTree(user.getJson()).path(Constants.ORGANIZATIONS_FIELD);
+				rootNode.put(Constants.ORGANIZATIONS_FIELD,organizations);
+				rootNode.put(Constants.ROLES_FIELD,rolesNodeList);
+			}
 			
 			//before ending the method delete lockTime and attemptedLogins parameters from the record
 			//because if the execution got to this point the lock time has already expired
