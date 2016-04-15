@@ -1,0 +1,143 @@
+<h2>Manage data sets</h2>
+<uib-tabset active="active">
+    <uib-tab index="0" heading="Data set list" active="tabs[0].active">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group required">
+                    <label for="type" class="control-label">Filter data sets by data source</label>
+                    <select type="text" class="form-control" id="type" ng-model="data.dataSourceId" ng-change="filterByDataSource()" required>
+                        <option value=''>Please select a data source</option>
+                        <option ng-repeat='ds in dataSources' value='{{ds.id}}'>{{ds.datasourcename}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Data set name</th>
+                <th>Based on data source</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="ds in dataSets">
+                <td>{{ds.iddataset}}</td>
+                <td>{{ds.datasetname}}</td>
+                <td>{{ds.datasourcename}}</td>
+                <td>
+                    <button class="btn" ng-click="edit(ds.iddataset)">Edit</button>
+                    <button class="btn" ng-click="delete(ds.iddataset)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Create/edit data set" active="tabs[1].active" select="resetDataSet() ">
+        <form ng-submit="save()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Dataset name</label>
+                        <input type="text" class="form-control" id="type" ng-model="dataSet.datasetname" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Data set description</label>
+                        <textarea class="form-control" id="type" ng-model="dataSet.description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Based on data source</label>
+                        <select type="text" class="form-control" id="type" ng-model="dataSet.iddatasource" ng-change="selectDataSource()" required>
+                            <option>Please select a data source</option>
+                            <option ng-repeat='ds in dataSources' value='{{ds.id}}'>{{ds.datasourcename}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="dataSet.iddatasource !== undefined">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group required">
+                            <label for="type" class="control-label">Data origin</label>
+                            <select type="text" class="form-control" id="type" ng-model="dataSet.realname" required>
+                                <option value="">Please select a data origin</option>
+                                <option ng-repeat='do in dataOrigin' value='{{do.name}}'>{{do.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="type" class="control-label">To be ingested</label>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="false" ng-model="dataSet.tobeingested">
+                                    Tick to ingest
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="type" class="control-label">Refresh interval</label>
+                            <input type="text" class="form-control" id="type" ng-model="dataSet.refreshinterval">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="type" class="control-label">URL</label>
+                            <input type="url" class="form-control" id="type" ng-model="dataSet.url">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
+                    <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+    <uib-tab index="2" heading="Edit data set fields" active="tabs[2].active" disable="columnTabDisabled()" select="selectDataOrigin()">
+        <form ng-submit="updateColumns()">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data type</th>
+                        <th>Physical name</th>
+                        <th>Display name</th>
+                        <th>Include</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="c in columns">
+                        <td>
+                            {{c.type}}
+                        </td>
+                        <td>
+                            {{c.name}}
+                        </td>
+                        <td>
+                            <input type="text" value="{{c.alias}}" ng-model="columns[$index].alias">
+                        </td>
+                        <td>
+                            <input type="checkbox" value="{{c.visibility === 'true' ? true : false}}" ng-model="columns[$index].visibility">
+                        </td>
+                    </tr>
+                <tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-primary" value="Save changes">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

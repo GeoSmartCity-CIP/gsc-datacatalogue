@@ -1,0 +1,70 @@
+<h2>Manage users</h2>
+<uib-tabset active="active">
+    <uib-tab index="0" heading="User list" active="tabs[0].active">
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Username</th>
+                <th>Organization</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="us in users">
+                <td>{{us.id}}</td>
+                <td>{{us.organizationname}}</td>
+                <td>{{us.description}}</td>
+                <td>
+                    <button class="btn" ng-click="edit(us.id)">Edit</button>
+                    <button class="btn" ng-click="delete(us.id)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Create/edit users" active="tabs[1].active" select="resetUser()">
+        <form ng-submit="submit()">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">E-mail</label>
+                        <input type="email" class="form-control" id="type" ng-model="user.email" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Username</label>
+                        <input type="text" class="form-control" id="type" ng-model="user.username" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Password</label>
+                        <input type="password" class="form-control" id="type" ng-model="user.password" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Confirm password</label>
+                        <input type="password" class="form-control" id="type" ng-model="user.confirmpassword" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Organization</label>
+                        <select type="text" class="form-control" id="type" ng-model="user.organizations[0]">
+                            <option value="">Please select</option>
+                            <option ng-repeat='or in organizations' value='{{or.id}}'>{{or.organizationname}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-primary" value="Save">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

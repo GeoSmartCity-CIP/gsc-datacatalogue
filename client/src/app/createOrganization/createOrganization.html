@@ -1,0 +1,47 @@
+<h2>Manage organizations</h2>
+<uib-tabset active="active">
+    <uib-tab index="0" heading="Organization list" active="tabs[0].active">
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Organization</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="or in organizations">
+                <td>{{or.id}}</td>
+                <td>{{or.organizationname}}</td>
+                <td>{{or.description}}</td>
+                <td>
+                    <button class="btn" ng-click="edit(or.organizationname)">Edit</button>
+                    <button class="btn" ng-click="delete(or.id)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Create/edit organization" active="tabs[1].active" select="resetOrganization()">
+        <form ng-submit="submit()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Name</label>
+                        <input type="text" class="form-control" id="type" ng-model="organization.organizationname" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Description</label>
+                        <textarea class="form-control" id="type" ng-model="organization.description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-primary" value="Save">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

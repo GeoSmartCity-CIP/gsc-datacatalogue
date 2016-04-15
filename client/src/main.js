@@ -45,12 +45,93 @@ angular.module('gscDatacat', [
                                 }
                             }
                         })
+                        .state('app.createApplication', {
+                            url: '/createApplication',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createApplication/createApplication.html',
+                                    controller: 'createApplicationCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createDataSet', {
+                            url: '/createDataSet',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createDataSet/createDataSet.html',
+                                    controller: 'createDataSetCtrl'
+                                }
+                            }
+                        })
                         .state('app.createDataSource', {
                             url: '/createDataSource',
                             views: {
                                 'content': {
                                     templateUrl: 'templates/createDataSource/createDataSource.html',
                                     controller: 'createDataSourceCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createFunction', {
+                            url: '/createFunction',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createFunction/createFunction.html',
+                                    controller: 'createFunctionCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createGroupLayer', {
+                            url: '/createGroupLayer',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createGroupLayer/createGroupLayer.html',
+                                    controller: 'createGroupLayerCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createLayer', {
+                            url: '/createLayer',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createLayer/createLayer.html',
+                                    controller: 'createLayerCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createOrganization', {
+                            url: '/createOrganization',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createOrganization/createOrganization.html',
+                                    controller: 'createOrganizationCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createPermission', {
+                            url: '/createPermission',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createPermission/createPermission.html',
+                                    controller: 'createPermissionCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createRole', {
+                            url: '/createRole',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createRole/createRole.html',
+                                    controller: 'createRoleCtrl'
+                                }
+                            }
+                        })
+                        .state('app.createUser', {
+                            url: '/createUser',
+                            views: {
+                                'content': {
+                                    templateUrl: 'templates/createUser/createUser.html',
+                                    controller: 'createUserCtrl'
                                 }
                             }
                         })
