@@ -1,0 +1,75 @@
+<h2>Manage layers</h2>
+<uib-tabset active="active">
+    <uib-tab index="0" heading="Layer list" active="tabs[0].active">
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Layer name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="ly in layers">
+                <td>{{ly.id}}</td>
+                <td>{{ly.layername}}</td>
+                <td>{{ly.description}}</td>
+                <td>
+                    <button class="btn" ng-click="edit(ly.id)">Edit</button>
+                    <button class="btn" ng-click="delete(ly.id)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Create/edit layer" active="tabs[1].active" select="resetLayer() ">
+        <form ng-submit="save()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Layer name</label>
+                        <input type="text" class="form-control" id="type" ng-model="layer.layername" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Layer description</label>
+                        <textarea class="form-control" id="type" ng-model="layer.description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Based on data set</label>
+                        <select type="text" class="form-control" id="type" ng-model="layer.iddataset" required>
+                            <option>Please select a data set</option>
+                            <option ng-repeat='ds in dataSets' value='{{ds.iddataset}}'>{{ds.datasetname}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Metadata file</label>
+                        <textarea class="form-control" id="type" ng-model="layer.metadatafile"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Styled Layer Descriptor file</label>
+                        <textarea class="form-control" id="type" ng-model="layer.sld"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
+                    <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

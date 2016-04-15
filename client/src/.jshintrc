@@ -28,6 +28,7 @@
         "console": false,
         "crossfilter": false,
         "d3": false,
-        "dc": false
+        "dc": false,
+        "gsc": false
     }
 }

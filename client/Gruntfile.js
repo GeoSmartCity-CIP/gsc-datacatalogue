@@ -1,15 +1,15 @@
 'use strict';
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
         // Metadata.
         pkg: grunt.file.readJSON('package.json'),
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-                '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-                '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+            '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+            '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
+            '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+            ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
         // Task configuration.
         concat: {
             options: {
@@ -72,16 +72,22 @@ module.exports = function (grunt) {
         },
         copy: {
             main: {
-                files: [
-                    // includes files within path
-                    {
-                        expand: true,
-                        cwd: 'src/app',
-                        src: ['**/*.html'],
-                        dest: 'templates/',
-                        filter: 'isFile'
-                    }
-                ]
+                files: [{
+                    expand: true,
+                    cwd: 'src/app',
+                    src: ['**/*.html'],
+                    dest: 'templates/',
+                    filter: 'isFile'
+                }]
+            },
+            dtemplates: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/directives',
+                    src: ['**/*.html'],
+                    dest: 'templates/directives',
+                    filter: 'isFile'
+                }]
             }
         },
         jscs: {
@@ -108,7 +114,8 @@ module.exports = function (grunt) {
                     'src/services/*.js',
                     'src/app/**/*.js',
                     'src/app/**/*.html',
-                    '!src/app/**/*test.js'],
+                    '!src/app/**/*test.js'
+                ],
                 tasks: ['default']
             },
             withdocs: {
@@ -120,7 +127,8 @@ module.exports = function (grunt) {
                     'src/services/*.js',
                     'src/app/**/*.js',
                     'src/app/**/*.html',
-                    '!src/app/**/*test.js'],
+                    '!src/app/**/*test.js'
+                ],
                 tasks: ['build']
             },
             gruntfile: {

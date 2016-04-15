@@ -12,7 +12,7 @@ angular.module('gscDatacat.controllers')
                     $rootScope,
                     $stateParams) {
 
-                console.log($stateParams);
+                $rootScope.console.log($stateParams);
 
                 $scope.query = $stateParams.query;
 
