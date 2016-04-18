@@ -75,6 +75,10 @@ public class DatasetsService extends ServiceCommons {
 									Constants.PATH);
 
 							if (StringUtils.isNotEmpty(datasourcePath) && StringUtils.isNotEmpty(datasetFilename)) {
+								
+								if(!datasourcePath.endsWith("/")) {
+									datasourcePath = datasourcePath.concat("/");
+								}
 								String columnsJson = ServiceUtil
 										.createJSONColumnsFromShapeFile(datasourcePath + datasetFilename);
 

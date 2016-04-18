@@ -1,11 +1,15 @@
 package it.sinergis.datacatalogue.services;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +19,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
+import it.geosolutions.geoserver.rest.GeoServerRESTReader;
+import it.geosolutions.geoserver.rest.decoder.RESTDataStore;
+import it.geosolutions.geoserver.rest.decoder.RESTDataStoreList;
+import it.geosolutions.geoserver.rest.decoder.RESTNamespace;
+import it.geosolutions.geoserver.rest.decoder.RESTWorkspaceList;
+import it.geosolutions.geoserver.rest.manager.GeoServerRESTStoreManager;
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc009GrouplayerEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc010ApplicationEntity;
@@ -23,9 +36,14 @@ import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
+import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
+import it.sinergis.datacatalogue.services.datastore.PropertyLayer;
+import it.sinergis.datacatalogue.services.datastore.SHAPEDataStore;
 
 public class ApplicationsService extends ServiceCommons {
 
@@ -39,6 +57,12 @@ public class ApplicationsService extends ServiceCommons {
 	/** Dao organization. */
 	private Gsc001OrganizationPersistence gsc001Dao;
 
+	/** Gsc006Datasource DAO. */
+	private Gsc006DatasourcePersistence gsc006Dao;
+
+	/** Gsc007Dataset DAO. */
+	private Gsc007DatasetPersistence gsc007Dao;
+
 	/** Gsc008Layer DAO. */
 	private Gsc008LayerPersistence gsc008Dao;
 
@@ -51,6 +75,8 @@ public class ApplicationsService extends ServiceCommons {
 	public ApplicationsService() {
 		logger = Logger.getLogger(this.getClass());
 		gsc001Dao = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class);
+		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
+		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
 		gsc009Dao = PersistenceServiceProvider.getService(Gsc009GrouplayerPersistence.class);
 		gsc010Dao = PersistenceServiceProvider.getService(Gsc010ApplicationPersistence.class);
@@ -497,7 +523,182 @@ public class ApplicationsService extends ServiceCommons {
 	}
 
 	public String publishToGeoserver(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.PUBLISH_ON_GEOSERVER, req);
+			logger.info(req);
+
+			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
+			Gsc010ApplicationEntity application = gsc010Dao.load(Long.parseLong(idApplication));
+
+			if (application == null) {
+				// No application found with given parameters.
+				throw new DCException(Constants.ER1002, req);
+			}
+
+			String geoserverProperties = getObjectFromJsonText(application.getJson(), Constants.GEOSERVER_PARAMS);
+			String urlGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.URL);
+			String userGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.USERNAME_FIELD);
+			String pwdGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.PASSWORD_FIELD);
+
+			try {
+
+				GeoServerRESTReader reader = new GeoServerRESTReader(urlGeoserver, userGeoserver, pwdGeoserver);
+
+				GeoServerRESTPublisher publisher = new GeoServerRESTPublisher(urlGeoserver, userGeoserver,
+						pwdGeoserver);
+
+				GeoServerRESTStoreManager storeManager = new GeoServerRESTStoreManager(new URL(urlGeoserver),
+						userGeoserver, pwdGeoserver);
+
+				RESTWorkspaceList listaWorkspace = reader.getWorkspaces();
+				String workspace_name = getFieldValueFromJsonText(application.getJson(), Constants.APP_NAME_FIELD);
+				String workspace_uri = getFieldValueFromJsonText(application.getJson(), Constants.APP_URI);
+				String srs = getFieldValueFromJsonText(application.getJson(), Constants.SRS);
+
+				boolean found = false;
+				if (listaWorkspace != null) {
+					List<String> wsList = reader.getWorkspaceNames();
+
+					// creo un nuovo workspace su geoserver con il nome della
+					// mappa
+					// se esiste un workspace con il nome della mappa allora lo
+					// rimuovo da geoserver
+					// e vengono rimossi tutti i layer e gli store associati a
+					// quel workspace
+
+					for (int i = 0; i < wsList.size(); i++) {
+						String ws = wsList.get(i);
+						RESTNamespace wsnamespace = reader.getNamespace(ws);
+						if (ws.equals(workspace_name) || wsnamespace.getURI().toString().equals(workspace_uri)) {
+							logger.debug("Workspace found: " + workspace_name + ".");
+							
+							workspace_name = ws;
+							found = true;
+							break;
+						}
+					}
+				}
+
+				logger.debug("Inizio pubblicazione su geoserver");
+
+				boolean created = false;
+				if (!found) {
+					logger.debug("Creazione workspace con nome " + workspace_name);
+					created = publisher.createWorkspace(workspace_name, new URI(workspace_uri));
+
+					if (!created) {
+						throw new DCException(Constants.ER_GEO03);
+					}
+				}
+
+				RESTDataStoreList databaselist = reader.getDatastores(workspace_name);
+
+				if (databaselist != null) {
+					List<String> nameList = databaselist.getNames();
+
+					for (int i = 0; i < nameList.size(); i++) {
+						String elestore = nameList.get(i);
+
+						RESTDataStore datastore = reader.getDatastore(workspace_name, elestore);
+
+						String storeType = datastore.getStoreType();
+
+						if ((storeType != null && storeType.toUpperCase().indexOf("POSTGIS") == -1
+								&& storeType.toUpperCase().indexOf("SQL SERVER") == -1) || storeType == null) {
+							publisher.removeDatastore(workspace_name, elestore, true);
+						}
+
+					}
+				}
+
+				HashMap<String, Boolean> checkLayerName = new HashMap<String, Boolean>();
+
+				String layersAssigned = getObjectFromJsonText(application.getJson(), Constants.LAYERS);
+				JsonNode node = om.readTree(layersAssigned);
+
+				Iterator<JsonNode> iteratorNode = node.elements();
+
+				while (iteratorNode.hasNext()) {
+
+					JsonNode layerNode = iteratorNode.next();
+					String layerNodeAsString = om.writeValueAsString(layerNode);
+					String layerId = getFieldValueFromJsonText(layerNodeAsString, Constants.LAYER_ID_FIELD);
+					Gsc008LayerEntity entityLayer = gsc008Dao.load(Long.parseLong(layerId));
+
+					String srsLayer = getFieldValueFromJsonText(layerNodeAsString, Constants.SRS);
+					if (StringUtils.isEmpty(srsLayer)) {
+						srsLayer = srs;
+					}
+
+					// utilizzo di normalized per creare i servizi WMS
+					// (garantisce anche l'univocita')
+					String layerName = getFieldValueFromJsonText(entityLayer.getJson(), Constants.LAYER_NAME_FIELD);
+
+					layerName = ServiceUtil.normalizedLayerName(layerName);
+
+					// il nuovo nome non deve essere gia' utilizzato
+					if (checkLayerName.get(layerName) != null) {
+						logger.error("The layer " + layerName + " is already in the map.");
+						throw new DCException(Constants.ER01, req);
+					} else {
+						checkLayerName.put(layerName, Boolean.TRUE);
+					}
+
+					String datasetId = getFieldValueFromJsonText(entityLayer.getJson(), Constants.DSET_ID_FIELD);
+					Gsc007DatasetEntity entityDataset = gsc007Dao.load(Long.parseLong(datasetId));
+					String realName = getFieldValueFromJsonText(entityDataset.getJson(), Constants.DSET_REALNAME_FIELD);
+					String tablephysicalname = StringUtils.substringBefore(realName, ".");
+
+					String idDatasource = getFieldValueFromJsonText(entityDataset.getJson(),
+							Constants.DATASOURCE_ID_FIELD);
+
+					Gsc006DatasourceEntity entityDatasource = gsc006Dao.load(Long.parseLong(idDatasource));
+					String urlShapeLocation = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PATH);
+					String nameDatabase = getFieldValueFromJsonText(entityDatasource.getJson(),
+							Constants.DATASOURCE_NAME_FIELD);
+
+					String tablePhysicalPath = "";
+
+					// String typeDatabase = "DBLogicalType".toUpperCase();
+					// String typeDatabasePhysical = "DBTypePhysycal";
+
+					SHAPEDataStore datastoreShapeCreator = new SHAPEDataStore();
+
+					logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
+					// se il datastore non esiste lo creiamo e invochiamo
+					// il servizio del servirepe infodatabase per recuperare le
+					// informazioni del db
+					Pattern pattern = Pattern.compile("\\s");
+					Matcher matcher = pattern.matcher(nameDatabase);
+					if (matcher.find()) {
+						nameDatabase = nameDatabase.replace(" ", "");
+					}
+
+					nameDatabase = datastoreShapeCreator.createDatastore(nameDatabase, workspace_name, workspace_uri,
+							urlShapeLocation, storeManager, reader, tablephysicalname, tablePhysicalPath);
+
+					PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
+							srsLayer, workspace_name + "_" + layerName);
+
+					logger.debug("Pubblicazione layer con nome " + layerName);
+					datastoreShapeCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
+				}
+
+				return createJsonStatus(Constants.STATUS_DONE, Constants.PUBLISH_ON_GEOSERVER, null, req);
+			} catch (IOException e) {
+				logger.error("IOException", e);
+				throw new DCException(Constants.ER01, req);
+			}
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("publish on geoserver service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("publish on geoserver: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String getConfiguration(String req) {

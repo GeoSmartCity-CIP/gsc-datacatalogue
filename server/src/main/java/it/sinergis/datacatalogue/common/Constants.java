@@ -28,6 +28,7 @@ public final class Constants {
 	public static final String STATUS_FIELD = "status";
 	public static final String NAME_FIELD = "name";
 	public static final String ID_FIELD = "id";
+	public static final String SRS = "srs";
 	public static final String INCLUDE_ADMIN_RECORDS = "includeadminrecords";
 	
 	/** Organization field names */
@@ -96,8 +97,10 @@ public final class Constants {
 	
 	/** Application field names. */
 	public static final String APP_NAME_FIELD = "applicationname";
+	public static final String APP_URI = "uri";
 	public static final String APPLICATION_ID = "idapplication";
 	public static final String APPLICATION_RESULT = "applications";
+	public static final String GEOSERVER_PARAMS = "geoserver";
 
 	/** E-mail constants. */
 	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
@@ -201,6 +204,11 @@ public final class Constants {
 	public static final String ER1006 = "ER1006";
 	public static final String ER1007 = "ER1007";
 	public static final String ER1008 = "ER1008";
+	
+	/** Publish on geoserver errors. */
+	public static final String ER_GEO01 = "ER_GEO01";
+	public static final String ER_GEO02 = "ER_GEO02";
+	public static final String ER_GEO03 = "ER_GEO03";
 	
 	/** STATUS MESSAGES*/
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
