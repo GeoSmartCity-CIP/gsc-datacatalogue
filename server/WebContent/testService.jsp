@@ -149,7 +149,15 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("idListAppExample").value;
 		    	
-		    } else if (selected === 'login') {
+		    } else if (selected === 'pubongeoserver') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("idpubongeoserverExample").value;
+		    	
+		    } else if (selected === 'getconfiguration') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("idgetconfigurationExample").value;
+		    	
+		    }  else if (selected === 'login') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("idUserLoginExample").value;
 		    	
@@ -259,6 +267,8 @@ public String handleEscaping(String jsonExample){
 <input type="hidden" id="idUpdateAppExample" value="<%out.print(handleEscaping("updateAppExample"));%>"></input>
 <input type="hidden" id="idDeleteAppExample" value="<%out.print(handleEscaping("deleteAppExample"));%>"></input>
 <input type="hidden" id="idListAppExample" value="<%out.print(handleEscaping("listAppExample"));%>"></input>
+<input type="hidden" id="idpubongeoserverExample" value="<%out.print(handleEscaping("pubongeoserverExample"));%>"></input>
+<input type="hidden" id="idgetconfigurationExample" value="<%out.print(handleEscaping("getconfigurationExample"));%>"></input>
 <input type="hidden" id="idUserLoginExample" value="<%out.print(handleEscaping("userLoginExample"));%>"></input>
 <input type="hidden" id="idUserRegisterExample" value="<%out.print(handleEscaping("userRegisterExample"));%>"></input>
 <input type="hidden" id="idUserRemindPasswordExample" value="<%out.print(handleEscaping("userRemindPasswordExample"));%>"></input>
@@ -321,6 +331,8 @@ if (servizio==null) {
             <option value="assigntoapp" <%= servizio.equals("assigntoapp") ? "selected=\"selected\"" : ""%>>Application - Update/Assign layers/group to application</option>
             <option value="deleteapp" <%= servizio.equals("deleteapp") ? "selected=\"selected\"" : ""%>>Application - Delete</option>
             <option value="listapp" <%= servizio.equals("listapp") ? "selected=\"selected\"" : ""%>>Application - List/Search</option>
+            <option value="pubongeoserver" <%= servizio.equals("pubongeoserver") ? "selected=\"selected\"" : ""%>>Application - Publish on geoserver</option>
+            <option value="getconfiguration" <%= servizio.equals("getconfiguration") ? "selected=\"selected\"" : ""%>>Application - GetConfiguration</option>
             <option value="login" <%= servizio.equals("login") ? "selected=\"selected\"" : ""%>>User - Login</option>
             <option value="reguser" <%= servizio.equals("reguser") ? "selected=\"selected\"" : ""%>>User - Register</option>
             <option value="remindpwd" <%= servizio.equals("remindpwd") ? "selected=\"selected\"" : ""%>>User - Remind Password</option>

@@ -204,6 +204,11 @@
 			<artifactId>gt-jdbc-postgis</artifactId>
 			<version>14.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>it.geosolutions</groupId>
+		    <artifactId>geoserver-manager</artifactId>
+		    <version>1.7.0</version>
+		  </dependency>
 	</dependencies>
 
 	<properties>

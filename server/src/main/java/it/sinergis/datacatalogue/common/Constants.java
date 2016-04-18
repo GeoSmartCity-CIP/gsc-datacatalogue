@@ -284,6 +284,8 @@ public final class Constants {
 	public static final String ASSIGN_USERS_TO_ROLE = "ASSIGN_USERS_TO_ROLE";
 	public static final String ASSIGN_PERMISSION = "ASSIGN_PERMISSION";
 	public static final String LIST_PERMISSION = "LIST_PERMISSION";
+	public static final String GET_CONFIGURATION = "GET_CONFIGURATION";
+	public static final String PUBLISH_ON_GEOSERVER = "PUBLISH_ON_GEOSERVER";
 	
 	/** Values. */
 	public static final String TRUE = "true";

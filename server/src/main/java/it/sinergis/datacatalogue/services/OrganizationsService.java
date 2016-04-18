@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -192,16 +193,40 @@ public class OrganizationsService extends ServiceCommons{
 			List<Gsc001OrganizationEntity> orgs = null;
 			
 			if(!req.equals("{}")){
+				
 				//preliminary checks on the request parameters
-				preliminaryChecks(req,Constants.LIST_ORGANIZATION);
+				checkJsonWellFormed(req);
+				// checks if the request contains all the mandatory parameters
+				checkMandatoryParameters(Constants.LIST_ORGANIZATION, req);
 				
-				String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
-				query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
+				String organizationNameField = getFieldValueFromJsonText(req,Constants.ORG_NAME_FIELD);
+				String idOrganization = getFieldValueFromJsonText(req,Constants.ORG_ID_FIELD);
 				
-				orgs = organizationPersistence.getOrganizations(query);
+				if(StringUtils.isNotEmpty(idOrganization) && StringUtils.isNotEmpty(organizationNameField)) {
+					StringBuilder sb = new StringBuilder();
+
+					String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
+					sb.append(createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select"));
+					
+					sb.append(" AND ").append(Constants.ID).append(" = ").append(idOrganization);
+					query = sb.toString();
+					orgs = organizationPersistence.getOrganizations(query);
+				}
+				else if(StringUtils.isNotEmpty(idOrganization)) {
+					Gsc001OrganizationEntity orgEntity = organizationPersistence.load(Long.parseLong(idOrganization));
+					orgs = new ArrayList<Gsc001OrganizationEntity>();
+					orgs.add(orgEntity);
+					
+				} else if(StringUtils.isNotEmpty(organizationNameField)) {
+					String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
+					query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
+					orgs = organizationPersistence.getOrganizations(query);
+				}
+				
 			}
-			else
+			else {
 				orgs = organizationPersistence.loadAll();
+			}
 									
 			logger.info("Organizations found: " + orgs.size());
 			

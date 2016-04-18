@@ -392,7 +392,8 @@ public class ApplicationsService extends ServiceCommons {
 
 					// I retrieve all layer entities from the id list
 					String layerQuery = loadObjectFromIdList(Constants.LAYER_TABLE_NAME, idLayersList);
-					List<Gsc008LayerEntity> entitiesFound = StringUtils.isNotEmpty(layerQuery) ? gsc008Dao.getLayers(layerQuery) : null;
+					List<Gsc008LayerEntity> entitiesFound = StringUtils.isNotEmpty(layerQuery)
+							? gsc008Dao.getLayers(layerQuery) : null;
 
 					ArrayNode layersNodeWithLayerName = om.createArrayNode();
 
@@ -408,12 +409,13 @@ public class ApplicationsService extends ServiceCommons {
 							layerToInsert.put(Constants.LAYER_NAME_FIELD, layerName);
 							layersNodeWithLayerName.add(layerToInsert);
 						}
-					} 
-//					else {
-//						logger.error(
-//								"There's no record in the layer table associated with one of the layer id assigned to the application.");
-//						throw new DCException(Constants.ER1008, req);
-//					}
+					}
+					// else {
+					// logger.error(
+					// "There's no record in the layer table associated with one
+					// of the layer id assigned to the application.");
+					// throw new DCException(Constants.ER1008, req);
+					// }
 					appMap.put(Constants.LAYERS, om.readTree(om.writeValueAsString(layersNodeWithLayerName)));
 				}
 
@@ -457,12 +459,13 @@ public class ApplicationsService extends ServiceCommons {
 							groupToInsert.put(Constants.GROUP_LAYER_NAME_FIELD, groupName);
 							groupsNodeWithGroupName.add(groupToInsert);
 						}
-					} 
-//					else {
-//						logger.error(
-//								"There's no record in the group layer table associated with one of the layer id assigned to the application.");
-//						throw new DCException(Constants.ER1007, req);
-//					}
+					}
+					// else {
+					// logger.error(
+					// "There's no record in the group layer table associated
+					// with one of the layer id assigned to the application.");
+					// throw new DCException(Constants.ER1007, req);
+					// }
 					appMap.put(Constants.GROUPS, om.readTree(om.writeValueAsString(groupsNodeWithGroupName)));
 				}
 
@@ -498,7 +501,31 @@ public class ApplicationsService extends ServiceCommons {
 	}
 
 	public String getConfiguration(String req) {
-		return RESPONSE_JSON_GET_CONFIGURATION;
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.GET_CONFIGURATION, req);
+			logger.info(req);
+
+			String jsonString;
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				jsonString = mapper.writeValueAsString("");
+			} catch (IOException e) {
+				logger.error("IOException", e);
+				throw new DCException(Constants.ER01, req);
+			}
+
+			return jsonString;
+
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("getConfiguration service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("getConfiguration service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	private List<Long> getIdFromRequest(ArrayNode objectList, String field) {

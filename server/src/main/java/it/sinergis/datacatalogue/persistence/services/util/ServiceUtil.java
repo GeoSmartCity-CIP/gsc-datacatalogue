@@ -2,6 +2,7 @@ package it.sinergis.datacatalogue.persistence.services.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,23 @@ public class ServiceUtil {
 		dataStore.dispose();
 		return json;
 	}
+	
+	public static String normalizedLayerName(String accented) {
+        // convert accented chars to equivalent unaccented char + dead char accent pair.
+        // See http://www.unicode.org/unicode/reports/tr15/tr15-23.html no understand the NFD
+        // transform.
+        final String normalized = Normalizer.normalize(accented, Normalizer.Form.NFD);
+        // remove the dead char accents, leaving just the unaccented chars.
+        // Stripped string should have the same length as the original accented String.
+        StringBuilder sb = new StringBuilder(accented.length());
+        for (int i = 0; i < normalized.length(); i++) {
+            char c = normalized.charAt(i);
+            if (Character.getType(c) != Character.NON_SPACING_MARK) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 
 	private static DataStore createDatastorePostgis(String dbType, String host, String port, String schema,
 			String database, String user, String password) throws IOException {
