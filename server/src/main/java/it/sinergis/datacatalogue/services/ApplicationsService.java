@@ -42,6 +42,7 @@ import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc009GrouplayerPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc010ApplicationPersistence;
 import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
+import it.sinergis.datacatalogue.services.datastore.PostgisDataStore;
 import it.sinergis.datacatalogue.services.datastore.PropertyLayer;
 import it.sinergis.datacatalogue.services.datastore.SHAPEDataStore;
 
@@ -572,7 +573,7 @@ public class ApplicationsService extends ServiceCommons {
 						RESTNamespace wsnamespace = reader.getNamespace(ws);
 						if (ws.equals(workspace_name) || wsnamespace.getURI().toString().equals(workspace_uri)) {
 							logger.debug("Workspace found: " + workspace_name + ".");
-							
+
 							workspace_name = ws;
 							found = true;
 							break;
@@ -631,10 +632,10 @@ public class ApplicationsService extends ServiceCommons {
 						srsLayer = srs;
 					}
 
-					// utilizzo di normalized per creare i servizi WMS
-					// (garantisce anche l'univocita')
 					String layerName = getFieldValueFromJsonText(entityLayer.getJson(), Constants.LAYER_NAME_FIELD);
 
+					// utilizzo di normalized per creare i servizi WMS
+					// (garantisce anche l'univocita')
 					layerName = ServiceUtil.normalizedLayerName(layerName);
 
 					// il nuovo nome non deve essere gia' utilizzato
@@ -660,12 +661,8 @@ public class ApplicationsService extends ServiceCommons {
 
 					String tablePhysicalPath = "";
 
-					// String typeDatabase = "DBLogicalType".toUpperCase();
-					// String typeDatabasePhysical = "DBTypePhysycal";
+					String typeDatasource = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.TYPE);
 
-					SHAPEDataStore datastoreShapeCreator = new SHAPEDataStore();
-
-					logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
 					// se il datastore non esiste lo creiamo e invochiamo
 					// il servizio del servirepe infodatabase per recuperare le
 					// informazioni del db
@@ -675,14 +672,44 @@ public class ApplicationsService extends ServiceCommons {
 						nameDatabase = nameDatabase.replace(" ", "");
 					}
 
-					nameDatabase = datastoreShapeCreator.createDatastore(nameDatabase, workspace_name, workspace_uri,
-							urlShapeLocation, storeManager, reader, tablephysicalname, tablePhysicalPath);
+					if (Constants.SHAPE.equalsIgnoreCase(typeDatasource)) {
+						SHAPEDataStore datastoreShapeCreator = new SHAPEDataStore();
+						nameDatabase = datastoreShapeCreator.createDatastore(nameDatabase, workspace_name,
+								workspace_uri, urlShapeLocation, storeManager, reader, tablephysicalname,
+								tablePhysicalPath);
+						logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
+						PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
+								srsLayer, workspace_name + "_" + layerName);
 
-					PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
-							srsLayer, workspace_name + "_" + layerName);
+						logger.debug("Publising layer: " + layerName);
+						datastoreShapeCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
+						logger.debug("Layer published: " + layerName);
+					} else if (Constants.POSTGIS.equalsIgnoreCase(typeDatasource)) {
+						String nameDatabaseforGeoserver = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.DATABASE);
+						String port = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PORT);
+						String host = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.URL);
+						String schema = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.SCHEMA_FIELD);
+						String user = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.USERNAME_FIELD);
+						String password = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PASSWORD_FIELD);
 
-					logger.debug("Pubblicazione layer con nome " + layerName);
-					datastoreShapeCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
+						PostgisDataStore datastorePostgisCreator = new PostgisDataStore();
+						nameDatabase = datastorePostgisCreator.createDatastore(nameDatabase, workspace_name,
+								workspace_uri, storeManager, reader, host, Integer.parseInt(port), user, schema,
+								password, nameDatabaseforGeoserver);
+						
+						logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
+						PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
+								srsLayer, workspace_name + "_" + layerName);
+
+						logger.debug("Publising layer: " + layerName);
+						datastorePostgisCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
+						logger.debug("Layer published: " + layerName);
+						
+					} else {
+						logger.error("Datasource type not supported");
+						throw new DCException(Constants.ER14);
+					}
+
 				}
 
 				return createJsonStatus(Constants.STATUS_DONE, Constants.PUBLISH_ON_GEOSERVER, null, req);

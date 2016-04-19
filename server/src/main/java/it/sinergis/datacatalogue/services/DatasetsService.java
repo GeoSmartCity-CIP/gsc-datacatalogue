@@ -75,8 +75,8 @@ public class DatasetsService extends ServiceCommons {
 									Constants.PATH);
 
 							if (StringUtils.isNotEmpty(datasourcePath) && StringUtils.isNotEmpty(datasetFilename)) {
-								
-								if(!datasourcePath.endsWith("/")) {
+
+								if (!datasourcePath.endsWith("/")) {
 									datasourcePath = datasourcePath.concat("/");
 								}
 								String columnsJson = ServiceUtil
@@ -102,13 +102,14 @@ public class DatasetsService extends ServiceCommons {
 									Constants.USERNAME_FIELD);
 							String password = getFieldValueFromJsonText(datasourceEntity.getJson(),
 									Constants.PASSWORD_FIELD);
+							String database = getFieldValueFromJsonText(datasourceEntity.getJson(), Constants.DATABASE);
 							String datasetRealname = getFieldValueFromJsonText(req, Constants.DSET_REALNAME_FIELD);
 
 							if (StringUtils.isNotEmpty(urlDatasource) && StringUtils.isNotEmpty(portDatasource)
 									&& StringUtils.isNotEmpty(schema) && StringUtils.isNotEmpty(username)
 									&& StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(datasetRealname)) {
 								String columnsJson = ServiceUtil.createJSONColumnsFromPostGisDB(Constants.POSTGIS,
-										urlDatasource, portDatasource, schema, Constants.POSTGRES, username, password,
+										urlDatasource, portDatasource, schema, database, username, password,
 										datasetRealname);
 
 								ObjectNode node = (ObjectNode) om.readTree(req);
@@ -227,8 +228,8 @@ public class DatasetsService extends ServiceCommons {
 
 			if (StringUtils.isNumeric(idDataset)) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteDataset(null, null, Long.parseLong(idDataset) ,null);
-				
+				deleteService.deleteDataset(null, null, Long.parseLong(idDataset), null);
+
 				logger.info("datasetr succesfully deleted");
 				logger.info(req);
 				return createJsonStatus(Constants.STATUS_DONE, Constants.DATASETS_DELETED, null, req);
