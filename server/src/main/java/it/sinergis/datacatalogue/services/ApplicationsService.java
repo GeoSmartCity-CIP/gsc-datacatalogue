@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -554,6 +552,7 @@ public class ApplicationsService extends ServiceCommons {
 
 				RESTWorkspaceList listaWorkspace = reader.getWorkspaces();
 				String workspace_name = getFieldValueFromJsonText(application.getJson(), Constants.APP_NAME_FIELD);
+				workspace_name = workspace_name.replace(" ", "_");
 				String workspace_uri = getFieldValueFromJsonText(application.getJson(), Constants.APP_URI);
 				String srs = getFieldValueFromJsonText(application.getJson(), Constants.SRS);
 
@@ -633,7 +632,7 @@ public class ApplicationsService extends ServiceCommons {
 					}
 
 					String layerName = getFieldValueFromJsonText(entityLayer.getJson(), Constants.LAYER_NAME_FIELD);
-
+					layerName = layerName.replace(" ", "_");
 					// utilizzo di normalized per creare i servizi WMS
 					// (garantisce anche l'univocita')
 					layerName = ServiceUtil.normalizedLayerName(layerName);
@@ -658,19 +657,11 @@ public class ApplicationsService extends ServiceCommons {
 					String urlShapeLocation = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PATH);
 					String nameDatabase = getFieldValueFromJsonText(entityDatasource.getJson(),
 							Constants.DATASOURCE_NAME_FIELD);
+					nameDatabase = nameDatabase.replace(" ", "_");
 
 					String tablePhysicalPath = "";
 
 					String typeDatasource = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.TYPE);
-
-					// se il datastore non esiste lo creiamo e invochiamo
-					// il servizio del servirepe infodatabase per recuperare le
-					// informazioni del db
-					Pattern pattern = Pattern.compile("\\s");
-					Matcher matcher = pattern.matcher(nameDatabase);
-					if (matcher.find()) {
-						nameDatabase = nameDatabase.replace(" ", "");
-					}
 
 					if (Constants.SHAPE.equalsIgnoreCase(typeDatasource)) {
 						SHAPEDataStore datastoreShapeCreator = new SHAPEDataStore();

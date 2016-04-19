@@ -3,7 +3,6 @@ package it.sinergis.datacatalogue.services.datastore;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
@@ -19,6 +18,7 @@ import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
 
 /**
  * Class to create datastores and publish layers on them.
+ * 
  * @author A2MD0149
  *
  */
@@ -40,34 +40,19 @@ public class SHAPEDataStore {
 			GeoServerRESTStoreManager publisher, GeoServerRESTReader reader, String tablephysicalname,
 			String tablePhysicalPath) throws IOException, DCException {
 
-		if (fnDatabase != null) {
-			// se il db e' di tipo shape
-			if (StringUtils.isNotEmpty(tablePhysicalPath)) {
-				nameStore = nameStore + "_"
-						+ ServiceUtil.normalizedLayerName(tablePhysicalPath.replaceAll("\\\\", "_"));
+		URL url = new URL("file:" + fnDatabase);
+		GSShapefileDatastoreEncoder sds = new GSShapefileDatastoreEncoder(nameStore, url);
+		sds.setEnabled(true);
+		// sds.setNamespace(workspace_uri);
+
+		RESTDataStore ds = reader.getDatastore(workspace, nameStore);
+		if (ds == null) {
+			boolean created = publisher.create(workspace, sds);
+			if (created == false) {
+				throw new DCException(Constants.ER_GEO02);
 			}
-			GSShapefileDatastoreEncoder sds;
 
-			if (tablePhysicalPath != null) {
-				URL url = new URL("file:" + fnDatabase + "\\" + tablePhysicalPath);
-				sds = new GSShapefileDatastoreEncoder(nameStore, url);
-
-			} else {
-				URL url = new URL("file:" + fnDatabase);
-				sds = new GSShapefileDatastoreEncoder(nameStore, url);
-			}
-			sds.setEnabled(true);
-			// sds.setNamespace(workspace_uri);
-
-			RESTDataStore ds = reader.getDatastore(workspace, nameStore);
-			if (ds == null) {
-				boolean created = publisher.create(workspace, sds);
-				if (created == false) {
-					throw new DCException(Constants.ER_GEO02);
-				}
-
-				logger.debug("Datastore created successfully on geoserver");
-			}
+			logger.debug("Datastore created successfully on geoserver");
 		}
 		return nameStore;
 	}
