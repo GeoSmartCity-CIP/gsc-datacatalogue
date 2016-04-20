@@ -184,6 +184,10 @@
 		    } else if (selected === 'unreguser') {
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("idUserUnregisterExample").value;	
+		    	
+		    } else if (selected === 'listuser') {
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("idListUserExample").value;	
 		    } 
 		    else if (selected === 'createrole'){
 		    	document.getElementById("text").style.display = "table-row";
@@ -276,6 +280,7 @@ public String handleEscaping(String jsonExample){
 <input type="hidden" id="idUserUpdateProfileExample" value="<%out.print(handleEscaping("userUpdateProfileExample"));%>"></input>
 <input type="hidden" id="idUserLockExample" value="<%out.print(handleEscaping("userLockExample"));%>"></input>
 <input type="hidden" id="idUserUnregisterExample" value="<%out.print(handleEscaping("userUnregisterExample"));%>"></input>
+<input type="hidden" id="idListUserExample" value="<%out.print(handleEscaping("listUserExample"));%>"></input>
 <input type="hidden" id="idCreateRoleExample" value="<%out.print(handleEscaping("createRoleExample"));%>"></input>
 <input type="hidden" id="idDeleteRoleExample" value="<%out.print(handleEscaping("deleteRoleExample"));%>"></input>
 <input type="hidden" id="idListRoleExample" value="<%out.print(handleEscaping("listRoleExample"));%>"></input>
@@ -340,6 +345,7 @@ if (servizio==null) {
             <option value="updateuser" <%= servizio.equals("updateuser") ? "selected=\"selected\"" : ""%>>User - Update Profile</option>
             <option value="lockuser" <%= servizio.equals("lockuser") ? "selected=\"selected\"" : ""%>>User - Lock/Unlock</option>
             <option value="unreguser" <%= servizio.equals("unreguser") ? "selected=\"selected\"" : ""%>>User - Unregister/Delete</option>
+            <option value="listuser" <%= servizio.equals("listuser") ? "selected=\"selected\"" : ""%>>User - List</option>
             <option value="createrole" <%= servizio.equals("createrole") ? "selected=\"selected\"" : ""%>>Role - Create</option>
             <option value="deleterole" <%= servizio.equals("deleteerole") ? "selected=\"selected\"" : ""%>>Role - Delete</option>
             <option value="listrole" <%= servizio.equals("listrole") ? "selected=\"selected\"" : ""%>>Role - List/Search</option>

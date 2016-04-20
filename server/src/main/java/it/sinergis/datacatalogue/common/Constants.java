@@ -286,6 +286,7 @@ public final class Constants {
 	public static final String UPDATE_USER = "UPDATE_USER";
 	public static final String LOCK_USER = "LOCK_USER";
 	public static final String UNREGISTER_USER = "UNREGISTER_USER";
+	public static final String LIST_USERS = "LIST_USERS";
 	public static final String VERIFY_MAIL = "VERIFY_MAIL";
 	public static final String CREATE_ROLE = "CREATE_ROLE";
 	public static final String DELETE_ROLE = "DELETE_ROLE";

@@ -197,19 +197,22 @@ public class ApplicationsService extends ServiceCommons {
 						// get all the layers id involved
 						List<Long> idlayers = getIdFromRequest(requestLayers, Constants.LAYER_ID_FIELD);
 
-						// create the request
-						String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME, idOrganization,
-								true);
-						// execute the request
-						Long resultNumberLayers = gsc008Dao.countInId(queryLayers);
-						// if at least one of the specified layers does not
-						// exist throw error
-						// if the countnumber is less than the id list size one
-						// or more records was not found
-						if (resultNumberLayers < idlayers.size()) {
-							logger.error(
-									"Incorrect parameters: one of the requested layers cannot be assigned to the application because it does not exist.");
-							throw new DCException(Constants.ER1005, req);
+						if (!idlayers.isEmpty()) {
+							// create the request
+							String queryLayers = createCheckRequest(idlayers, Constants.LAYER_TABLE_NAME,
+									idOrganization, true);
+							// execute the request
+							Long resultNumberLayers = gsc008Dao.countInId(queryLayers);
+							// if at least one of the specified layers does not
+							// exist throw error
+							// if the countnumber is less than the id list size
+							// one
+							// or more records was not found
+							if (resultNumberLayers < idlayers.size()) {
+								logger.error(
+										"Incorrect parameters: one of the requested layers cannot be assigned to the application because it does not exist.");
+								throw new DCException(Constants.ER1005, req);
+							}
 						}
 
 						// Check groups existence
@@ -218,20 +221,23 @@ public class ApplicationsService extends ServiceCommons {
 						// get all the layers id involved
 						List<Long> idGroups = getIdFromRequest(requestGroups, Constants.GROUP_LAYER_ID_FIELD);
 
-						// create the request
-						String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME,
-								idOrganization, false);
-						// execute the request
-						Long resultNumberGroups = gsc008Dao.countInId(queryGroups);
+						if (!idGroups.isEmpty()) {
+							// create the request
+							String queryGroups = createCheckRequest(idGroups, Constants.GROUP_LAYER_TABLE_NAME,
+									idOrganization, false);
+							// execute the request
+							Long resultNumberGroups = gsc008Dao.countInId(queryGroups);
 
-						// if at least one of the specified layers does not
-						// exist throw error
-						// if the countnumber is less than the id list size one
-						// or more records was not found
-						if (resultNumberGroups < idGroups.size()) {
-							logger.error(
-									"Incorrect parameters: one of the requested groups cannot be assigned to the application because it does not exist.");
-							throw new DCException(Constants.ER1006, req);
+							// if at least one of the specified layers does not
+							// exist throw error
+							// if the countnumber is less than the id list size
+							// one
+							// or more records was not found
+							if (resultNumberGroups < idGroups.size()) {
+								logger.error(
+										"Incorrect parameters: one of the requested groups cannot be assigned to the application because it does not exist.");
+								throw new DCException(Constants.ER1006, req);
+							}
 						}
 
 						entityFound.setJson(req);
@@ -676,18 +682,20 @@ public class ApplicationsService extends ServiceCommons {
 						datastoreShapeCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
 						logger.debug("Layer published: " + layerName);
 					} else if (Constants.POSTGIS.equalsIgnoreCase(typeDatasource)) {
-						String nameDatabaseforGeoserver = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.DATABASE);
+						String nameDatabaseforGeoserver = getFieldValueFromJsonText(entityDatasource.getJson(),
+								Constants.DATABASE);
 						String port = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PORT);
 						String host = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.URL);
 						String schema = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.SCHEMA_FIELD);
 						String user = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.USERNAME_FIELD);
-						String password = getFieldValueFromJsonText(entityDatasource.getJson(), Constants.PASSWORD_FIELD);
+						String password = getFieldValueFromJsonText(entityDatasource.getJson(),
+								Constants.PASSWORD_FIELD);
 
 						PostgisDataStore datastorePostgisCreator = new PostgisDataStore();
 						nameDatabase = datastorePostgisCreator.createDatastore(nameDatabase, workspace_name,
 								workspace_uri, storeManager, reader, host, Integer.parseInt(port), user, schema,
 								password, nameDatabaseforGeoserver);
-						
+
 						logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
 						PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
 								srsLayer, workspace_name + "_" + layerName);
@@ -695,7 +703,7 @@ public class ApplicationsService extends ServiceCommons {
 						logger.debug("Publising layer: " + layerName);
 						datastorePostgisCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
 						logger.debug("Layer published: " + layerName);
-						
+
 					} else {
 						logger.error("Datasource type not supported");
 						throw new DCException(Constants.ER14);
