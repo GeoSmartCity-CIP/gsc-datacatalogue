@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,18 +37,16 @@ public class LayersService extends ServiceCommons {
 		layerPersistence = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
 	}
 
-	
-	public static String RESPONSE_JSON_STATUS_DONE =  "{Status:'Done'}";
+	public static String RESPONSE_JSON_STATUS_DONE = "{Status:'Done'}";
 	public static String RESPONSE_JSON_LIST_LAYER = "  {layers:[{name:'Streets',datasetname:'Dataset1',description:'Main streets',metadata:'',sld:'streets.sld'},{name:'Trees',datasetname:'Dataset2',description:'trees',metadata:'',sld:'trees.sld'}]}";
-	
-	
+
 	/**
 	 * Creates a new Layer.
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public String createLayer(String req){
+	public String createLayer(String req) {
 		try {
 			// preliminary checks on the request parameters
 			preliminaryChecks(req, Constants.CREATE_LAYER);
@@ -90,14 +89,14 @@ public class LayersService extends ServiceCommons {
 			return rpe.returnErrorString();
 		}
 	}
-	
+
 	/**
 	 * Updates an existing layer.
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public String updateLayer(String req){
+	public String updateLayer(String req) {
 		try {
 
 			// preliminary checks on the request parameters
@@ -119,7 +118,7 @@ public class LayersService extends ServiceCommons {
 				// record found with the same name is the record to be updated
 				// itself -> update record
 				if (layer == null || layer.getId().longValue() == requestedId.longValue()) {
-				
+
 					retrievedLayer.setJson(updateLayerJson(req));
 					layerPersistence.save(retrievedLayer);
 
@@ -151,14 +150,14 @@ public class LayersService extends ServiceCommons {
 			return rpe.returnErrorString();
 		}
 	}
-	
+
 	/**
 	 * Delete a layer.
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public String deleteLayer(String req){
+	public String deleteLayer(String req) {
 		try {
 			// preliminary checks on the request parameters
 			preliminaryChecks(req, Constants.DELETE_LAYER);
@@ -170,7 +169,7 @@ public class LayersService extends ServiceCommons {
 			// if results found -> delete record
 			if (layer != null) {
 				DeleteService deleteService = new DeleteService();
-				deleteService.deleteLayer(null, null, layer.getId(),null);
+				deleteService.deleteLayer(null, null, layer.getId(), null);
 
 				logger.info("Layer succesfully deleted");
 				logger.info(req);
@@ -178,7 +177,7 @@ public class LayersService extends ServiceCommons {
 
 				// otherwise error
 			} else {
-				DCException rpe = new DCException(Constants.ER803,req);
+				DCException rpe = new DCException(Constants.ER803, req);
 				return rpe.returnErrorString();
 			}
 
@@ -196,14 +195,14 @@ public class LayersService extends ServiceCommons {
 			return rpe.returnErrorString();
 		}
 	}
-	
+
 	/**
 	 * finds layers matching the request specifications.
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public String listLayer(String req){
+	public String listLayer(String req) {
 		try {
 			String query = null;
 			List<Gsc008LayerEntity> layers = new ArrayList<Gsc008LayerEntity>();
@@ -221,39 +220,30 @@ public class LayersService extends ServiceCommons {
 				String datasetIdParameter = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 				String layerNameParameter = getFieldValueFromJsonText(req, Constants.LAYER_NAME_FIELD);
 				String layerIdParameter = getFieldValueFromJsonText(req, Constants.LAYER_ID_FIELD);
-				if (layerIdParameter != null
-						&& (layerNameParameter != null || datasetIdParameter != null)) {
-					logger.error(
-							"Incorrect parameters: perform a request either by layerid or by datasetid (and layername). Both parameters are not allowed at the same time");
-					throw new DCException(Constants.ER806, req);
-				}
+				String idOrganization = getFieldValueFromJsonText(req, Constants.ORG_ID_FIELD);
+
 				// if the idlayer parameter is in the request the research
 				// will be done by id.
-				if (layerIdParameter != null) {
-					Gsc008LayerEntity layerFoundById = getLayerObjectById(
-							Long.parseLong(layerIdParameter));
+				if (StringUtils.isNotEmpty(layerIdParameter) && StringUtils.isEmpty(layerNameParameter)
+						&& StringUtils.isEmpty(datasetIdParameter) && StringUtils.isEmpty(idOrganization)) {
+
+					Gsc008LayerEntity layerFoundById = getLayerObjectById(Long.parseLong(layerIdParameter));
 					if (layerFoundById != null) {
 						layers.add(layerFoundById);
 					}
-					// otherwise the research is based on the dataset
-					// parameter.
-				} else if (datasetIdParameter != null) {
-					String queryText = "'" + Constants.DSET_ID_FIELD + "' =  '" + datasetIdParameter + "'";
+				}
+				// otherwise the research is based on the dataset
+				// parameter.
+				else if (StringUtils.isNotEmpty(layerIdParameter) || StringUtils.isNotEmpty(layerNameParameter)
+						|| StringUtils.isNotEmpty(datasetIdParameter) || StringUtils.isNotEmpty(idOrganization)) {
 
-					// user may additionally specify a partial or complete
-					// layername to refine the research process.
-					if (layerNameParameter != null) {
-						queryText += " AND '" + Constants.LAYER_NAME_FIELD + "' LIKE '%"
-								+ getKeyFromJsonText(req, Constants.LAYER_NAME_FIELD) + "%'";
-					}
-
-					query = createQuery(queryText, Constants.LAYER_TABLE_NAME, Constants.JSON_COLUMN_NAME,
-							"select");
+					query = createSearchQuery(Constants.LAYER_TABLE_NAME, Constants.DATASETS_TABLE_NAME,
+							Constants.DATASOURCE_TABLE_NAME, layerIdParameter, layerNameParameter, datasetIdParameter,
+							idOrganization);
 					layers = layerPersistence.getLayers(query);
 
 				} else {
-					logger.error(
-							"Incorrect parameters: either iddataset or idlayer parameters should be specified.");
+					logger.error("Incorrect parameters: either iddataset or idlayer parameters should be specified.");
 					throw new DCException(Constants.ER807, req);
 				}
 			} else {
@@ -301,10 +291,10 @@ public class LayersService extends ServiceCommons {
 			return rpe.returnErrorString();
 		}
 	}
-	
+
 	/**
-	 * Checks if the given parameter for dataset matches the id of any
-	 * existing dataset.
+	 * Checks if the given parameter for dataset matches the id of any existing
+	 * dataset.
 	 * 
 	 * @param datasetId
 	 * @return
@@ -321,7 +311,7 @@ public class LayersService extends ServiceCommons {
 			throw rpe;
 		}
 	}
-	
+
 	/**
 	 * Retrieves the layer given an datasource name.
 	 * 
@@ -333,10 +323,9 @@ public class LayersService extends ServiceCommons {
 		ArrayList<String> params = new ArrayList<String>();
 		params.add(Constants.LAYER_NAME_FIELD);
 		params.add(Constants.DSET_ID_FIELD);
-		return (Gsc008LayerEntity) getRowObject(json, Constants.LAYER_TABLE_NAME, params,
-				layerPersistence);
+		return (Gsc008LayerEntity) getRowObject(json, Constants.LAYER_TABLE_NAME, params, layerPersistence);
 	}
-	
+
 	/**
 	 * Retrieves the layer given an layer Id.
 	 * 
@@ -347,7 +336,7 @@ public class LayersService extends ServiceCommons {
 	private Gsc008LayerEntity getLayerObjectById(Long id) throws DCException {
 		return (Gsc008LayerEntity) layerPersistence.load(id);
 	}
-	
+
 	/**
 	 * Update layer json
 	 * 
@@ -363,7 +352,7 @@ public class LayersService extends ServiceCommons {
 			JsonNode newLYRName = newRootNode.findValue(Constants.LAYER_NAME_FIELD);
 			if (newLYRName == null) {
 				logger.error(Constants.LAYER_NAME_FIELD + " parameter is mandatory within the json string.");
-				throw new DCException(Constants.ER04,newJson);
+				throw new DCException(Constants.ER04, newJson);
 			}
 
 			((ObjectNode) newRootNode).put(Constants.LAYER_NAME_FIELD, newLYRName.toString().replace("\"", ""));
@@ -378,5 +367,39 @@ public class LayersService extends ServiceCommons {
 			throw new DCException(Constants.ER01, newJson);
 		}
 
+	}
+
+	private String createSearchQuery(String tableNameLayer, String tableNameDataset, String tableNameDatasource,
+			String idLayer, String layerName, String idDataset, String idOrganization) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ").append(tableNameLayer).append(" layer WHERE layer.id IN ( ");
+		sb.append("SELECT gsc008.id FROM ").append(tableNameLayer).append(" gsc008, ").append(tableNameDataset)
+				.append(" gsc007, ").append(tableNameDatasource).append(" gsc006 WHERE ");
+		sb.append("gsc007.id = cast(gsc008.json->>'").append(Constants.DSET_ID_FIELD).append("' as integer) ");
+		sb.append(" AND gsc006.id = cast(gsc007.json->>'").append(Constants.DATASOURCE_ID_FIELD)
+				.append("' as integer) ");
+
+		if (StringUtils.isNotEmpty(idLayer)) {
+			sb.append(" AND gsc008.id = ").append(idLayer);
+		}
+
+		if (StringUtils.isNotEmpty(layerName)) {
+			sb.append(" AND gsc008.json->>'").append(Constants.LAYER_NAME_FIELD).append("' LIKE '%").append(layerName)
+					.append("%'");
+		}
+
+		if (StringUtils.isNotEmpty(idDataset)) {
+			sb.append(" AND gsc008.json->>'").append(Constants.DSET_ID_FIELD).append("' = '").append(idDataset)
+					.append("'");
+		}
+
+		if (StringUtils.isNotEmpty(idOrganization)) {
+			sb.append(" AND gsc006.json->>'").append(Constants.ORG_FIELD).append("' = '").append(idOrganization)
+					.append("'");
+		}
+
+		sb.append(")");
+		return sb.toString();
 	}
 }

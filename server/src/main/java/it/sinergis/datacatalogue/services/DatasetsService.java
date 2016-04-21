@@ -261,64 +261,47 @@ public class DatasetsService extends ServiceCommons {
 			String idDataset = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 			String datasetName = getFieldValueFromJsonText(req, Constants.DSET_NAME_FIELD);
 			String idDatasource = getFieldValueFromJsonText(req, Constants.DATASOURCE_ID_FIELD);
+			String idOrganization = getFieldValueFromJsonText(req, Constants.ORG_ID_FIELD);
 
-			// idDataset has priority in the research
-			if (StringUtils.isNotEmpty(idDataset)) {
+			// Dataset id has to be numeric
+			if (StringUtils.isNotEmpty(idDataset) && !StringUtils.isNumeric(idDataset)) {
+				throw new DCException(Constants.ER12, req);
+			}
+
+			// Datasource id has to be numeric
+			if (StringUtils.isNotEmpty(idDatasource) && !StringUtils.isNumeric(idDatasource)) {
+				throw new DCException(Constants.ER12, req);
+			}
+
+			// Organization id has to be numeric
+			if (StringUtils.isNotEmpty(idOrganization) && !StringUtils.isNumeric(idOrganization)) {
+				throw new DCException(Constants.ER12, req);
+			}
+
+			// load dataset from its id if idDataset is the only parameter used
+			// in this search
+			if (StringUtils.isNotEmpty(idDataset) && StringUtils.isEmpty(datasetName)
+					&& StringUtils.isEmpty(idDatasource) && StringUtils.isEmpty(idOrganization)) {
 				dsets = new ArrayList<Gsc007DatasetEntity>();
 
-				if (StringUtils.isNumeric(idDataset)) {
-					Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
-					if (entityFound == null) {
-						// No dataset found with given parameters.
-						throw new DCException(Constants.ER702, req);
-					}
-					dsets.add(entityFound);
-				} else {
-					// Dataset id has to be numeric
-					throw new DCException(Constants.ER12, req);
+				Gsc007DatasetEntity entityFound = gsc007Dao.load(Long.parseLong(idDataset));
+				if (entityFound == null) {
+					// No dataset found with given parameters.
+					throw new DCException(Constants.ER702, req);
 				}
-			} else {
-				// We build the query appending parameters
-				StringBuilder builderQuery = new StringBuilder();
+				dsets.add(entityFound);
 
-				if (StringUtils.isNotEmpty(idDatasource)) {
+			} else if (StringUtils.isNotEmpty(idDataset) || StringUtils.isNotEmpty(datasetName)
+					|| StringUtils.isNotEmpty(idDatasource) || StringUtils.isNotEmpty(idOrganization)) {
 
-					if (StringUtils.isNumeric(idDatasource)) {
-						builderQuery.append("'");
-						builderQuery.append(Constants.DATASOURCE_ID_FIELD);
-						builderQuery.append("' = '");
-						builderQuery.append(idDatasource);
-						builderQuery.append("'");
-					} else {
-						// Datasource id has to be numeric
-						throw new DCException(Constants.ER12, req);
-					}
-				}
+				String query = createSearchQuery(Constants.DATASETS_TABLE_NAME, Constants.DATASOURCE_TABLE_NAME,
+						idDataset, datasetName, idDatasource, idOrganization);
+				dsets = gsc007Dao.getDatasets(query);
+			}
+			// else we select all datasets
+			else {
 
-				if (StringUtils.isNotEmpty(idDatasource) && StringUtils.isNotEmpty(datasetName)) {
-					builderQuery.append(" AND ");
-				}
-
-				if (StringUtils.isNotEmpty(datasetName)) {
-					builderQuery.append("'");
-					builderQuery.append(Constants.DSET_NAME_FIELD);
-					builderQuery.append("' LIKE '%");
-					builderQuery.append(datasetName);
-					builderQuery.append("%'");
-				}
-
-				// if the builder produced something not empty
-				if (StringUtils.isNotEmpty(builderQuery.toString())) {
-
-					String query = createQuery(builderQuery.toString(), Constants.DATASETS_TABLE_NAME,
-							Constants.JSON_COLUMN_NAME, "select");
-					dsets = gsc007Dao.getDatasets(query);
-				}
-				// else we select all datasets
-				else {
-
-					dsets = gsc007Dao.loadAll();
-				}
+				dsets = gsc007Dao.loadAll();
 			}
 
 			logger.info("Datasets found: " + dsets.size());
@@ -519,5 +502,51 @@ public class DatasetsService extends ServiceCommons {
 			throw new DCException(Constants.ER01);
 		}
 
+	}
+
+	/**
+	 *  Query example:
+	 * SELECT * FROM gscdatacatalogue.gsc_007_dataset dataset
+	 * WHERE dataset.id IN (
+	 * SELECT
+	 * gsc007.id
+	 *	FROM 
+	 *	gscdatacatalogue.gsc_007_dataset gsc007,
+	 *	gscdatacatalogue.gsc_006_datasource gsc006
+	 *	WHERE
+	 *	gsc006.id = cast(gsc007.json->>'iddatasource' as integer) 
+	 *	AND gsc007.id = '150'
+	 *	AND gsc007.json->>'iddatasource' = '269'
+	 *	AND gsc007.json->>'datasetname' LIKE '%new%'
+	 *		AND gsc006.json->>'organization' = '665'
+	 *	) */
+	private String createSearchQuery(String tableNameDataset, String tableNameDatasource, String idDataset,
+			String datasetName, String idDatasource, String idOrganization) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ").append(tableNameDataset).append(" dataset WHERE dataset.id IN ( ");
+		sb.append("SELECT gsc007.id FROM ").append(tableNameDataset).append(" gsc007, ").append(tableNameDatasource)
+				.append(" gsc006 WHERE ");
+		sb.append("gsc006.id = cast(gsc007.json->>'").append(Constants.DATASOURCE_ID_FIELD).append("' as integer) ");
+
+		if (StringUtils.isNotEmpty(idDataset)) {
+			sb.append(" AND gsc007.id = ").append(idDataset);
+		}
+
+		if (StringUtils.isNotEmpty(datasetName)) {
+			sb.append(" AND gsc007.json->>'").append(Constants.DSET_NAME_FIELD).append("' LIKE '%").append(datasetName)
+					.append("%'");
+		}
+
+		if (StringUtils.isNotEmpty(idDatasource)) {
+			sb.append(" AND gsc007.json->>'").append(Constants.DATASOURCE_ID_FIELD).append("' = '").append(idDatasource).append("'");
+		}
+
+		if (StringUtils.isNotEmpty(idOrganization)) {
+			sb.append(" AND gsc006.json->>'").append(Constants.ORG_FIELD).append("' = '").append(idOrganization).append("'");
+		}
+
+		sb.append(")");
+		return sb.toString();
 	}
 }
