@@ -208,7 +208,7 @@ public class FunctionsService extends ServiceCommons {
 				builderQuery.append(" AND ");
 				builderQuery.append("'");
 				builderQuery.append(Constants.FUNC_NAME_FIELD);
-				builderQuery.append("'LIKE '%");
+				builderQuery.append("'ILIKE '%");
 				builderQuery.append(functionName);
 				builderQuery.append("%'");
 			}

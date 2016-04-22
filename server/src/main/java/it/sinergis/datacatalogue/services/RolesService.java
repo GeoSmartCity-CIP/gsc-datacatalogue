@@ -155,7 +155,7 @@ public class RolesService extends ServiceCommons{
 				//add the main clause (search by orgId and partial name)
 				queryText += "'" + Constants.ORG_FIELD + "' = '"+ getKeyFromJsonText(req,Constants.ORG_FIELD)+"'";			
 				if(isParameterInJson(req,Constants.ROLE_NAME_FIELD)) {
-					queryText += " AND '"+Constants.ROLE_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ROLE_NAME_FIELD)+"%'";
+					queryText += " AND '"+Constants.ROLE_NAME_FIELD + "' ILIKE '%"+getKeyFromJsonText(req,Constants.ROLE_NAME_FIELD)+"%'";
 				}
 
 				//add the admin clause to the query

@@ -251,7 +251,7 @@ public class DatasourcesService extends ServiceCommons {
 					// user may additionally specify a partial or complete
 					// datasourcename to refine the research process.
 					if (datasourcenameParameter != null) {
-						queryText += " AND '" + Constants.DATASOURCE_NAME_FIELD + "' LIKE '%"
+						queryText += " AND '" + Constants.DATASOURCE_NAME_FIELD + "' ILIKE '%"
 								+ getKeyFromJsonText(req, Constants.DATASOURCE_NAME_FIELD) + "%'";
 					}
 

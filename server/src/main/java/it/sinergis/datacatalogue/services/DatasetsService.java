@@ -517,7 +517,7 @@ public class DatasetsService extends ServiceCommons {
 	 *	gsc006.id = cast(gsc007.json->>'iddatasource' as integer) 
 	 *	AND gsc007.id = '150'
 	 *	AND gsc007.json->>'iddatasource' = '269'
-	 *	AND gsc007.json->>'datasetname' LIKE '%new%'
+	 *	AND gsc007.json->>'datasetname' ILIKE '%new%'
 	 *		AND gsc006.json->>'organization' = '665'
 	 *	) */
 	private String createSearchQuery(String tableNameDataset, String tableNameDatasource, String idDataset,
@@ -534,7 +534,7 @@ public class DatasetsService extends ServiceCommons {
 		}
 
 		if (StringUtils.isNotEmpty(datasetName)) {
-			sb.append(" AND gsc007.json->>'").append(Constants.DSET_NAME_FIELD).append("' LIKE '%").append(datasetName)
+			sb.append(" AND gsc007.json->>'").append(Constants.DSET_NAME_FIELD).append("' ILIKE '%").append(datasetName)
 					.append("%'");
 		}
 

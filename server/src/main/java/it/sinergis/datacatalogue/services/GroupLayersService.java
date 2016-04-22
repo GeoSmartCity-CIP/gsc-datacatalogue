@@ -188,7 +188,7 @@ public class GroupLayersService extends ServiceCommons {
 					// user may additionally specify a partial or complete
 					// grouplayername to refine the research process.
 					if (grouplayerNameParameter != null) {
-						queryText += " AND '" + Constants.GROUP_LAYER_NAME_FIELD + "' LIKE '%"
+						queryText += " AND '" + Constants.GROUP_LAYER_NAME_FIELD + "' ILIKE '%"
 								+ getKeyFromJsonText(req, Constants.GROUP_LAYER_NAME_FIELD) + "%'";
 					}
 

@@ -385,7 +385,7 @@ public class LayersService extends ServiceCommons {
 		}
 
 		if (StringUtils.isNotEmpty(layerName)) {
-			sb.append(" AND gsc008.json->>'").append(Constants.LAYER_NAME_FIELD).append("' LIKE '%").append(layerName)
+			sb.append(" AND gsc008.json->>'").append(Constants.LAYER_NAME_FIELD).append("' ILIKE '%").append(layerName)
 					.append("%'");
 		}
 

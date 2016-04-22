@@ -205,7 +205,7 @@ public class OrganizationsService extends ServiceCommons{
 				if(StringUtils.isNotEmpty(idOrganization) && StringUtils.isNotEmpty(organizationNameField)) {
 					StringBuilder sb = new StringBuilder();
 
-					String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
+					String queryText = "'" + Constants.ORG_NAME_FIELD + "' ILIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 					sb.append(createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select"));
 					
 					sb.append(" AND ").append(Constants.ID).append(" = ").append(idOrganization);
@@ -218,7 +218,7 @@ public class OrganizationsService extends ServiceCommons{
 					orgs.add(orgEntity);
 					
 				} else if(StringUtils.isNotEmpty(organizationNameField)) {
-					String queryText = "'" + Constants.ORG_NAME_FIELD + "' LIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
+					String queryText = "'" + Constants.ORG_NAME_FIELD + "' ILIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 					query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");
 					orgs = organizationPersistence.getOrganizations(query);
 				}

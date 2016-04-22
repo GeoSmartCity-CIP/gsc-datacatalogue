@@ -364,7 +364,7 @@ public class ApplicationsService extends ServiceCommons {
 				if (StringUtils.isNotEmpty(applicationName)) {
 					builderQuery.append("'");
 					builderQuery.append(Constants.APP_NAME_FIELD);
-					builderQuery.append("' LIKE '%");
+					builderQuery.append("' ILIKE '%");
 					builderQuery.append(applicationName);
 					builderQuery.append("%'");
 				}
