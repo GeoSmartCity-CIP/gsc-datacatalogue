@@ -732,11 +732,42 @@ public class ApplicationsService extends ServiceCommons {
 			checkJsonWellFormed(req);
 			checkMandatoryParameters(Constants.GET_CONFIGURATION, req);
 			logger.info(req);
+			// retrieve the application from ID
+			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
+			Gsc010ApplicationEntity application = null;
+
+			if (StringUtils.isNotEmpty(idApplication)) {
+				if (StringUtils.isNumeric(idApplication)) {
+					application = gsc010Dao.load(Long.parseLong(idApplication));
+					if (application == null) {
+						// No application found with given parameters.
+						throw new DCException(Constants.ER1002, req);
+					}
+				} else {
+					// Application id has to be numeric
+					throw new DCException(Constants.ER12, req);
+				}
+			}
 
 			String jsonString;
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				jsonString = mapper.writeValueAsString("");
+
+				String layers = getObjectFromJsonText(application.getJson(), Constants.LAYERS);
+				JsonNode node = om.readTree(layers);
+
+				Iterator<JsonNode> iteratorNode = node.elements();
+				ArrayList<String> listIdLayers = new ArrayList<String>();
+
+				while (iteratorNode.hasNext()) {
+
+					JsonNode layerNode = iteratorNode.next();
+					String layerNodeAsString = om.writeValueAsString(layerNode);
+					String layerId = getFieldValueFromJsonText(layerNodeAsString, Constants.LAYER_ID_FIELD);
+					listIdLayers.add(layerId);
+				}
+
+				jsonString = om.writeValueAsString(createGetConfigurationResult(application.getJson(), listIdLayers));
+
 			} catch (IOException e) {
 				logger.error("IOException", e);
 				throw new DCException(Constants.ER01, req);
@@ -809,5 +840,185 @@ public class ApplicationsService extends ServiceCommons {
 		}
 
 		return sb.toString();
+	}
+
+	private ObjectNode createGetConfigurationResult(String applicationJson, ArrayList<String> listIdLayers)
+			throws DCException {
+		ObjectNode maps = om.createObjectNode();
+		ObjectNode configs = om.createObjectNode();
+
+		configs.put(Constants.PROPERTIES, createMapsConfigsProperties());
+		configs.put(Constants.CLASS_NAME, "MW.Configs");
+		maps.put(Constants.CONFIGS, configs);
+
+		maps.put(Constants.XMLNS, "http://schemas.corenet.it/mapwork/mapconfiguration");
+
+		ArrayNode map = om.createArrayNode();
+		ObjectNode firstMapObject = om.createObjectNode();
+
+		String workspaceName = getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_");
+
+		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
+		firstMapObject.put(Constants.DEFAULT_MAP, true);
+		firstMapObject.put(Constants.ZOOM, 2);
+		firstMapObject.put(Constants.UNITS, "m");
+		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
+		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
+		firstMapObject.put(Constants.MAX_RESOLUTION, 90.31);
+		firstMapObject.put(Constants.NUM_ZOOM_LEVELS, 12);
+		firstMapObject.put(Constants.NAME, workspaceName);
+
+		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(listIdLayers));
+		firstMapObject.put(Constants.NAMESPACE_URI, getFieldValueFromJsonText(applicationJson, Constants.APP_URI));
+
+		ObjectNode projection = om.createObjectNode();
+		projection.put(Constants.PROJ4CODE, getFieldValueFromJsonText(applicationJson, Constants.SRS));
+		projection.put(Constants.PROJ, "null");
+		projection.put(Constants.PROJ4DEF,
+				"+proj=tmerc +ellps=intl +lat_0=0 +lon_0=9 +x_0=500053 +y_0=-3999820 +k=0.9996 +units=m +proj=tmerc +ellps=intl +lat_0=0 +lon_0=9 +x_0=500053 +y_0=-3999820 +k=0.9996 +units=m +towgs84=-104.1,-49.1,-9.9,0.971,-2.917,0.714,-11.68");
+		projection.put(Constants.CLASS_NAME, "OpenLayers.Projection");
+		firstMapObject.put(Constants.PROJECTION, projection);
+
+		firstMapObject.put(Constants.MAX_EXTENT,
+				createMaxExtent(675332, 918619.988066, 695711.986064, 938760, "OpenLayers.Bounds"));
+
+		map.add(firstMapObject);
+		maps.put("map", map);
+
+		return maps;
+	}
+
+	private ObjectNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
+		ObjectNode layersNode = om.createObjectNode();
+		ArrayNode layers = om.createArrayNode();
+
+		for (String idLayer : listIdLayers) {
+
+			Gsc008LayerEntity layerEntity = gsc008Dao.load(Long.parseLong(idLayer));
+			String layerJson = layerEntity.getJson();
+			String layerName = getFieldValueFromJsonText(layerJson, Constants.LAYER_NAME_FIELD).replace(" ", "_");
+
+			ObjectNode layerObject = om.createObjectNode();
+
+			layerObject.put(Constants.MIN_RESOLUTION, 0);
+			layerObject.put(Constants.IS_BASE_LAYER, true);
+			layerObject.put(Constants.SINGLE_TILE, true);
+			layerObject.put(Constants.WMS_LAYERS, createWmsLayers());
+			layerObject.put(Constants.VISIBILITY, false);
+			layerObject.put(Constants.NAME, layerName);
+			layerObject.put(Constants.OPTIONS, createLayerOptions(layerName));
+			layerObject.put(Constants.PARAMS, createLayerParams());
+			layerObject.put(Constants.URL, "http://coreweb1.coremed.it/geoserver/MappaCatasto_01_1/wms");
+			layerObject.put(Constants.MAX_EXTENT,
+					createMaxExtent(676101.625122, 920667.923567, 694357.870996, 937347.977722, "OpenLayers.Bounds"));
+			layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
+			// layerObject.put(Constants.TILE_ORIGIN,
+			// createTileOrigin(676101.625122, 920667.923567,
+			// "OpenLayers.LonLat"));
+			// layerObject.put(Constants.LAYER_NAME_FIELD, layerName);
+			// layerObject.put(Constants.TYPE, "jpg");
+			// layerObject.put(Constants.MAX_RESOLUTION, 90.31);
+			// layerObject.put(Constants.NUM_ZOOM_LEVELS, 12);
+			// layerObject.put(Constants.DISPLAY_IN_LAYER_SWITCHER, true);
+			layers.add(layerObject);
+		}
+
+		layersNode.put(Constants.LAYERS, layers);
+		return layersNode;
+	}
+
+	private ObjectNode createLayerOptions(String layerName) {
+		ObjectNode layerOptionsNode = om.createObjectNode();
+
+		layerOptionsNode.put(Constants.MAX_RESOLUTION, 90.31);
+		layerOptionsNode.put(Constants.BUFFER, 0);
+		// layerOptionsNode.put(Constants.SERVICE_VERSON, "");
+		// layerOptionsNode.put(Constants.TILE_ORIGIN,
+		// createTileOrigin(676998.2275614999, 921269.7915430071,
+		// "OpenLayers.LonLat"));
+		// layerOptionsNode.put(Constants.LAYER_NAME_FIELD, layerName);
+		// layerOptionsNode.put(Constants.TYPE, "jpg");
+		// layerOptionsNode.put(Constants.MAX_EXTENT,
+		// createMaxExtent(676101.625122, 920667.923567, 694357.870996,
+		// 937347.977722, "OpenLayers.Bounds"));
+		return layerOptionsNode;
+	}
+
+	private ObjectNode createLayerParams() {
+		ObjectNode layerParamsNode = om.createObjectNode();
+
+		layerParamsNode.put(Constants.TILED, 90.31);
+		layerParamsNode.put(Constants.TILES_ORIGIN, "675332.0,918619.988066");
+		layerParamsNode.put(Constants.FORMAT, "image/png");
+		layerParamsNode.put(Constants.REQUEST.toUpperCase(), "GetMap");
+		layerParamsNode.put(Constants.STYLES, "");
+		return layerParamsNode;
+	}
+	
+	private ArrayNode createWmsLayers() {
+		ArrayNode arrayNode = om.createArrayNode();
+		ObjectNode wmsLayerNode = om.createObjectNode();
+
+		wmsLayerNode.put(Constants.OVERVIEW, false);
+		wmsLayerNode.put(Constants.QUERYABLE, false);
+		wmsLayerNode.put(Constants.PHYSICAL_NAME, "MappaCatasto_01_1:Alberi");
+		wmsLayerNode.put(Constants.MAX_SCALE, 0);
+		wmsLayerNode.put(Constants.VISIBILITY, true);
+		wmsLayerNode.put(Constants.EXTRACTABLE, false);
+		wmsLayerNode.put(Constants.LOGICAL_NAME, "Alberi");
+		wmsLayerNode.put(Constants.MIN_SCALE, 0);
+		wmsLayerNode.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
+		wmsLayerNode.put(Constants.PRIORITA_VIS, 50);
+		wmsLayerNode.put(Constants.CLASS_NAME, "MW.WMSLayer");
+		ObjectNode groupWms = om.createObjectNode();
+		groupWms.put(Constants.VISIBILITY, true);
+		groupWms.put(Constants.NAME, "SfondoCTW");
+		groupWms.put(Constants.EXPLORABLE, false);
+		wmsLayerNode.put(Constants.GROUP, groupWms);
+		
+		arrayNode.add(wmsLayerNode);
+		return arrayNode;
+	}
+
+	private ObjectNode createMapsConfigsProperties() {
+		ObjectNode sectionNode = om.createObjectNode();
+		ArrayNode section = om.createArrayNode();
+
+		ObjectNode firstSectionObject = om.createObjectNode();
+
+		ArrayNode param = om.createArrayNode();
+
+		ObjectNode firstParamObject = om.createObjectNode();
+		firstParamObject.put(Constants.NAME, "NumeroElementi");
+		firstParamObject.put(Constants.VALUE, 6);
+
+		param.add(firstParamObject);
+
+		firstSectionObject.put(Constants.PARAM, param);
+		firstSectionObject.put(Constants.NAME, "Trova Generici");
+
+		section.add(firstSectionObject);
+
+		sectionNode.put(Constants.SECTION, section);
+		return sectionNode;
+	}
+
+	private ObjectNode createMaxExtent(double left, double bottom, double right, double top, String className) {
+		ObjectNode maxExtent = om.createObjectNode();
+		maxExtent.put(Constants.CLASS_NAME, className);
+		maxExtent.put(Constants.LEFT, left);
+		maxExtent.put(Constants.BOTTOM, bottom);
+		maxExtent.put(Constants.RIGHT, right);
+		maxExtent.put(Constants.TOP, top);
+
+		return maxExtent;
+	}
+
+	private ObjectNode createTileOrigin(double lon, double lat, String className) {
+		ObjectNode tileOrigin = om.createObjectNode();
+		tileOrigin.put(Constants.CLASS_NAME, className);
+		tileOrigin.put(Constants.LON, lon);
+		tileOrigin.put(Constants.LAT, lat);
+		return tileOrigin;
 	}
 }

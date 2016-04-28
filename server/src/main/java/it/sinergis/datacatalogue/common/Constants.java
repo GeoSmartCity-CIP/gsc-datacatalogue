@@ -2,24 +2,24 @@ package it.sinergis.datacatalogue.common;
 
 public final class Constants {
 
-	/** GENERIC PARAMETERS*/
+	/** GENERIC PARAMETERS */
 	public static final String STATUS_DONE = "done";
 	public static final String STATUS_ERROR = "error";
 	public static final String REQUEST = "request";
 	public static final String ID = "id";
-	public static final String JSON_COLUMN_NAME = "json";	
-	
-	/** TABLE NAME PARAMETERS*/
+	public static final String JSON_COLUMN_NAME = "json";
+
+	/** TABLE NAME PARAMETERS */
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
 	public static final String USER_TABLE_NAME = "gsc_002_user";
-	public static final String ROLE_TABLE_NAME = "gsc_003_role";	
+	public static final String ROLE_TABLE_NAME = "gsc_003_role";
 	public static final String DATASOURCE_TABLE_NAME = "gsc_006_datasource";
 	public static final String DATASETS_TABLE_NAME = "gsc_007_dataset";
 	public static final String FUNCTION_TABLE_NAME = "gsc_004_function";
 	public static final String LAYER_TABLE_NAME = "gsc_008_layer";
 	public static final String GROUP_LAYER_TABLE_NAME = "gsc_009_grouplayer";
 	public static final String APPLICATION_TABLE_NAME = "gsc_010_application";
-	public static final String PERMISSION_TABLE_NAME  = "gsc_005_permission";
+	public static final String PERMISSION_TABLE_NAME = "gsc_005_permission";
 
 	/** JSON FIELDS NAMES */
 	public static final String DETAIL_FIELD = "detail";
@@ -30,13 +30,13 @@ public final class Constants {
 	public static final String ID_FIELD = "id";
 	public static final String SRS = "srs";
 	public static final String INCLUDE_ADMIN_RECORDS = "includeadminrecords";
-	
+
 	/** Organization field names */
 	public static final String ORG_NAME_FIELD = "organizationname";
 	public static final String ORG_ID_FIELD = "idorganization";
 	public static final String ORGANIZATIONS_FIELD = "organizations";
 	public static final String ORG_FIELD = "organization";
-	
+
 	/** Dataset field names */
 	public static final String DSET_ID_FIELD = "iddataset";
 	public static final String DSET_NAME_FIELD = "datasetname";
@@ -44,7 +44,7 @@ public final class Constants {
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
-	
+
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
 	public static final String DATASOURCE_ID_FIELD = "iddatasource";
@@ -54,25 +54,25 @@ public final class Constants {
 	public static final String TYPE = "type";
 	public static final String ALIAS = "alias";
 	public static final String VISIBILITY = "visibility";
-	public static final String COLUMNS = "columns";	
-	public static final String DATA_ORIGIN = "dataorigin";	
-	
+	public static final String COLUMNS = "columns";
+	public static final String DATA_ORIGIN = "dataorigin";
+
 	/** Layer field names. */
 	public static final String LAYER_NAME_FIELD = "layername";
 	public static final String LAYER_ID_FIELD = "idlayer";
 	public static final String LAYERS = "layers";
-	
+
 	/** GROUP Layer field names. */
 	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
 	public static final String GROUP_LAYER_ID_FIELD = "idgroup";
 	public static final String GROUP_LAYER = "grouplayers";
 	public static final String GROUPS = "groups";
-	
+
 	/** Function field names. */
 	public static final String FUNC_NAME_FIELD = "functionname";
 	public static final String FUNC_ID_FIELD = "idfunction";
 	public static final String FUNCTIONS_FIELD = "functions";
-	
+
 	/** User field names */
 	public static final String USER_NAME_FIELD = "username";
 	public static final String USER_ID_FIELD = "iduser";
@@ -89,12 +89,12 @@ public final class Constants {
 	public static final String VERIFIED = "verified";
 	public static final String LOCKED = "locked";
 	public static final String UUID = "uuid";
-	
+
 	/** Role field names. */
 	public static final String ROLE_ID_FIELD = "idrole";
 	public static final String ROLES_FIELD = "roles";
 	public static final String ROLE_NAME_FIELD = "rolename";
-	
+
 	/** Application field names. */
 	public static final String APP_NAME_FIELD = "applicationname";
 	public static final String APP_URI = "uri";
@@ -109,11 +109,11 @@ public final class Constants {
 	/** ERRORS */
 	public static final String ER01 = "ER01";
 	public static final String ER02 = "ER02";
-	public static final String ER03 = "ER03";	
-	public static final String ER04 = "ER04";	
-	public static final String ER05 = "ER05";	
-	public static final String ER06 = "ER06";	
-	public static final String ER07 = "ER07";	
+	public static final String ER03 = "ER03";
+	public static final String ER04 = "ER04";
+	public static final String ER05 = "ER05";
+	public static final String ER06 = "ER06";
+	public static final String ER07 = "ER07";
 	public static final String ER11 = "ER11";
 	public static final String ER12 = "ER12";
 	public static final String ER13 = "ER13";
@@ -126,14 +126,14 @@ public final class Constants {
 	public static final String ER20 = "ER20";
 
 	/** Organization Errors. */
-	public static final String ER101 = "ER101";	
-	public static final String ER102 = "ER102";	
-	
+	public static final String ER101 = "ER101";
+	public static final String ER102 = "ER102";
+
 	/** Users errors. */
-	public static final String ER201 = "ER201";	
-	public static final String ER202 = "ER202";	
-	public static final String ER203 = "ER203";	
-	public static final String ER204 = "ER204";	
+	public static final String ER201 = "ER201";
+	public static final String ER202 = "ER202";
+	public static final String ER203 = "ER203";
+	public static final String ER204 = "ER204";
 	public static final String ER205 = "ER205";
 	public static final String ER206 = "ER206";
 	public static final String ER207 = "ER207";
@@ -146,27 +146,27 @@ public final class Constants {
 	public static final String ER214 = "ER214";
 	public static final String ER215 = "ER215";
 	public static final String ER216 = "ER216";
-	
+
 	/** Role errors. */
 	public static final String ER301 = "ER301";
 	public static final String ER302 = "ER302";
 	public static final String ER304 = "ER304";
-	
+
 	/** Function Errors. */
 	public static final String ER401 = "ER401";
 	public static final String ER402 = "ER402";
 	public static final String ER404 = "ER404";
 	public static final String ER405 = "ER405";
-	
+
 	/** permission errors codes. */
 	public static final String ER501 = "ER501";
 	public static final String ER502 = "ER502";
 	public static final String ER503 = "ER503";
 	public static final String ER504 = "ER504";
-	
+
 	/** Datasource Errors. */
-	public static final String ER601 = "ER601";	
-	public static final String ER602 = "ER602";		
+	public static final String ER601 = "ER601";
+	public static final String ER602 = "ER602";
 	public static final String ER605 = "ER605";
 	public static final String ER606 = "ER606";
 	public static final String ER607 = "ER607";
@@ -175,13 +175,13 @@ public final class Constants {
 	public static final String ER610 = "ER610";
 	public static final String ER611 = "ER611";
 	public static final String ER612 = "ER612";
-	
+
 	/** Dataset Errors. */
 	public static final String ER702 = "ER702";
 	public static final String ER704 = "ER704";
 	public static final String ER705 = "ER705";
 	public static final String ER708 = "ER708";
-	
+
 	/** Layers errors. */
 	public static final String ER801 = "ER801";
 	public static final String ER802 = "ER802";
@@ -189,14 +189,14 @@ public final class Constants {
 	public static final String ER804 = "ER804";
 	public static final String ER806 = "ER806";
 	public static final String ER807 = "ER807";
-	
+
 	/** group layer errors. */
 	public static final String ER901 = "ER901";
 	public static final String ER902 = "ER902";
 	public static final String ER903 = "ER903";
 	public static final String ER904 = "ER904";
 	public static final String ER906 = "ER906";
-	
+
 	/** Application errors. */
 	public static final String ER1000 = "ER1000";
 	public static final String ER1002 = "ER1002";
@@ -204,13 +204,13 @@ public final class Constants {
 	public static final String ER1006 = "ER1006";
 	public static final String ER1007 = "ER1007";
 	public static final String ER1008 = "ER1008";
-	
+
 	/** Publish on geoserver errors. */
 	public static final String ER_GEO01 = "ER_GEO01";
 	public static final String ER_GEO02 = "ER_GEO02";
 	public static final String ER_GEO03 = "ER_GEO03";
-	
-	/** STATUS MESSAGES*/
+
+	/** STATUS MESSAGES */
 	public static final String ORGANIZATION_CREATED = "ORGANIZATION_CREATED";
 	public static final String ORGANIZATION_UPDATED = "ORGANIZATION_UPDATED";
 	public static final String ORGANIZATION_DELETED = "ORGANIZATION_DELETED";
@@ -246,7 +246,7 @@ public final class Constants {
 	public static final String USER_DELETED = "USER_DELETED";
 	public static final String USER_EMAIL_VERIFIED = "USER_EMAIL_VERIFIED";
 	public static final String PERMISSION_ASSIGNED = "PERMISSION_ASSIGNED";
-		
+
 	/** Services names. */
 	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
 	public static final String UPDATE_ORGANIZATION = "UPDATE_ORGANIZATION";
@@ -295,7 +295,7 @@ public final class Constants {
 	public static final String LIST_PERMISSION = "LIST_PERMISSION";
 	public static final String GET_CONFIGURATION = "GET_CONFIGURATION";
 	public static final String PUBLISH_ON_GEOSERVER = "PUBLISH_ON_GEOSERVER";
-	
+
 	/** Values. */
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
@@ -312,7 +312,7 @@ public final class Constants {
 	public static final String HOST = "host";
 	public static final String SHP_EXT = ".shp";
 	public static final String SHA1 = "SHA-1";
-	
+
 	/** MAIL PROPERTY FIELDS. */
 	public static final String HOST_NAME = "HOST_NAME";
 	public static final String PORT_NUMBER = "PORT_NUMBER";
@@ -321,8 +321,60 @@ public final class Constants {
 	public static final String SENDER_MAIL_ADDRESS = "SENDER_MAIL_ADDRESS";
 	public static final String SENDER_MAIL_PASSWORD = "SENDER_MAIL_PASSWORD";
 	public static final String SMTP_AUTH = "mail.smtp.auth";
-	
+
 	/** LOGIN parameters. */
 	public static final String ATTEMPTED_LOGINS = "attemptedlogins";
 	public static final String LOCK_TIME = "locktime";
+
+	/** Get_configuration constants. */
+	public static final String CLASS_NAME = "CLASS_NAME";
+	public static final String LON = "lon";
+	public static final String LAT = "lat";
+	public static final String LEFT = "left";
+	public static final String RIGHT = "right";
+	public static final String TOP = "top";
+	public static final String BOTTOM = "bottom";
+	public static final String MAX_EXTENT = "maxExtent";
+	public static final String TILE_ORIGIN = "tileOrigin";
+	public static final String TILES_ORIGIN = "tilesOrigin";
+	public static final String TILED = "tiled";
+	public static final String STYLES = "STYLES";
+	public static final String FORMAT = "FORMAT";
+	public static final String MIN_RESOLUTION = "minResolution";
+	public static final String MAX_RESOLUTION = "maxResolution";
+	public static final String SINGLE_TILE = "singleTile";
+	public static final String IS_BASE_LAYER = "isBaseLayer";
+	public static final String NUM_ZOOM_LEVELS = "numZoomLevels";
+	public static final String OPTIONS = "options";
+	public static final String DISPLAY_IN_LAYER_SWITCHER = "displayInLayerSwitcher";
+	public static final String NAMESPACE_URI = "namespaceUri";
+	public static final String CONFIGS = "configs";
+	public static final String PROPERTIES = "properties";
+	public static final String XMLNS = "xmlns";
+	public static final String CENTER = "center";
+	public static final String DEFAULT_MAP = "defaultMap";
+	public static final String ZOOM = "zoom";
+	public static final String UNITS = "units";
+	public static final String NAMESPACE_PREFIX = "namespacePrefix";
+	public static final String PROJ = "proj";
+	public static final String PROJ4CODE = "projCode";
+	public static final String PROJ4DEF = "proj4Def";
+	public static final String PROJECTION = "projection";
+	public static final String SERVICE_VERSON = "serviceVersion";
+	public static final String BUFFER = "buffer";
+	public static final String PARAM = "param";
+	public static final String PARAMS = "params";
+	public static final String VALUE = "value";
+	public static final String SECTION = "section";
+	public static final String WMS_LAYERS = "wmsLayers";
+	public static final String OVERVIEW = "overview";
+	public static final String QUERYABLE = "queryable";
+	public static final String PHYSICAL_NAME = "physicalName";
+	public static final String MAX_SCALE = "maxScale";
+	public static final String EXTRACTABLE = "extractable";
+	public static final String EXPLORABLE = "explorable";
+	public static final String LOGICAL_NAME = "logicalName";
+	public static final String MIN_SCALE = "minScale";
+	public static final String PRIORITA_VIS = "prioritaVis";
+	public static final String GROUP = "group";
 }
