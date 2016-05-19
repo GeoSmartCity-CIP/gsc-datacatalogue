@@ -844,6 +844,7 @@ public class ApplicationsService extends ServiceCommons {
 
 	private ObjectNode createGetConfigurationResult(String applicationJson, ArrayList<String> listIdLayers)
 			throws DCException {
+		ObjectNode root = om.createObjectNode();
 		ObjectNode maps = om.createObjectNode();
 		ObjectNode configs = om.createObjectNode();
 
@@ -858,15 +859,17 @@ public class ApplicationsService extends ServiceCommons {
 
 		String workspaceName = getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_");
 
-		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
-		firstMapObject.put(Constants.DEFAULT_MAP, true);
-		firstMapObject.put(Constants.ZOOM, 2);
-		firstMapObject.put(Constants.UNITS, "m");
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
-		firstMapObject.put(Constants.MAX_RESOLUTION, 90.31);
-		firstMapObject.put(Constants.NUM_ZOOM_LEVELS, 12);
-		firstMapObject.put(Constants.NAME, workspaceName);
+		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
+		
+		//XXX those parameter are not mandatory
+//		firstMapObject.put(Constants.DEFAULT_MAP, true);
+//		firstMapObject.put(Constants.ZOOM, 2);
+//		firstMapObject.put(Constants.UNITS, "m");
+//		firstMapObject.put(Constants.MAX_RESOLUTION, 90.31);
+//		firstMapObject.put(Constants.NUM_ZOOM_LEVELS, 12);
+//		firstMapObject.put(Constants.NAME, workspaceName);
 
 		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(listIdLayers));
 		firstMapObject.put(Constants.NAMESPACE_URI, getFieldValueFromJsonText(applicationJson, Constants.APP_URI));
@@ -884,12 +887,13 @@ public class ApplicationsService extends ServiceCommons {
 
 		map.add(firstMapObject);
 		maps.put("map", map);
-
-		return maps;
+		
+		root.put(Constants.MAPS, maps);
+		return root;
 	}
 
-	private ObjectNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
-		ObjectNode layersNode = om.createObjectNode();
+	private ArrayNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
+		//ObjectNode layersNode = om.createObjectNode();
 		ArrayNode layers = om.createArrayNode();
 
 		for (String idLayer : listIdLayers) {
@@ -900,11 +904,11 @@ public class ApplicationsService extends ServiceCommons {
 
 			ObjectNode layerObject = om.createObjectNode();
 
-			layerObject.put(Constants.MIN_RESOLUTION, 0);
-			layerObject.put(Constants.IS_BASE_LAYER, true);
-			layerObject.put(Constants.SINGLE_TILE, true);
+			//layerObject.put(Constants.MIN_RESOLUTION, 0);
+			//layerObject.put(Constants.IS_BASE_LAYER, true);
+			//layerObject.put(Constants.SINGLE_TILE, true);
 			layerObject.put(Constants.WMS_LAYERS, createWmsLayers());
-			layerObject.put(Constants.VISIBILITY, false);
+			//layerObject.put(Constants.VISIBILITY, false);
 			layerObject.put(Constants.NAME, layerName);
 			layerObject.put(Constants.OPTIONS, createLayerOptions(layerName));
 			layerObject.put(Constants.PARAMS, createLayerParams());
@@ -923,8 +927,9 @@ public class ApplicationsService extends ServiceCommons {
 			layers.add(layerObject);
 		}
 
-		layersNode.put(Constants.LAYERS, layers);
-		return layersNode;
+		//layersNode.put(Constants.LAYERS, layers);
+		//return layersNode;
+		return layers;
 	}
 
 	private ObjectNode createLayerOptions(String layerName) {
@@ -947,11 +952,11 @@ public class ApplicationsService extends ServiceCommons {
 	private ObjectNode createLayerParams() {
 		ObjectNode layerParamsNode = om.createObjectNode();
 
-		layerParamsNode.put(Constants.TILED, 90.31);
-		layerParamsNode.put(Constants.TILES_ORIGIN, "675332.0,918619.988066");
-		layerParamsNode.put(Constants.FORMAT, "image/png");
-		layerParamsNode.put(Constants.REQUEST.toUpperCase(), "GetMap");
-		layerParamsNode.put(Constants.STYLES, "");
+//		layerParamsNode.put(Constants.TILED, 90.31);
+//		layerParamsNode.put(Constants.TILES_ORIGIN, "675332.0,918619.988066");
+//		layerParamsNode.put(Constants.FORMAT, "image/png");
+//		layerParamsNode.put(Constants.REQUEST.toUpperCase(), "GetMap");
+//		layerParamsNode.put(Constants.STYLES, "");
 		return layerParamsNode;
 	}
 	
@@ -964,17 +969,21 @@ public class ApplicationsService extends ServiceCommons {
 		wmsLayerNode.put(Constants.PHYSICAL_NAME, "MappaCatasto_01_1:Alberi");
 		wmsLayerNode.put(Constants.MAX_SCALE, 0);
 		wmsLayerNode.put(Constants.VISIBILITY, true);
-		wmsLayerNode.put(Constants.EXTRACTABLE, false);
+//		wmsLayerNode.put(Constants.EXTRACTABLE, false);
 		wmsLayerNode.put(Constants.LOGICAL_NAME, "Alberi");
 		wmsLayerNode.put(Constants.MIN_SCALE, 0);
-		wmsLayerNode.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
-		wmsLayerNode.put(Constants.PRIORITA_VIS, 50);
+//		wmsLayerNode.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
+//		wmsLayerNode.put(Constants.PRIORITA_VIS, 50);
 		wmsLayerNode.put(Constants.CLASS_NAME, "MW.WMSLayer");
 		ObjectNode groupWms = om.createObjectNode();
 		groupWms.put(Constants.VISIBILITY, true);
 		groupWms.put(Constants.NAME, "SfondoCTW");
-		groupWms.put(Constants.EXPLORABLE, false);
+//		groupWms.put(Constants.EXPLORABLE, false);
 		wmsLayerNode.put(Constants.GROUP, groupWms);
+		
+		ArrayNode fieldsNode = om.createArrayNode();
+		wmsLayerNode.put(Constants.FIELDS,fieldsNode);
+		
 		
 		arrayNode.add(wmsLayerNode);
 		return arrayNode;
@@ -984,20 +993,21 @@ public class ApplicationsService extends ServiceCommons {
 		ObjectNode sectionNode = om.createObjectNode();
 		ArrayNode section = om.createArrayNode();
 
-		ObjectNode firstSectionObject = om.createObjectNode();
-
-		ArrayNode param = om.createArrayNode();
-
-		ObjectNode firstParamObject = om.createObjectNode();
-		firstParamObject.put(Constants.NAME, "NumeroElementi");
-		firstParamObject.put(Constants.VALUE, 6);
-
-		param.add(firstParamObject);
-
-		firstSectionObject.put(Constants.PARAM, param);
-		firstSectionObject.put(Constants.NAME, "Trova Generici");
-
-		section.add(firstSectionObject);
+		//XXX mapwork section list can be empty
+//		ObjectNode firstSectionObject = om.createObjectNode();
+//
+//		ArrayNode param = om.createArrayNode();
+//
+//		ObjectNode firstParamObject = om.createObjectNode();
+//		firstParamObject.put(Constants.NAME, "NumeroElementi");
+//		firstParamObject.put(Constants.VALUE, 6);
+//
+//		param.add(firstParamObject);
+//
+//		firstSectionObject.put(Constants.PARAM, param);
+//		firstSectionObject.put(Constants.NAME, "Trova Generici");
+//
+//		section.add(firstSectionObject);
 
 		sectionNode.put(Constants.SECTION, section);
 		return sectionNode;
@@ -1016,9 +1026,11 @@ public class ApplicationsService extends ServiceCommons {
 
 	private ObjectNode createTileOrigin(double lon, double lat, String className) {
 		ObjectNode tileOrigin = om.createObjectNode();
-		tileOrigin.put(Constants.CLASS_NAME, className);
-		tileOrigin.put(Constants.LON, lon);
-		tileOrigin.put(Constants.LAT, lat);
+		
+		//XXX center node can be empty
+//		tileOrigin.put(Constants.CLASS_NAME, className);
+//		tileOrigin.put(Constants.LON, lon);
+//		tileOrigin.put(Constants.LAT, lat);
 		return tileOrigin;
 	}
 }

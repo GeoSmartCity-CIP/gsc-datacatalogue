@@ -157,11 +157,20 @@ public class DeleteService extends ServiceCommons {
 		// Application doesn't need to delete other tables, just itself.
 
 		if (selfId != null) {
-			boolean deleted = gsc010Dao.deleteNoTrans(selfId, em);
-
-			if (!deleted) {
-				logger.error("Error in the delete application occurred.");
+			EntityTransaction transaction = null;
+			try {
+				em = jpaEnvironment.getEntityManagerFactory().createEntityManager();
+				transaction = jpaEnvironment.openTransaction(em);
+				
+				gsc010Dao.deleteNoTrans(selfId, em);
+	
+				jpaEnvironment.commitTransaction(transaction);
+			} catch (Exception e) {
+				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
+				transaction.rollback();
 				throw new DCException(Constants.ER16);
+			} finally {
+				em.close();
 			}
 		} else {
 			try {

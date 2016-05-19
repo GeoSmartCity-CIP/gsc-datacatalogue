@@ -377,4 +377,6 @@ public final class Constants {
 	public static final String MIN_SCALE = "minScale";
 	public static final String PRIORITA_VIS = "prioritaVis";
 	public static final String GROUP = "group";
+	public static final String FIELDS = "fields";
+	public static final String MAPS = "maps";
 }
