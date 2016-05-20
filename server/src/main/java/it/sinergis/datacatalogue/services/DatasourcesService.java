@@ -3,10 +3,16 @@ package it.sinergis.datacatalogue.services;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.Part;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -17,10 +23,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
+import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.util.ServiceUtil;
 
@@ -329,8 +337,50 @@ public class DatasourcesService extends ServiceCommons {
 		}
 	}
 
-	public String uploadDatasource(String req) {
-		return RESPONSE_JSON_STATUS_DONE;
+	public String uploadDatasource(String req,Part filePart) {
+		try {
+			// preliminary checks on the request parameters
+			preliminaryChecks(req, Constants.FILE_UPLOAD);
+
+			// check if the inserted organization id exists in the organization
+			// table. If not throws exception
+			checkIdOrganizationValid(req);
+			Long orgId = Long.parseLong(getKeyFromJsonText(req, Constants.ORG_FIELD));
+			Gsc001OrganizationPersistence orgPersistence = PersistenceServiceProvider
+					.getService(Gsc001OrganizationPersistence.class);
+			Gsc001OrganizationEntity orgEntity = orgPersistence.load(orgId);
+			if (orgEntity == null) {
+				DCException rpe = new DCException(Constants.ER15, req);
+				throw rpe;
+			}			
+			
+			String orgName = getFieldValueFromJsonText(orgEntity.getJson(), Constants.ORG_NAME_FIELD);
+			
+			InputStream fileContent = filePart.getInputStream();
+			
+			String filename = getFieldValueFromJsonText(req, Constants.FILENAME);
+			String remoteRelativePath = getFieldValueFromJsonText(req, Constants.REMOTE_RELATIVE_PATH);
+			String pathText = "/opt/"+orgName;
+			if (remoteRelativePath != null && !remoteRelativePath.isEmpty())
+			{
+				pathText += "/" + remoteRelativePath;
+			}
+					
+			Path path = Paths.get(pathText);
+			File destFile = new File(path+"/"+filename);
+			Files.createDirectories(path);
+			Files.copy(fileContent, destFile.toPath());
+			
+			return createJsonStatus(Constants.STATUS_DONE, Constants.FILE_UPLOADED, null, req);
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("upload file service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("uploadFile service: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
 	}
 
 	public String ckanDatasource(String req) {
