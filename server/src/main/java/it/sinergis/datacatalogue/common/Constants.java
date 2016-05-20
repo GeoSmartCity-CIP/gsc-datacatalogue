@@ -8,6 +8,10 @@ public final class Constants {
 	public static final String REQUEST = "request";
 	public static final String ID = "id";
 	public static final String JSON_COLUMN_NAME = "json";
+	
+	/** CONFIGURATION PARAMETERS */
+	public static final String UPLOAD_PATH = "uploadpath";
+	
 
 	/** TABLE NAME PARAMETERS */
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";
@@ -56,6 +60,8 @@ public final class Constants {
 	public static final String VISIBILITY = "visibility";
 	public static final String COLUMNS = "columns";
 	public static final String DATA_ORIGIN = "dataorigin";
+	public static final String FILENAME = "filename";
+	public static final String REMOTE_RELATIVE_PATH = "remoterelativepath";
 
 	/** Layer field names. */
 	public static final String LAYER_NAME_FIELD = "layername";
@@ -246,6 +252,7 @@ public final class Constants {
 	public static final String USER_DELETED = "USER_DELETED";
 	public static final String USER_EMAIL_VERIFIED = "USER_EMAIL_VERIFIED";
 	public static final String PERMISSION_ASSIGNED = "PERMISSION_ASSIGNED";
+	public static final String FILE_UPLOADED = "FILE_UPLOADED";
 
 	/** Services names. */
 	public static final String CREATE_ORGANIZATION = "CREATE_ORGANIZATION";
@@ -295,6 +302,8 @@ public final class Constants {
 	public static final String LIST_PERMISSION = "LIST_PERMISSION";
 	public static final String GET_CONFIGURATION = "GET_CONFIGURATION";
 	public static final String PUBLISH_ON_GEOSERVER = "PUBLISH_ON_GEOSERVER";
+	public static final String FILE_UPLOAD = "FILE_UPLOAD";
+	
 
 	/** Values. */
 	public static final String TRUE = "true";

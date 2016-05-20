@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gsc-datacatalogue</groupId>
-	<artifactId>gsc-datacatalogue</artifactId>
+	<artifactId>gsc-datacatalogue-server</artifactId>
 	<version>0.1</version>
 	<packaging>war</packaging>
 	<profiles>
-	<profile>
+		<profile>
 			<id>localhost</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -27,40 +27,37 @@
 						<configuration>
 							<tasks>
 								<delete file="target/gsc-datacatalogue/lib/WEB-INF/web.xml" />
-								<!--delete file="src/main/webapp/WEB-INF/classes/mapwork.xml" />
-								<delete file="src/main/webapp/WEB-INF/classes/mapconfiguration.xml" />
-								<delete
-									file="src/main/webapp/WEB-INF/classes/servirepe_jndi.properties" />
-								<delete file="target/classes/META-INF/persistence.xml" />
-								<delete file="target/classes/META-INF/classes/log4j.properties" /-->
+								<!--delete file="src/main/webapp/WEB-INF/classes/mapwork.xml" /> 
+									<delete file="src/main/webapp/WEB-INF/classes/mapconfiguration.xml" /> <delete 
+									file="src/main/webapp/WEB-INF/classes/servirepe_jndi.properties" /> <delete 
+									file="target/classes/META-INF/persistence.xml" /> <delete file="target/classes/META-INF/classes/log4j.properties" 
+									/ -->
 
 								<copy file="config/localhost/web.xml" tofile="target/gsc-datacatalogue/WEB-INF/web.xml" />
 								<copy file="WebContent/testService.html" tofile="target/gsc-datacatalogue/testService.html" />
 								<copy file="WebContent/testService.jsp" tofile="target/gsc-datacatalogue/testService.jsp" />
-								<!--copy file="config/localhost/persistence.xml" tofile="target/classes/META-INF/persistence.xml" />
-								<copy file="config/localhost/mapwork.xml" tofile="target/mapwork/WEB-INF/classes/mapwork.xml" />
-								<copy file="config/localhost/mapconfiguration.xml"
-									tofile="target/mapwork/WEB-INF/classes/mapconfiguration.xml" />
-								<copy file="config/localhost/servirepe_jndi.properties"
-									tofile="target/mapwork/WEB-INF/classes/servirepe_jndi.properties" />
-								<copy file="config/localhost/log4j.properties"
-									tofile="target/mapwork/WEB-INF/classes/log4j.properties" /-->
+								<!--copy file="config/localhost/persistence.xml" tofile="target/classes/META-INF/persistence.xml" 
+									/> <copy file="config/localhost/mapwork.xml" tofile="target/mapwork/WEB-INF/classes/mapwork.xml" 
+									/> <copy file="config/localhost/mapconfiguration.xml" tofile="target/mapwork/WEB-INF/classes/mapconfiguration.xml" 
+									/> <copy file="config/localhost/servirepe_jndi.properties" tofile="target/mapwork/WEB-INF/classes/servirepe_jndi.properties" 
+									/> <copy file="config/localhost/log4j.properties" tofile="target/mapwork/WEB-INF/classes/log4j.properties" 
+									/ -->
 							</tasks>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-		
+
 	</profiles>
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.8</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -77,7 +74,7 @@
 			<artifactId>jts</artifactId>
 			<version>1.13</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernatespatial</groupId>
 			<artifactId>hibernate-spatial</artifactId>
@@ -110,7 +107,7 @@
 			<artifactId>spring-context</artifactId>
 			<version>3.2.6.RELEASE</version>
 		</dependency>
-		
+
 		<!-- Bean validation -->
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -120,11 +117,11 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.3.1.Final</version> 
+			<version>4.3.1.Final</version>
 		</dependency>
-		
+
 		<!-- Dependencies for Unit Testing -->
-  		<dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
 			<version>4.11</version>
@@ -137,16 +134,16 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.mockito</groupId>
+			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-		    <version>1.9.5</version>
-		    <scope>test</scope>
+			<version>1.9.5</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-test</artifactId>
-		    <version>3.2.6.RELEASE</version>
-		    <scope>test</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.2.6.RELEASE</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Logging : SLF4J is used by Hibernate -->
@@ -158,18 +155,18 @@
 		<!-- SLF4J Simple implementation : sends log messages to the console -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId> 
+			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.5</version>
 		</dependency>
 		<dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-            <version>1.5.3</version>
-        </dependency>
-        <dependency>
-		    <groupId>com.sun.mail</groupId>
-		    <artifactId>javax.mail</artifactId>
-		    <version>1.5.2</version>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.5.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
@@ -193,7 +190,7 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-shapefile</artifactId>
@@ -205,10 +202,10 @@
 			<version>14.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>it.geosolutions</groupId>
-		    <artifactId>geoserver-manager</artifactId>
-		    <version>1.7.0</version>
-		  </dependency>
+			<groupId>it.geosolutions</groupId>
+			<artifactId>geoserver-manager</artifactId>
+			<version>1.7.0</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -216,19 +213,10 @@
 		<java.version>1.7</java.version>
 	</properties>
 
-	<!--build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build-->
+	<!--build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-compiler-plugin</artifactId> <version>2.5.1</version> <configuration> 
+		<source>${java.version}</source> <target>${java.version}</target> </configuration> 
+		</plugin> </plugins> </build -->
 	<build>
 		<finalName>gsc-datacatalogue</finalName>
 		<plugins>
@@ -258,7 +246,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -292,4 +281,10 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<repositories>
+		<repository>
+			<id>GeoSolutions</id>
+			<url>http://maven.geo-solutions.it/</url>
+		</repository>
+	</repositories>
 </project>
