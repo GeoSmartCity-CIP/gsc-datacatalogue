@@ -8,6 +8,10 @@ public final class Constants {
 	public static final String REQUEST = "request";
 	public static final String ID = "id";
 	public static final String JSON_COLUMN_NAME = "json";
+	
+	/** CONFIGURATION PARAMETERS */
+	public static final String UPLOAD_PATH = "uploadpath";
+	
 
 	/** TABLE NAME PARAMETERS */
 	public static final String ORGANIZATION_TABLE_NAME = "gsc_001_organization";

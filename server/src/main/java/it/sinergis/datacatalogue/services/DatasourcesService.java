@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.common.PropertyReader;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
@@ -358,9 +359,13 @@ public class DatasourcesService extends ServiceCommons {
 			
 			InputStream fileContent = filePart.getInputStream();
 			
+			PropertyReader pr = new PropertyReader("configuration.properties");
+
+			String uploadPath = pr.getValue(Constants.UPLOAD_PATH);
+			
 			String filename = getFieldValueFromJsonText(req, Constants.FILENAME);
 			String remoteRelativePath = getFieldValueFromJsonText(req, Constants.REMOTE_RELATIVE_PATH);
-			String pathText = "/opt/"+orgName;
+			String pathText = uploadPath+"/"+orgName;
 			if (remoteRelativePath != null && !remoteRelativePath.isEmpty())
 			{
 				pathText += "/" + remoteRelativePath;
