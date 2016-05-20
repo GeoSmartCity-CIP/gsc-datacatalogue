@@ -5,9 +5,11 @@ import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.log4j.Logger;
 
@@ -28,6 +30,7 @@ import it.sinergis.datacatalogue.services.UsersService;
  * Servlet implementation class DataCatalogServlet
  */
 // @WebServlet("/DataCatalogServlet")
+@MultipartConfig
 public class DataCatalogServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -188,7 +191,8 @@ public class DataCatalogServlet extends HttpServlet {
 					serviceResp = service.listDatasource(requestJson);
 				} else if (action.equalsIgnoreCase("uploadfile")) {
 					DatasourcesService service = new DatasourcesService();
-					serviceResp = service.uploadDatasource(requestJson);
+					Part filePart = request.getPart("file");
+					serviceResp = service.uploadDatasource(requestJson,filePart);
 				} else if (action.equalsIgnoreCase("pubtockan")) {
 					DatasourcesService service = new DatasourcesService();
 					serviceResp = service.ckanDatasource(requestJson);

@@ -23,6 +23,7 @@
 	    if(select && !keepRequest) {
 	    	
 		    var selected = select.options[select.selectedIndex].value;
+	    	document.getElementById("fileContainer").style.display = "none";
 		    
 		    if(selected === 'createorg' ){
 		    	document.getElementById("text").style.display = "table-row";
@@ -214,6 +215,12 @@
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("idListPermissionExample").value;
 		    }
+		    else if (selected === 'uploadfile'){
+		    	document.getElementById("fileContainer").style.display = "table-row";
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("idUploadFileExample").value;
+		    	document.getElementById("file").value = "";
+		    }
 		    
 		    prettyPrint();
    		}
@@ -287,9 +294,10 @@ public String handleEscaping(String jsonExample){
 <input type="hidden" id="idAssignRoleExample" value="<%out.print(handleEscaping("assignRoleExample"));%>"></input>
 <input type="hidden" id="idListPermissionExample" value="<%out.print(handleEscaping("listPermissionExample"));%>"></input>
 <input type="hidden" id="idAssignPermissionExample" value="<%out.print(handleEscaping("assignPermissionExample"));%>"></input>
+<input type="hidden" id="idUploadFileExample" value="<%out.print(handleEscaping("uploadFileExample"));%>"></input>
 
 
-<form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8">
+<form action="datacatalogservlet" method="post" id="serviceForm" accept-charset="UTF-8" enctype="multipart/form-data">
 <%
 String servizio=(String)request.getAttribute("actionName");
 if (servizio==null) {
@@ -352,14 +360,17 @@ if (servizio==null) {
             <option value="assignrole" <%= servizio.equals("assignrole") ? "selected=\"selected\"" : ""%>>Role - Assign users</option>
             <option value="listperm" <%= servizio.equals("listperm") ? "selected=\"selected\"" : ""%>>Permission - List</option>
             <option value="assignperm" <%= servizio.equals("assignperm") ? "selected=\"selected\"" : ""%>>Permission - Assign</option>
-            								
-			<option value=""></option>
+            <option value="uploadfile" <%= servizio.equals("uploadfile") ? "selected=\"selected\"" : ""%>>Upload file</option>           								
 		</select></td>
 	</tr>
 	<tr id="text" style="display:table-row">	 
 		<td>Text *</td>
 		<td><textarea id="textArea" name="request" cols="120" rows="30"><%if (request.getAttribute("text") != null)
 				out.print(request.getAttribute("text"));%></textarea></td>
+	</tr>	
+	<tr id="fileContainer" style="display:none;">	 
+		<td></td>
+		<td><input type="file" id="file" name="file"></input></td>
 	</tr>	
 	<tr id="submitButton">
 		<td></td>
