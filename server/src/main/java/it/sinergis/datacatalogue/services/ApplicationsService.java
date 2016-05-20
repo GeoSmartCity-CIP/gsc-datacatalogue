@@ -70,6 +70,8 @@ public class ApplicationsService extends ServiceCommons {
 
 	/** Dao application. */
 	private Gsc010ApplicationPersistence gsc010Dao;
+	
+	private String applicationJson = null;
 
 	public ApplicationsService() {
 		logger = Logger.getLogger(this.getClass());
@@ -752,6 +754,8 @@ public class ApplicationsService extends ServiceCommons {
 			String jsonString;
 			try {
 
+				applicationJson = application.getJson();
+				
 				String layers = getObjectFromJsonText(application.getJson(), Constants.LAYERS);
 				JsonNode node = om.readTree(layers);
 
@@ -853,12 +857,12 @@ public class ApplicationsService extends ServiceCommons {
 		maps.put(Constants.CONFIGS, configs);
 
 		maps.put(Constants.XMLNS, "http://schemas.corenet.it/mapwork/mapconfiguration");
-
+		
 		ArrayNode map = om.createArrayNode();
 		ObjectNode firstMapObject = om.createObjectNode();
 
 		String workspaceName = getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_");
-
+				
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
 		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
@@ -883,7 +887,7 @@ public class ApplicationsService extends ServiceCommons {
 		firstMapObject.put(Constants.PROJECTION, projection);
 
 		firstMapObject.put(Constants.MAX_EXTENT,
-				createMaxExtent(675332, 918619.988066, 695711.986064, 938760, "OpenLayers.Bounds"));
+				createMaxExtent(getMaxExtentLeft(), getMaxExtentBottom(), getMaxExtentRight(), getMaxExtentTop(), "OpenLayers.Bounds"));
 
 		map.add(firstMapObject);
 		maps.put("map", map);
@@ -895,6 +899,8 @@ public class ApplicationsService extends ServiceCommons {
 	private ArrayNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
 		//ObjectNode layersNode = om.createObjectNode();
 		ArrayNode layers = om.createArrayNode();
+		
+		String WMSUrl = composeWMSUrl(getUrlGeoserver(),getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_"));
 
 		for (String idLayer : listIdLayers) {
 
@@ -907,14 +913,14 @@ public class ApplicationsService extends ServiceCommons {
 			//layerObject.put(Constants.MIN_RESOLUTION, 0);
 			//layerObject.put(Constants.IS_BASE_LAYER, true);
 			//layerObject.put(Constants.SINGLE_TILE, true);
-			layerObject.put(Constants.WMS_LAYERS, createWmsLayers());
+			layerObject.put(Constants.WMS_LAYERS, createWmsLayers(layerName));
 			//layerObject.put(Constants.VISIBILITY, false);
 			layerObject.put(Constants.NAME, layerName);
 			layerObject.put(Constants.OPTIONS, createLayerOptions(layerName));
 			layerObject.put(Constants.PARAMS, createLayerParams());
-			layerObject.put(Constants.URL, "http://coreweb1.coremed.it/geoserver/MappaCatasto_01_1/wms");
+			layerObject.put(Constants.URL,WMSUrl);
 			layerObject.put(Constants.MAX_EXTENT,
-					createMaxExtent(676101.625122, 920667.923567, 694357.870996, 937347.977722, "OpenLayers.Bounds"));
+					createMaxExtent(getMaxExtentLeft(), getMaxExtentBottom(), getMaxExtentRight(), getMaxExtentTop(), "OpenLayers.Bounds"));
 			layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
 			// layerObject.put(Constants.TILE_ORIGIN,
 			// createTileOrigin(676101.625122, 920667.923567,
@@ -960,24 +966,25 @@ public class ApplicationsService extends ServiceCommons {
 		return layerParamsNode;
 	}
 	
-	private ArrayNode createWmsLayers() {
+	private ArrayNode createWmsLayers(String layerName) throws DCException {
 		ArrayNode arrayNode = om.createArrayNode();
 		ObjectNode wmsLayerNode = om.createObjectNode();
 
+		
 		wmsLayerNode.put(Constants.OVERVIEW, false);
 		wmsLayerNode.put(Constants.QUERYABLE, false);
-		wmsLayerNode.put(Constants.PHYSICAL_NAME, "MappaCatasto_01_1:Alberi");
+		wmsLayerNode.put(Constants.PHYSICAL_NAME,composePhysicalName(layerName));
 		wmsLayerNode.put(Constants.MAX_SCALE, 0);
 		wmsLayerNode.put(Constants.VISIBILITY, true);
 //		wmsLayerNode.put(Constants.EXTRACTABLE, false);
-		wmsLayerNode.put(Constants.LOGICAL_NAME, "Alberi");
+		wmsLayerNode.put(Constants.LOGICAL_NAME,layerName);
 		wmsLayerNode.put(Constants.MIN_SCALE, 0);
 //		wmsLayerNode.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
 //		wmsLayerNode.put(Constants.PRIORITA_VIS, 50);
 		wmsLayerNode.put(Constants.CLASS_NAME, "MW.WMSLayer");
 		ObjectNode groupWms = om.createObjectNode();
 		groupWms.put(Constants.VISIBILITY, true);
-		groupWms.put(Constants.NAME, "SfondoCTW");
+		groupWms.put(Constants.NAME,layerName);
 //		groupWms.put(Constants.EXPLORABLE, false);
 		wmsLayerNode.put(Constants.GROUP, groupWms);
 		
@@ -1032,5 +1039,41 @@ public class ApplicationsService extends ServiceCommons {
 //		tileOrigin.put(Constants.LON, lon);
 //		tileOrigin.put(Constants.LAT, lat);
 		return tileOrigin;
+	}
+	
+	private String getUrlGeoserver() throws DCException {
+		return getFieldValueFromJsonText(getObjectFromJsonText(applicationJson, Constants.GEOSERVER_PARAMS), Constants.URL);
+	}
+	
+	private String composeWMSUrl(String baseUrl,String workspaceName) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(baseUrl);
+		sb.append(workspaceName);
+		sb.append("/"+Constants.WMS);
+		return sb.toString();
+	}
+	
+	private String composePhysicalName(String layerName) throws DCException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_"));
+		sb.append(":");
+		sb.append(layerName);
+		return sb.toString();
+	}
+	
+	private double getMaxExtentTop() throws DCException {
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.TOP).asDouble();
+	}
+	
+	private double getMaxExtentBottom() throws DCException {
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.BOTTOM).asDouble();
+	}
+	
+	private double getMaxExtentLeft() throws DCException {
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.LEFT).asDouble();
+	}
+	
+	private double getMaxExtentRight() throws DCException {
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.RIGHT).asDouble();
 	}
 }

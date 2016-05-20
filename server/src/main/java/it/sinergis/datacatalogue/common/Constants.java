@@ -366,6 +366,7 @@ public final class Constants {
 	public static final String PARAMS = "params";
 	public static final String VALUE = "value";
 	public static final String SECTION = "section";
+	public static final String WMS = "wms";
 	public static final String WMS_LAYERS = "wmsLayers";
 	public static final String OVERVIEW = "overview";
 	public static final String QUERYABLE = "queryable";
@@ -379,4 +380,5 @@ public final class Constants {
 	public static final String GROUP = "group";
 	public static final String FIELDS = "fields";
 	public static final String MAPS = "maps";
+	
 }
