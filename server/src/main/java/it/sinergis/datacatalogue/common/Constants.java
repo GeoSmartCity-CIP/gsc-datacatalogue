@@ -67,7 +67,9 @@ public final class Constants {
 	public static final String LAYER_NAME_FIELD = "layername";
 	public static final String LAYER_ID_FIELD = "idlayer";
 	public static final String LAYERS = "layers";
-
+	public static final String BASIC_LAYER = "basic";
+	public static final String OVERVIEW_LAYER = "overviewlayer";
+	
 	/** GROUP Layer field names. */
 	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
 	public static final String GROUP_LAYER_ID_FIELD = "idgroup";
@@ -344,6 +346,7 @@ public final class Constants {
 	public static final String TOP = "top";
 	public static final String BOTTOM = "bottom";
 	public static final String MAX_EXTENT = "maxExtent";
+	public static final String MAX_EXTENT_LOWERCASE = "maxextent";
 	public static final String TILE_ORIGIN = "tileOrigin";
 	public static final String TILES_ORIGIN = "tilesOrigin";
 	public static final String TILED = "tiled";
@@ -389,5 +392,15 @@ public final class Constants {
 	public static final String GROUP = "group";
 	public static final String FIELDS = "fields";
 	public static final String MAPS = "maps";
-	
+	public static final String GENERALE = "Generale";
+	public static final String MAX_ROWS = "maxrows";
+	public static final String PAGING_ROW_NUMBER = "pagingrowsnumber";
+	public static final String GEOM = "geom";
+	public static final String WMS_LAYER_FIELD = "MW.WMSLayerField";
+	public static final String MULTIPOLYGON = "Multipolygon";
+	public static final String MULTILINESTRING = "MuiltiLineString";
+	public static final String MULTIPOINT = "MultiPoint";
+	public static final String GET_MAP = "GetMap";
+	public static final String IMAGE_PNG = "image/png";
+
 }

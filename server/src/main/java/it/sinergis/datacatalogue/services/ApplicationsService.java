@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
@@ -896,128 +897,192 @@ public class ApplicationsService extends ServiceCommons {
 		return root;
 	}
 
+	private ObjectNode createWMSLayerContainer() throws DCException {
+		ObjectNode layerObject = om.createObjectNode();
+		layerObject.put(Constants.NAME, Constants.WMS_LAYERS);
+		layerObject.put(Constants.OPTIONS, createLayerOptions());
+		layerObject.put(Constants.URL,composeWMSUrl(getUrlGeoserver(),getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_")));
+		layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
+		layerObject.put(Constants.PARAMS, createLayerParams());
+		layerObject.put(Constants.IS_BASE_LAYER, false);
+		layerObject.put(Constants.SINGLE_TILE, true);
+		layerObject.put(Constants.VISIBILITY, true);
+		layerObject.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
+		
+		ArrayNode arrayNode = om.createArrayNode();
+		layerObject.put(Constants.WMS_LAYERS,arrayNode);
+		
+		return layerObject;
+	}
+	
+	private ObjectNode createBasicLayerContainer() throws DCException {
+		ObjectNode layerObject = om.createObjectNode();
+		layerObject.put(Constants.NAME, Constants.BASIC_LAYER);
+		layerObject.put(Constants.OPTIONS, createLayerOptions());			
+		layerObject.put(Constants.URL,composeWMSUrl(getUrlGeoserver(),getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_")));
+		layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
+		layerObject.put(Constants.OVERVIEW, true);
+		layerObject.put(Constants.PARAMS, createEmptyLayerParams());
+		layerObject.put(Constants.MAX_EXTENT,createMaxExtent(getMaxExtentLeft(), getMaxExtentBottom(), getMaxExtentRight(), getMaxExtentTop(), "OpenLayers.Bounds"));			
+		layerObject.put(Constants.DISPLAY_IN_LAYER_SWITCHER, true);
+		
+		ArrayNode arrayNode = om.createArrayNode();
+		layerObject.put(Constants.WMS_LAYERS,arrayNode);
+		
+		return layerObject;
+	}
+	
 	private ArrayNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
-		//ObjectNode layersNode = om.createObjectNode();
 		ArrayNode layers = om.createArrayNode();
 		
-		String WMSUrl = composeWMSUrl(getUrlGeoserver(),getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_"));
-
+		ObjectNode wmsLayer = createWMSLayerContainer();
+		
 		for (String idLayer : listIdLayers) {
 
 			Gsc008LayerEntity layerEntity = gsc008Dao.load(Long.parseLong(idLayer));
 			String layerJson = layerEntity.getJson();
 			String layerName = getFieldValueFromJsonText(layerJson, Constants.LAYER_NAME_FIELD).replace(" ", "_");
-
-			ObjectNode layerObject = om.createObjectNode();
-
-			//layerObject.put(Constants.MIN_RESOLUTION, 0);
-			//layerObject.put(Constants.IS_BASE_LAYER, true);
-			//layerObject.put(Constants.SINGLE_TILE, true);
-			layerObject.put(Constants.WMS_LAYERS, createWmsLayers(layerName));
-			//layerObject.put(Constants.VISIBILITY, false);
-			layerObject.put(Constants.NAME, layerName);
-			layerObject.put(Constants.OPTIONS, createLayerOptions(layerName));
-			layerObject.put(Constants.PARAMS, createLayerParams());
-			layerObject.put(Constants.URL,WMSUrl);
-			layerObject.put(Constants.MAX_EXTENT,
-					createMaxExtent(getMaxExtentLeft(), getMaxExtentBottom(), getMaxExtentRight(), getMaxExtentTop(), "OpenLayers.Bounds"));
-			layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
-			// layerObject.put(Constants.TILE_ORIGIN,
-			// createTileOrigin(676101.625122, 920667.923567,
-			// "OpenLayers.LonLat"));
-			// layerObject.put(Constants.LAYER_NAME_FIELD, layerName);
-			// layerObject.put(Constants.TYPE, "jpg");
-			// layerObject.put(Constants.MAX_RESOLUTION, 90.31);
-			// layerObject.put(Constants.NUM_ZOOM_LEVELS, 12);
-			// layerObject.put(Constants.DISPLAY_IN_LAYER_SWITCHER, true);
-			layers.add(layerObject);
+			Long datasetId = Long.parseLong(getFieldValueFromJsonText(layerJson, Constants.DSET_ID_FIELD));
+			boolean isQueryable = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.QUERYABLE)) ? true : false;
+			boolean isBasic = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.BASIC_LAYER)) ? true : false;
+			boolean isOverview = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.OVERVIEW_LAYER)) ? true : false;
+			
+			if(isBasic) {
+				ObjectNode basicLayer = createBasicLayerContainer();
+				((ArrayNode) basicLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,isQueryable,datasetId,isOverview));	
+				layers.add(basicLayer);
+			} else {	
+				((ArrayNode) wmsLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,isQueryable,datasetId,isOverview));	
+			}
+			
+			
 		}
+		
+		if(wmsLayer.size() > 0 ) {
+			layers.add(wmsLayer);
+		}
+		
 
-		//layersNode.put(Constants.LAYERS, layers);
-		//return layersNode;
 		return layers;
 	}
 
-	private ObjectNode createLayerOptions(String layerName) {
+	private ObjectNode createLayerOptions() {
 		ObjectNode layerOptionsNode = om.createObjectNode();
-
 		layerOptionsNode.put(Constants.MAX_RESOLUTION, 90.31);
 		layerOptionsNode.put(Constants.BUFFER, 0);
-		// layerOptionsNode.put(Constants.SERVICE_VERSON, "");
-		// layerOptionsNode.put(Constants.TILE_ORIGIN,
-		// createTileOrigin(676998.2275614999, 921269.7915430071,
-		// "OpenLayers.LonLat"));
-		// layerOptionsNode.put(Constants.LAYER_NAME_FIELD, layerName);
-		// layerOptionsNode.put(Constants.TYPE, "jpg");
-		// layerOptionsNode.put(Constants.MAX_EXTENT,
-		// createMaxExtent(676101.625122, 920667.923567, 694357.870996,
-		// 937347.977722, "OpenLayers.Bounds"));
 		return layerOptionsNode;
 	}
 
-	private ObjectNode createLayerParams() {
+	private ObjectNode createEmptyLayerParams() {
 		ObjectNode layerParamsNode = om.createObjectNode();
-
-//		layerParamsNode.put(Constants.TILED, 90.31);
-//		layerParamsNode.put(Constants.TILES_ORIGIN, "675332.0,918619.988066");
-//		layerParamsNode.put(Constants.FORMAT, "image/png");
-//		layerParamsNode.put(Constants.REQUEST.toUpperCase(), "GetMap");
-//		layerParamsNode.put(Constants.STYLES, "");
 		return layerParamsNode;
 	}
 	
-	private ArrayNode createWmsLayers(String layerName) throws DCException {
-		ArrayNode arrayNode = om.createArrayNode();
+	private ObjectNode createLayerParams() {
+		ObjectNode layerParamsNode = om.createObjectNode();
+		layerParamsNode.put(Constants.FORMAT, "image/png");
+		layerParamsNode.put(Constants.REQUEST.toUpperCase(), "GetMap");
+		layerParamsNode.put(Constants.STYLES, "");
+		return layerParamsNode;
+	}
+	
+	private ObjectNode createWmsLayers(String layerName,boolean baseLayer, boolean queryableLayer, Long datasetId, boolean isOverview) throws DCException {
+		
 		ObjectNode wmsLayerNode = om.createObjectNode();
 
-		
-		wmsLayerNode.put(Constants.OVERVIEW, false);
-		wmsLayerNode.put(Constants.QUERYABLE, false);
-		wmsLayerNode.put(Constants.PHYSICAL_NAME,composePhysicalName(layerName));
-		wmsLayerNode.put(Constants.MAX_SCALE, 0);
-		wmsLayerNode.put(Constants.VISIBILITY, true);
-//		wmsLayerNode.put(Constants.EXTRACTABLE, false);
-		wmsLayerNode.put(Constants.LOGICAL_NAME,layerName);
+		if(baseLayer) {
+			wmsLayerNode.put(Constants.VISIBILITY, true);
+		} else {
+			wmsLayerNode.put(Constants.VISIBILITY, false);
+		}
+	
 		wmsLayerNode.put(Constants.MIN_SCALE, 0);
-//		wmsLayerNode.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
-//		wmsLayerNode.put(Constants.PRIORITA_VIS, 50);
+		wmsLayerNode.put(Constants.MAX_SCALE, 0);
+		wmsLayerNode.put(Constants.PHYSICAL_NAME,composePhysicalName(layerName));
+		wmsLayerNode.put(Constants.LOGICAL_NAME,layerName);
+		wmsLayerNode.put(Constants.QUERYABLE, queryableLayer);
+		wmsLayerNode.put(Constants.OVERVIEW, isOverview);
 		wmsLayerNode.put(Constants.CLASS_NAME, "MW.WMSLayer");
 		ObjectNode groupWms = om.createObjectNode();
-		groupWms.put(Constants.VISIBILITY, true);
-		groupWms.put(Constants.NAME,layerName);
-//		groupWms.put(Constants.EXPLORABLE, false);
+		if(isOverview) {
+			groupWms.put(Constants.VISIBILITY, false);
+		} else {
+			groupWms.put(Constants.VISIBILITY, true);
+		}
+		groupWms.put(Constants.NAME, Constants.WMS_LAYERS);
 		wmsLayerNode.put(Constants.GROUP, groupWms);
 		
-		ArrayNode fieldsNode = om.createArrayNode();
+		
+		ArrayNode fieldsNode = createFieldsNode(datasetId);
 		wmsLayerNode.put(Constants.FIELDS,fieldsNode);
 		
-		
-		arrayNode.add(wmsLayerNode);
-		return arrayNode;
+		return wmsLayerNode;
 	}
 
-	private ObjectNode createMapsConfigsProperties() {
+	private ArrayNode createFieldsNode(Long datasetid) throws DCException {
+		ArrayNode fieldsNode = om.createArrayNode();
+		//retrieve the dataset associated to this layer
+		Gsc007DatasetEntity dataset = gsc007Dao.load(datasetid);
+		if (dataset == null) {
+			// No dataset found with given parameters.
+			throw new DCException(Constants.ER702);
+		}
+		
+		try {
+			//get the json element containing the table columns
+			ArrayNode datasetColumns = getArrayNodeFromJsonText(dataset.getJson(),Constants.COLUMNS);
+			
+			for(int i = 0; i < datasetColumns.size(); i++) {
+				ObjectNode fieldNode = JsonNodeFactory.instance.objectNode();
+				
+				fieldNode.put(Constants.PHYSICAL_NAME,getFieldValueFromJsonText(datasetColumns.get(i).toString(),Constants.NAME));
+				fieldNode.put(Constants.LOGICAL_NAME,getFieldValueFromJsonText(datasetColumns.get(i).toString(),Constants.ALIAS));
+				fieldNode.put(Constants.ID,new Long(i));
+				fieldNode.put(Constants.VISIBILITY,true);
+				
+				String fieldType = getFieldValueFromJsonText(datasetColumns.get(i).toString(),Constants.TYPE);
+				boolean isGeom = fieldType.equalsIgnoreCase(Constants.MULTIPOINT) || fieldType.equalsIgnoreCase(Constants.MULTILINESTRING) || fieldType.equalsIgnoreCase(Constants.MULTIPOLYGON) ? true : false;
+				fieldNode.put(Constants.GEOM,isGeom);
+				fieldNode.put(Constants.CLASS_NAME,Constants.WMS_LAYER_FIELD);
+				
+				fieldsNode.add(fieldNode);			
+			}
+		} catch (Exception e) {
+			logger.error("get configuration service error", e);
+			logger.error("get configuration service: unhandled error");
+			throw new DCException(Constants.ER01);
+		}
+		return fieldsNode;
+	}
+	
+	private ObjectNode createMapsConfigsProperties() throws DCException {
 		ObjectNode sectionNode = om.createObjectNode();
 		ArrayNode section = om.createArrayNode();
-
-		//XXX mapwork section list can be empty
-//		ObjectNode firstSectionObject = om.createObjectNode();
-//
-//		ArrayNode param = om.createArrayNode();
-//
-//		ObjectNode firstParamObject = om.createObjectNode();
-//		firstParamObject.put(Constants.NAME, "NumeroElementi");
-//		firstParamObject.put(Constants.VALUE, 6);
-//
-//		param.add(firstParamObject);
-//
-//		firstSectionObject.put(Constants.PARAM, param);
-//		firstSectionObject.put(Constants.NAME, "Trova Generici");
-//
-//		section.add(firstSectionObject);
-
+		section.add(createMainParamSection());
 		sectionNode.put(Constants.SECTION, section);
 		return sectionNode;
+	}
+	
+	private ObjectNode createMainParamSection() throws DCException {
+		ObjectNode mainParamSection = om.createObjectNode();
+		ArrayNode param = om.createArrayNode();
+		
+		
+		ObjectNode firstParamObject = om.createObjectNode();
+		firstParamObject.put(Constants.NAME,Constants.MAX_ROWS);
+		firstParamObject.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.MAX_ROWS)));
+		param.add(firstParamObject);
+
+		ObjectNode pagingRowsNumber = om.createObjectNode();
+		pagingRowsNumber.put(Constants.NAME,Constants.PAGING_ROW_NUMBER);
+		pagingRowsNumber.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.PAGING_ROW_NUMBER)));
+		param.add(pagingRowsNumber);
+		
+		mainParamSection.put(Constants.PARAM, param);
+		mainParamSection.put(Constants.NAME,Constants.GENERALE);
+
+		return mainParamSection;
+		
 	}
 
 	private ObjectNode createMaxExtent(double left, double bottom, double right, double top, String className) {
@@ -1062,18 +1127,18 @@ public class ApplicationsService extends ServiceCommons {
 	}
 	
 	private double getMaxExtentTop() throws DCException {
-		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.TOP).asDouble();
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT_LOWERCASE).get(Constants.TOP).asDouble();
 	}
 	
 	private double getMaxExtentBottom() throws DCException {
-		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.BOTTOM).asDouble();
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT_LOWERCASE).get(Constants.BOTTOM).asDouble();
 	}
 	
 	private double getMaxExtentLeft() throws DCException {
-		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.LEFT).asDouble();
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT_LOWERCASE).get(Constants.LEFT).asDouble();
 	}
 	
 	private double getMaxExtentRight() throws DCException {
-		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT).get(Constants.RIGHT).asDouble();
+		return getNodeFromJsonText(applicationJson, Constants.MAX_EXTENT_LOWERCASE).get(Constants.RIGHT).asDouble();
 	}
 }

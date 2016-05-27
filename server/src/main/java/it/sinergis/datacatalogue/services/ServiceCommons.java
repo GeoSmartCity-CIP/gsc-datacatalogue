@@ -222,6 +222,30 @@ public class ServiceCommons {
 			throw new DCException(Constants.ER01);
 		}
 	}
+	
+	/**
+	 * Returns the specific object inside a json 
+	 * 
+	 * @param json
+	 * @param fieldName
+	 * @return null if value is null, else the value
+	 * @throws DPException
+	 */
+	protected ArrayNode getArrayNodeFromJsonText(String json, String fieldName) throws DCException {
+		try {
+			JsonNode rootNode = om.readTree(json);
+			ArrayNode value = (ArrayNode) rootNode.findValue(fieldName);
+
+			if (value == null) {
+				return null;
+			} else {
+				return value;
+			}
+		} catch (Exception e) {
+			logger.error("unhandled error: ", e);
+			throw new DCException(Constants.ER01);
+		}
+	}
 
 	/**
 	 * Returns key within the input json text parameter.
