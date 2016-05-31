@@ -115,4 +115,11 @@ public interface Gsc010ApplicationPersistence {
 	 */
 	public int deleteFromList(String query,EntityManager em);
 	
+	/**
+	 * count number of records within a certain id list
+	 * @param query native query
+	 * @return the count number
+	 */
+	public Long countInId(String query);
+	
 }

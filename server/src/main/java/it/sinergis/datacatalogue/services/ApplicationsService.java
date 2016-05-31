@@ -26,6 +26,7 @@ import it.geosolutions.geoserver.rest.decoder.RESTNamespace;
 import it.geosolutions.geoserver.rest.decoder.RESTWorkspaceList;
 import it.geosolutions.geoserver.rest.manager.GeoServerRESTStoreManager;
 import it.sinergis.datacatalogue.bean.jpa.Gsc001OrganizationEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc002UserEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
@@ -35,6 +36,7 @@ import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.persistence.PersistenceServiceProvider;
 import it.sinergis.datacatalogue.persistence.services.Gsc001OrganizationPersistence;
+import it.sinergis.datacatalogue.persistence.services.Gsc002UserPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc006DatasourcePersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc007DatasetPersistence;
 import it.sinergis.datacatalogue.persistence.services.Gsc008LayerPersistence;
@@ -57,6 +59,9 @@ public class ApplicationsService extends ServiceCommons {
 	/** Dao organization. */
 	private Gsc001OrganizationPersistence gsc001Dao;
 
+	/** Dao user. */
+	private Gsc002UserPersistence gsc002Dao;
+	
 	/** Gsc006Datasource DAO. */
 	private Gsc006DatasourcePersistence gsc006Dao;
 
@@ -77,6 +82,7 @@ public class ApplicationsService extends ServiceCommons {
 	public ApplicationsService() {
 		logger = Logger.getLogger(this.getClass());
 		gsc001Dao = PersistenceServiceProvider.getService(Gsc001OrganizationPersistence.class);
+		gsc002Dao = PersistenceServiceProvider.getService(Gsc002UserPersistence.class);
 		gsc006Dao = PersistenceServiceProvider.getService(Gsc006DatasourcePersistence.class);
 		gsc007Dao = PersistenceServiceProvider.getService(Gsc007DatasetPersistence.class);
 		gsc008Dao = PersistenceServiceProvider.getService(Gsc008LayerPersistence.class);
@@ -735,50 +741,46 @@ public class ApplicationsService extends ServiceCommons {
 			checkJsonWellFormed(req);
 			checkMandatoryParameters(Constants.GET_CONFIGURATION, req);
 			logger.info(req);
-			// retrieve the application from ID
-			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
-			Gsc010ApplicationEntity application = null;
-
-			if (StringUtils.isNotEmpty(idApplication)) {
-				if (StringUtils.isNumeric(idApplication)) {
-					application = gsc010Dao.load(Long.parseLong(idApplication));
-					if (application == null) {
-						// No application found with given parameters.
-						throw new DCException(Constants.ER1002, req);
-					}
-				} else {
-					// Application id has to be numeric
-					throw new DCException(Constants.ER12, req);
+			
+			// retrieve the user from ID
+			String idUser = getFieldValueFromJsonText(req, Constants.USER_ID_FIELD);
+			Gsc002UserEntity user = null;
+			if (StringUtils.isNotEmpty(idUser) && StringUtils.isNumeric(idUser))  {		
+				user = gsc002Dao.load(Long.parseLong(idUser));
+				if (user == null) {
+					// No user found with given parameters.
+					throw new DCException(Constants.ER205, req);
 				}
+			} else {
+				// user id has to be numeric
+				throw new DCException(Constants.ER12, req);
+			}
+			
+			//get all the application ids for the given user
+			String query = createGetApplicationIdByUsernameQuery(Long.parseLong(idUser));
+			List<Gsc010ApplicationEntity> applicationList = gsc010Dao.getApplications(query);
+
+			//create outer elements
+			ObjectNode root = om.createObjectNode();
+			ObjectNode maps = om.createObjectNode();
+			ObjectNode configs = om.createObjectNode();
+			ArrayNode map = om.createArrayNode();
+			
+			configs.put(Constants.PROPERTIES, createMapsConfigsProperties());
+			configs.put(Constants.CLASS_NAME, "MW.Configs");
+			maps.put(Constants.CONFIGS, configs);
+
+			maps.put(Constants.XMLNS, "http://schemas.corenet.it/mapwork/mapconfiguration");
+			
+			//create the map element for that application.
+			for(Gsc010ApplicationEntity application: applicationList) {
+				map.add(createSingleMapElement(application));
 			}
 
-			String jsonString;
-			try {
-
-				applicationJson = application.getJson();
-				
-				String layers = getObjectFromJsonText(application.getJson(), Constants.LAYERS);
-				JsonNode node = om.readTree(layers);
-
-				Iterator<JsonNode> iteratorNode = node.elements();
-				ArrayList<String> listIdLayers = new ArrayList<String>();
-
-				while (iteratorNode.hasNext()) {
-
-					JsonNode layerNode = iteratorNode.next();
-					String layerNodeAsString = om.writeValueAsString(layerNode);
-					String layerId = getFieldValueFromJsonText(layerNodeAsString, Constants.LAYER_ID_FIELD);
-					listIdLayers.add(layerId);
-				}
-
-				jsonString = om.writeValueAsString(createGetConfigurationResult(application.getJson(), listIdLayers));
-
-			} catch (IOException e) {
-				logger.error("IOException", e);
-				throw new DCException(Constants.ER01, req);
-			}
-
-			return jsonString;
+			maps.put("map", map);			
+			root.put(Constants.MAPS, maps);
+			
+			return om.writeValueAsString(root);
 
 		} catch (DCException rpe) {
 			return rpe.returnErrorString();
@@ -789,6 +791,61 @@ public class ApplicationsService extends ServiceCommons {
 
 			return rpe.returnErrorString();
 		}
+	}
+	
+	private ObjectNode createSingleMapElement(Gsc010ApplicationEntity application) throws IOException, DCException {
+		
+		applicationJson = application.getJson();
+			
+		String layers = getObjectFromJsonText(application.getJson(), Constants.LAYERS);
+		JsonNode node = om.readTree(layers);
+
+		Iterator<JsonNode> iteratorNode = node.elements();
+		ArrayList<String> listIdLayers = new ArrayList<String>();
+
+		while (iteratorNode.hasNext()) {
+
+			JsonNode layerNode = iteratorNode.next();
+			String layerNodeAsString = om.writeValueAsString(layerNode);
+			String layerId = getFieldValueFromJsonText(layerNodeAsString, Constants.LAYER_ID_FIELD);
+			listIdLayers.add(layerId);
+		}
+
+		return createGetConfigurationResult(application.getJson(), listIdLayers);
+	}
+	
+	/**
+	 * 		An example of the query created by this method.
+	 *      The query goes from the user table to his roles and from his roles to his permissions 
+	 *      getting all the application for each permission found this way.
+	 *      IS NOT NULL prevents from finding null values when one of the permissions that have been found
+	 *      contain one or more functions without any application id.
+	 *      
+	 *      select * from gscdatacatalogue.gsc_010_application appT where appT.id IN ( 
+	 * 			select CAST((func.json->>'idapplication') AS integer)
+	 *			from gscdatacatalogue.gsc_005_permission permT,jsonb_array_elements(permT.json->'functions') func
+	 *			where CAST((permT.json->>'idrole') AS integer) IN (
+	 *				select roleT.id from gscdatacatalogue.gsc_003_role roleT, jsonb_array_elements(roleT.json->'users') users
+	 *				where CAST((users.json->>'iduser') AS integer) = 296
+	 *			) AND CAST((func.json->>'idapplication') AS integer) IS NOT NULL
+	 * 		)
+	 * 
+	 * @param userId
+	 * @return The query string to find the application ids.
+	 */
+	private String createGetApplicationIdByUsernameQuery(Long userId) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("select * from "+Constants.APPLICATION_TABLE_NAME+" appT where appT.id IN ( ");
+		sb.append("select CAST((func.json->>'idapplication') AS integer) ");
+		sb.append("from "+Constants.PERMISSION_TABLE_NAME+" permT,jsonb_array_elements(permT.json->'functions') func ");
+		sb.append("where CAST((permT.json->>'idrole') AS integer) IN ( ");
+		sb.append("select roleT.id from "+Constants.ROLE_TABLE_NAME+" roleT, jsonb_array_elements(roleT.json->'users') users ");
+		sb.append("where CAST((users.json->>'iduser') AS integer) = "+userId);
+		sb.append(") AND CAST((func.json->>'idapplication') AS integer) IS NOT NULL)");
+		
+		return sb.toString();
+		
 	}
 
 	private List<Long> getIdFromRequest(ArrayNode objectList, String field) {
@@ -849,17 +906,7 @@ public class ApplicationsService extends ServiceCommons {
 
 	private ObjectNode createGetConfigurationResult(String applicationJson, ArrayList<String> listIdLayers)
 			throws DCException {
-		ObjectNode root = om.createObjectNode();
-		ObjectNode maps = om.createObjectNode();
-		ObjectNode configs = om.createObjectNode();
-
-		configs.put(Constants.PROPERTIES, createMapsConfigsProperties());
-		configs.put(Constants.CLASS_NAME, "MW.Configs");
-		maps.put(Constants.CONFIGS, configs);
-
-		maps.put(Constants.XMLNS, "http://schemas.corenet.it/mapwork/mapconfiguration");
 		
-		ArrayNode map = om.createArrayNode();
 		ObjectNode firstMapObject = om.createObjectNode();
 
 		String workspaceName = getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_");
@@ -867,15 +914,6 @@ public class ApplicationsService extends ServiceCommons {
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
 		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
-		
-		//XXX those parameter are not mandatory
-//		firstMapObject.put(Constants.DEFAULT_MAP, true);
-//		firstMapObject.put(Constants.ZOOM, 2);
-//		firstMapObject.put(Constants.UNITS, "m");
-//		firstMapObject.put(Constants.MAX_RESOLUTION, 90.31);
-//		firstMapObject.put(Constants.NUM_ZOOM_LEVELS, 12);
-//		firstMapObject.put(Constants.NAME, workspaceName);
-
 		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(listIdLayers));
 		firstMapObject.put(Constants.NAMESPACE_URI, getFieldValueFromJsonText(applicationJson, Constants.APP_URI));
 
@@ -890,11 +928,7 @@ public class ApplicationsService extends ServiceCommons {
 		firstMapObject.put(Constants.MAX_EXTENT,
 				createMaxExtent(getMaxExtentLeft(), getMaxExtentBottom(), getMaxExtentRight(), getMaxExtentTop(), "OpenLayers.Bounds"));
 
-		map.add(firstMapObject);
-		maps.put("map", map);
-		
-		root.put(Constants.MAPS, maps);
-		return root;
+		return firstMapObject;
 	}
 
 	private ObjectNode createWMSLayerContainer() throws DCException {
@@ -1070,12 +1104,14 @@ public class ApplicationsService extends ServiceCommons {
 		
 		ObjectNode firstParamObject = om.createObjectNode();
 		firstParamObject.put(Constants.NAME,Constants.MAX_ROWS);
-		firstParamObject.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.MAX_ROWS)));
+		//firstParamObject.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.MAX_ROWS)));
+		firstParamObject.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.MAX_ROWS));
 		param.add(firstParamObject);
 
 		ObjectNode pagingRowsNumber = om.createObjectNode();
 		pagingRowsNumber.put(Constants.NAME,Constants.PAGING_ROW_NUMBER);
-		pagingRowsNumber.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.PAGING_ROW_NUMBER)));
+		//pagingRowsNumber.put(Constants.VALUE,Long.parseLong(getFieldValueFromJsonText(applicationJson, Constants.PAGING_ROW_NUMBER)));
+		pagingRowsNumber.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.PAGING_ROW_NUMBER));
 		param.add(pagingRowsNumber);
 		
 		mainParamSection.put(Constants.PARAM, param);

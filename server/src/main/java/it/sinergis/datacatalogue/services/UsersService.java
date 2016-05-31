@@ -236,6 +236,10 @@ public class UsersService extends ServiceCommons {
 						if (layerId != null) {
 							info.put(Constants.LAYER_ID_FIELD, functionNode.get(Constants.LAYER_ID_FIELD).asText());
 						}
+						JsonNode applicationId = functionNode.get(Constants.APPLICATION_ID);
+						if (applicationId != null) {
+							info.put(Constants.APPLICATION_ID, functionNode.get(Constants.APPLICATION_ID).asText());
+						}
 						info.put(Constants.FUNC_ID_FIELD, functionNode.get(Constants.FUNC_ID_FIELD).asText());
 
 						functionsNodeList.add(info);

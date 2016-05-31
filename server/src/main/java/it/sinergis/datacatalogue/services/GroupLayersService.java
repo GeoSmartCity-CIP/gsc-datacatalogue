@@ -400,15 +400,15 @@ public class GroupLayersService extends ServiceCommons {
 		sb.append(Constants.ID);
 		sb.append(" IN (");
 		//This condition checks that the id count only matches layers belonging to the same groupLayer organization 
-		//		select lyrT.id
-		//		from gscdatacatalogue.gsc_001_organization orgT 
-		//		inner join gscdatacatalogue.gsc_006_datasource dsT
-		//		on orgT.id = CAST((dsT.json->>'organization') AS integer)
-		//		inner join gscdatacatalogue.gsc_007_dataset dstT
-		//		on dsT.id = CAST((dstT.json->>'iddatasource') AS integer)
-		//		inner join gscdatacatalogue.gsc_008_layer lyrT
-		//		on dstT.id = CAST((lyrT.json->>'iddataset') AS integer)
-		//		where orgT.id = THIS_GROUP_ORGANIZATIONID
+//				select lyrT.id
+//				from gscdatacatalogue.gsc_001_organization orgT 
+//				inner join gscdatacatalogue.gsc_006_datasource dsT
+//				on orgT.id = CAST((dsT.json->>'organization') AS integer)
+//				inner join gscdatacatalogue.gsc_007_dataset dstT
+//				on dsT.id = CAST((dstT.json->>'iddatasource') AS integer)
+//				inner join gscdatacatalogue.gsc_008_layer lyrT
+//				on dstT.id = CAST((lyrT.json->>'iddataset') AS integer)
+//				where orgT.id = THIS_GROUP_ORGANIZATIONID
 		sb.append("select lyrT.id from ");
 		sb.append(Constants.ORGANIZATION_TABLE_NAME); 
 		sb.append(" orgT inner join ");

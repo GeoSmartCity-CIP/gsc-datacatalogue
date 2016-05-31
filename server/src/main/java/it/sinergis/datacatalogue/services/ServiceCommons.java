@@ -35,11 +35,14 @@ public class ServiceCommons {
 	
 	/** MailUtils. */
 	protected MailUtils mailUtils;
+	
+	protected PropertyReader mapConfigurationProp;
 
 	public ServiceCommons() {
 		logger = Logger.getLogger(this.getClass());
 		om = new ObjectMapper();
-		mailUtils = new MailUtils();		
+		mailUtils = new MailUtils();
+		mapConfigurationProp = new PropertyReader(Constants.MAP_CONFIG_FILE);
 	}
 
 	protected void checkJsonWellFormed(String jsonText) throws DCException {

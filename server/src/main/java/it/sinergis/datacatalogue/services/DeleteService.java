@@ -61,6 +61,7 @@ public class DeleteService extends ServiceCommons {
 	public final String FUNCTIONS_PATH = "'functions'";
 	public final String FUNCTIONS_ID_ASSIGNMENT = "'idfunction' = '";
 	public final String LAYERS_ID_ASSIGNMENT = "'idlayer' = '";
+	public final String APPLICATION_ID_ASSIGNMENT = "'idapplication' = '";
 	
 	public final String ASSIGNMENT_END = "'";
 
@@ -154,8 +155,6 @@ public class DeleteService extends ServiceCommons {
 
 	public void deleteApplication(String predecessorIdName, List<Long> predecessorsId, Long selfId, EntityManager em) throws DCException {
 
-		// Application doesn't need to delete other tables, just itself.
-
 		if (selfId != null) {
 			EntityTransaction transaction = null;
 			try {
@@ -164,6 +163,12 @@ public class DeleteService extends ServiceCommons {
 				
 				gsc010Dao.deleteNoTrans(selfId, em);
 	
+				//delete application records in the permission table
+				String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, APPLICATION_ID_ASSIGNMENT+selfId+ASSIGNMENT_END,FUNCTIONS_PATH);
+				gsc005Dao.executeNativeQuery(updateQuery, em);
+				//if no functions are left delete the record
+				gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
+				
 				jpaEnvironment.commitTransaction(transaction);
 			} catch (Exception e) {
 				logger.error("Error in the delete service occurred. Transaction has been rolled back.", e);
@@ -181,6 +186,12 @@ public class DeleteService extends ServiceCommons {
 					for (Object retrievedGroup : retrievedGroupLayers) {
 						if (retrievedGroup instanceof Gsc010ApplicationEntity) {
 							gsc010Dao.deleteNoTrans(((Gsc010ApplicationEntity) retrievedGroup).getId(),em);
+							
+							//delete application records in the permission table
+							String updateQuery = createDeleteFromListQuery(Constants.PERMISSION_TABLE_NAME, Constants.JSON_COLUMN_NAME, APPLICATION_ID_ASSIGNMENT+((Gsc010ApplicationEntity) retrievedGroup).getId()+ASSIGNMENT_END,FUNCTIONS_PATH);
+							gsc005Dao.executeNativeQuery(updateQuery, em);
+							//if no functions are left delete the record
+							gsc005Dao.executeNativeQuery(createCleanupPermissionsQuery(), em);
 						}
 					}
 				}

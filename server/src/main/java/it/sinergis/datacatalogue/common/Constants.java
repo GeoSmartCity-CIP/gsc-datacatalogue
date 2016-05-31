@@ -171,7 +171,8 @@ public final class Constants {
 	public static final String ER502 = "ER502";
 	public static final String ER503 = "ER503";
 	public static final String ER504 = "ER504";
-
+	public static final String ER505 = "ER505";
+	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";
 	public static final String ER602 = "ER602";
@@ -402,5 +403,7 @@ public final class Constants {
 	public static final String MULTIPOINT = "MultiPoint";
 	public static final String GET_MAP = "GetMap";
 	public static final String IMAGE_PNG = "image/png";
+	public static final String MAP_CONFIG_FILE = "mapconfiguration.properties";
+
 
 }
