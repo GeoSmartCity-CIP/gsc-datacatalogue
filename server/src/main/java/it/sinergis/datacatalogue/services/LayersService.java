@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -220,30 +219,30 @@ public class LayersService extends ServiceCommons {
 				String datasetIdParameter = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 				String layerNameParameter = getFieldValueFromJsonText(req, Constants.LAYER_NAME_FIELD);
 				String layerIdParameter = getFieldValueFromJsonText(req, Constants.LAYER_ID_FIELD);
-				String idOrganization = getFieldValueFromJsonText(req, Constants.ORG_ID_FIELD);
-
+				if (layerIdParameter != null
+						&& (layerNameParameter != null || datasetIdParameter != null)) {
+					logger.error(
+							"Incorrect parameters: perform a request either by layerid or by datasetid (and layername). Both parameters are not allowed at the same time");
+					throw new DCException(Constants.ER806, req);
+				}
 				// if the idlayer parameter is in the request the research
 				// will be done by id.
-				if (StringUtils.isNotEmpty(layerIdParameter) && StringUtils.isEmpty(layerNameParameter)
-						&& StringUtils.isEmpty(datasetIdParameter) && StringUtils.isEmpty(idOrganization)) {
-
-					Gsc008LayerEntity layerFoundById = getLayerObjectById(Long.parseLong(layerIdParameter));
+				if (layerIdParameter != null) {
+					Gsc008LayerEntity layerFoundById = getLayerObjectById(
+							Long.parseLong(layerIdParameter));
 					if (layerFoundById != null) {
 						layers.add(layerFoundById);
 					}
-				}
-				// otherwise the research is based on the dataset
-				// parameter.
-				else if (StringUtils.isNotEmpty(layerIdParameter) || StringUtils.isNotEmpty(layerNameParameter)
-						|| StringUtils.isNotEmpty(datasetIdParameter) || StringUtils.isNotEmpty(idOrganization)) {
-
-					query = createSearchQuery(Constants.LAYER_TABLE_NAME, Constants.DATASETS_TABLE_NAME,
-							Constants.DATASOURCE_TABLE_NAME, layerIdParameter, layerNameParameter, datasetIdParameter,
-							idOrganization);
+					// otherwise the research is based on the dataset
+					// parameter.
+				} else if (datasetIdParameter != null) {
+					
+					query = createSearchQuery(Constants.LAYER_TABLE_NAME,datasetIdParameter,layerNameParameter);
 					layers = layerPersistence.getLayers(query);
 
 				} else {
-					logger.error("Incorrect parameters: either iddataset or idlayer parameters should be specified.");
+					logger.error(
+							"Incorrect parameters: either iddataset or idlayer parameters should be specified.");
 					throw new DCException(Constants.ER807, req);
 				}
 			} else {
@@ -369,37 +368,24 @@ public class LayersService extends ServiceCommons {
 
 	}
 
-	private String createSearchQuery(String tableNameLayer, String tableNameDataset, String tableNameDatasource,
-			String idLayer, String layerName, String idDataset, String idOrganization) {
+	/**
+	 * eg:
+	 * 
+	 * select * from gscdatacatalogue.gsc_008_layer gsc008 where cast(gsc008.json->>'iddataset' as integer) = 196 AND json->>'layername' ILIKE '%NUMERI%'
+	 *  
+	 * @param tableNameLayer
+	 * @param layerName
+	 * @param idDataset
+	 * @return
+	 */
+	private String createSearchQuery(String tableNameLayer, String idDataset, String layerName) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT * FROM ").append(tableNameLayer).append(" layer WHERE layer.id IN ( ");
-		sb.append("SELECT gsc008.id FROM ").append(tableNameLayer).append(" gsc008, ").append(tableNameDataset)
-				.append(" gsc007, ").append(tableNameDatasource).append(" gsc006 WHERE ");
-		sb.append("gsc007.id = cast(gsc008.json->>'").append(Constants.DSET_ID_FIELD).append("' as integer) ");
-		sb.append(" AND gsc006.id = cast(gsc007.json->>'").append(Constants.DATASOURCE_ID_FIELD)
-				.append("' as integer) ");
-
-		if (StringUtils.isNotEmpty(idLayer)) {
-			sb.append(" AND gsc008.id = ").append(idLayer);
+		sb.append("SELECT * FROM ").append(tableNameLayer).append(" layer where cast(layer.json->>'iddataset' as integer) = ").append(Long.parseLong(idDataset));
+		
+		if(layerName != null) {
+			sb.append(" AND layer.json->>'layername' ILIKE '%").append(layerName).append("%'");
 		}
-
-		if (StringUtils.isNotEmpty(layerName)) {
-			sb.append(" AND gsc008.json->>'").append(Constants.LAYER_NAME_FIELD).append("' ILIKE '%").append(layerName)
-					.append("%'");
-		}
-
-		if (StringUtils.isNotEmpty(idDataset)) {
-			sb.append(" AND gsc008.json->>'").append(Constants.DSET_ID_FIELD).append("' = '").append(idDataset)
-					.append("'");
-		}
-
-		if (StringUtils.isNotEmpty(idOrganization)) {
-			sb.append(" AND gsc006.json->>'").append(Constants.ORG_FIELD).append("' = '").append(idOrganization)
-					.append("'");
-		}
-
-		sb.append(")");
 		return sb.toString();
 	}
 }

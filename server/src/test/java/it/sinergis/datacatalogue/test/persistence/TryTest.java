@@ -66,7 +66,7 @@ public class TryTest {
 
 	}
 
-	@Test
+	//@Test
 	public void test2() throws Exception {
 		File file = new File("D:\\dati\\bologna\\shape");
 		

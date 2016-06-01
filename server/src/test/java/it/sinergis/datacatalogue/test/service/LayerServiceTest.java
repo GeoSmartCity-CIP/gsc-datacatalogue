@@ -500,7 +500,7 @@ public class LayerServiceTest extends ServiceCommons
 	 *  This test is a list layer error test.
 	 *  The response will be checked, and it should contain an error.
 	 *  This should trigger error ER806
-	 *  "ncorrect parameters: perform a request either by grouplayerid or by organizationid (and grouplayername). Both parameters are not allowed at the same time."
+	 *  "Incorrect parameters: Perform a request either by layerid or by datasetid (and optionally layername). Both parameters are not allowed at the same time."
 	 */
 	@Test
 	public void readLYRTestFail2() {
