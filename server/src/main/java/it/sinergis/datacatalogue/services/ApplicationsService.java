@@ -913,6 +913,7 @@ public class ApplicationsService extends ServiceCommons {
 				
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
+		firstMapObject.put(Constants.NAME,workspaceName);
 		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
 		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(listIdLayers));
 		firstMapObject.put(Constants.NAMESPACE_URI, getFieldValueFromJsonText(applicationJson, Constants.APP_URI));
