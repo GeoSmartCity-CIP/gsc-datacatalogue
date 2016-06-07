@@ -760,6 +760,21 @@ public class ApplicationsService extends ServiceCommons {
 			String query = createGetApplicationIdByUsernameQuery(Long.parseLong(idUser));
 			List<Gsc010ApplicationEntity> applicationList = gsc010Dao.getApplications(query);
 
+			String visibility_query = createGetFunctionsForApplicationByProfileQuery(Long.parseLong(idUser),Long.parseLong(mapConfigurationProp.getValue(Constants.MAP_VISIBILITY_FUNC_ID)));
+			List<Gsc010ApplicationEntity> visibleApplicationList = gsc010Dao.getApplications(visibility_query);
+			List<Long> visibleApplicationIdList = new ArrayList<Long>();
+			for(Gsc010ApplicationEntity visibleApplication : visibleApplicationList) {
+				visibleApplicationIdList.add(visibleApplication.getId());
+			}
+			
+			//it should be 1 value only, but it cannot be guaranteed.
+			String default_query = createGetFunctionsForApplicationByProfileQuery(Long.parseLong(idUser),Long.parseLong(mapConfigurationProp.getValue(Constants.MAP_DEFAULT_FUNC_ID)));
+			List<Gsc010ApplicationEntity> defaultApplicationList = gsc010Dao.getApplications(default_query);
+			List<Long> defaultApplicationIdList = new ArrayList<Long>();
+			for(Gsc010ApplicationEntity defaultApplication : defaultApplicationList) {
+				defaultApplicationIdList.add(defaultApplication.getId());
+			}
+			
 			//create outer elements
 			ObjectNode root = om.createObjectNode();
 			ObjectNode maps = om.createObjectNode();
@@ -774,7 +789,14 @@ public class ApplicationsService extends ServiceCommons {
 			
 			//create the map element for that application.
 			for(Gsc010ApplicationEntity application: applicationList) {
-				map.add(createSingleMapElement(application));
+				
+				boolean isDefaultApplication = defaultApplicationIdList.contains(application.getId());
+				boolean isVisibleApplication = visibleApplicationIdList.contains(application.getId());
+				
+				//if the application is not linked to the visibility function for that profile do not add it to the output
+				if(isVisibleApplication) {
+					map.add(createSingleMapElement(application,isDefaultApplication));
+				}
 			}
 
 			maps.put("map", map);			
@@ -793,7 +815,10 @@ public class ApplicationsService extends ServiceCommons {
 		}
 	}
 	
-	private ObjectNode createSingleMapElement(Gsc010ApplicationEntity application) throws IOException, DCException {
+	private ObjectNode createSingleMapElement(Gsc010ApplicationEntity application,boolean isDefaultApplication) throws IOException, DCException {
+		
+		//Contains a list of layers id. Each layer is linked to a set of properties (name:value)
+		Map<String,Map<String,String>> layerProperties = new HashMap<String,Map<String,String>>();
 		
 		applicationJson = application.getJson();
 			
@@ -801,17 +826,32 @@ public class ApplicationsService extends ServiceCommons {
 		JsonNode node = om.readTree(layers);
 
 		Iterator<JsonNode> iteratorNode = node.elements();
-		ArrayList<String> listIdLayers = new ArrayList<String>();
-
+		
+		//iterate the layer elements
 		while (iteratorNode.hasNext()) {
-
+			
+			Map<String,String> propertyValues = new HashMap<String,String>();
+			
 			JsonNode layerNode = iteratorNode.next();
-			String layerNodeAsString = om.writeValueAsString(layerNode);
-			String layerId = getFieldValueFromJsonText(layerNodeAsString, Constants.LAYER_ID_FIELD);
-			listIdLayers.add(layerId);
+			
+			Iterator<String> innerIteratorNode = layerNode.fieldNames();
+			
+			String layerId = null;
+			//iterate the layer element fields
+			while(innerIteratorNode.hasNext()) {
+				String fieldName = innerIteratorNode.next();
+				//get the layer id
+				if(Constants.LAYER_ID_FIELD.equalsIgnoreCase(fieldName)) {
+					layerId = layerNode.get(Constants.LAYER_ID_FIELD).asText();
+				//get additional properties
+				} else {
+					propertyValues.put(fieldName,layerNode.get(fieldName).asText());
+				}
+			}
+			layerProperties.put(layerId, propertyValues);
 		}
 
-		return createGetConfigurationResult(application.getJson(), listIdLayers);
+		return createGetConfigurationResult(application.getJson(),layerProperties,isDefaultApplication);
 	}
 	
 	/**
@@ -844,6 +884,31 @@ public class ApplicationsService extends ServiceCommons {
 		sb.append("where CAST((users.json->>'iduser') AS integer) = "+userId);
 		sb.append(") AND CAST((func.json->>'idapplication') AS integer) IS NOT NULL)");
 		
+		return sb.toString();
+		
+	}
+	
+	/**
+	 * 
+	 * Creates a query that retrieves the applications connected to a certain user that have the specified function associated.
+	 * 
+	 * 
+	 * @param userId
+	 * @param funcId
+	 * @return
+	 */
+	private String createGetFunctionsForApplicationByProfileQuery(Long userId, Long funcId) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("select * from "+Constants.APPLICATION_TABLE_NAME+" appT where appT.id IN ( ");
+		sb.append("select CAST((func.json->>'idapplication') AS integer) ");
+		sb.append("from "+Constants.PERMISSION_TABLE_NAME+" permT,jsonb_array_elements(permT.json->'functions') func ");
+		sb.append("where CAST((permT.json->>'idrole') AS integer) IN ( ");
+		sb.append("select roleT.id from "+Constants.ROLE_TABLE_NAME+" roleT, jsonb_array_elements(roleT.json->'users') users ");
+		sb.append("where CAST((users.json->>'iduser') AS integer) = "+userId);
+		sb.append(") AND CAST((func.json->>'idapplication') AS integer) IS NOT NULL ");
+		sb.append(" AND CAST((func.json->>'idfunction') AS integer) = "+ funcId + ")");
+
 		return sb.toString();
 		
 	}
@@ -904,18 +969,22 @@ public class ApplicationsService extends ServiceCommons {
 		return sb.toString();
 	}
 
-	private ObjectNode createGetConfigurationResult(String applicationJson, ArrayList<String> listIdLayers)
+	private ObjectNode createGetConfigurationResult(String applicationJson,Map<String, Map<String,String>> layerProperties,boolean isDefaultApplication)
 			throws DCException {
 		
 		ObjectNode firstMapObject = om.createObjectNode();
 
 		String workspaceName = getFieldValueFromJsonText(applicationJson, Constants.APP_NAME_FIELD).replace(" ", "_");
-				
+		
+		if(isDefaultApplication) {
+			firstMapObject.put(Constants.DEFAULT_MAP, true);
+		}
+		
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
 		firstMapObject.put(Constants.NAME,workspaceName);
 		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
-		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(listIdLayers));
+		firstMapObject.put(Constants.LAYERS, createMapsMapLayers(layerProperties));
 		firstMapObject.put(Constants.NAMESPACE_URI, getFieldValueFromJsonText(applicationJson, Constants.APP_URI));
 
 		ObjectNode projection = om.createObjectNode();
@@ -967,27 +1036,28 @@ public class ApplicationsService extends ServiceCommons {
 		return layerObject;
 	}
 	
-	private ArrayNode createMapsMapLayers(ArrayList<String> listIdLayers) throws DCException {
+	private ArrayNode createMapsMapLayers(Map<String, Map<String,String>> layerProperties) throws DCException {
 		ArrayNode layers = om.createArrayNode();
 		
 		ObjectNode wmsLayer = createWMSLayerContainer();
 		
-		for (String idLayer : listIdLayers) {
+		for (Map.Entry<String, Map<String,String>> entry : layerProperties.entrySet()) {
+			String idLayer = entry.getKey();
+			Map<String,String> propertyValues = entry.getValue();
 
 			Gsc008LayerEntity layerEntity = gsc008Dao.load(Long.parseLong(idLayer));
 			String layerJson = layerEntity.getJson();
 			String layerName = getFieldValueFromJsonText(layerJson, Constants.LAYER_NAME_FIELD).replace(" ", "_");
 			Long datasetId = Long.parseLong(getFieldValueFromJsonText(layerJson, Constants.DSET_ID_FIELD));
-			boolean isQueryable = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.QUERYABLE)) ? true : false;
-			boolean isBasic = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.BASIC_LAYER)) ? true : false;
-			boolean isOverview = "true".equalsIgnoreCase(getFieldValueFromJsonText(layerJson, Constants.OVERVIEW_LAYER)) ? true : false;
+			
+			boolean isBasic = "true".equalsIgnoreCase(propertyValues.get(Constants.BASIC_LAYER)) ? true : false;
 			
 			if(isBasic) {
 				ObjectNode basicLayer = createBasicLayerContainer();
-				((ArrayNode) basicLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,isQueryable,datasetId,isOverview));	
+				((ArrayNode) basicLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,datasetId,propertyValues));	
 				layers.add(basicLayer);
 			} else {	
-				((ArrayNode) wmsLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,isQueryable,datasetId,isOverview));	
+				((ArrayNode) wmsLayer.path(Constants.WMS_LAYERS)).add(createWmsLayers(layerName,isBasic,datasetId,propertyValues));	
 			}
 			
 			
@@ -1021,7 +1091,7 @@ public class ApplicationsService extends ServiceCommons {
 		return layerParamsNode;
 	}
 	
-	private ObjectNode createWmsLayers(String layerName,boolean baseLayer, boolean queryableLayer, Long datasetId, boolean isOverview) throws DCException {
+	private ObjectNode createWmsLayers(String layerName,boolean baseLayer, Long datasetId, Map<String,String> propertyValues) throws DCException {
 		
 		ObjectNode wmsLayerNode = om.createObjectNode();
 
@@ -1030,15 +1100,25 @@ public class ApplicationsService extends ServiceCommons {
 		} else {
 			wmsLayerNode.put(Constants.VISIBILITY, false);
 		}
-	
+		
+		//add all the layer property values to the configuration json 
+		for (Map.Entry<String,String> entry : propertyValues.entrySet()) {
+			String propertyName = entry.getKey();
+			String propertyValue = entry.getValue();
+		
+			wmsLayerNode.put(propertyName, propertyValue);
+		}
+
+		
 		wmsLayerNode.put(Constants.MIN_SCALE, 0);
 		wmsLayerNode.put(Constants.MAX_SCALE, 0);
 		wmsLayerNode.put(Constants.PHYSICAL_NAME,composePhysicalName(layerName));
 		wmsLayerNode.put(Constants.LOGICAL_NAME,layerName);
-		wmsLayerNode.put(Constants.QUERYABLE, queryableLayer);
-		wmsLayerNode.put(Constants.OVERVIEW, isOverview);
 		wmsLayerNode.put(Constants.CLASS_NAME, "MW.WMSLayer");
 		ObjectNode groupWms = om.createObjectNode();
+		
+		//if the layer is an overview layer there is no need to show it in the TOC
+		boolean isOverview = "true".equalsIgnoreCase(propertyValues.get(Constants.OVERVIEW_LAYER)) ? true : false;
 		if(isOverview) {
 			groupWms.put(Constants.VISIBILITY, false);
 		} else {
@@ -1135,11 +1215,6 @@ public class ApplicationsService extends ServiceCommons {
 
 	private ObjectNode createTileOrigin(double lon, double lat, String className) {
 		ObjectNode tileOrigin = om.createObjectNode();
-		
-		//XXX center node can be empty
-//		tileOrigin.put(Constants.CLASS_NAME, className);
-//		tileOrigin.put(Constants.LON, lon);
-//		tileOrigin.put(Constants.LAT, lat);
 		return tileOrigin;
 	}
 	

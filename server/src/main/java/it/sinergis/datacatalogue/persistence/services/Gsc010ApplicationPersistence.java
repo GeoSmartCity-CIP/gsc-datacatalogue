@@ -109,6 +109,13 @@ public interface Gsc010ApplicationPersistence {
 	public List<Gsc010ApplicationEntity> getApplications(final String query);
 	
 	/**
+	 * Get application ids from query.
+	 * @param query
+	 * @return
+	 */
+	public List<Long> getApplicationIds(final String query);
+	
+	/**
 	 * Delete from each record of this table all the instances of parameter that appear in a list within the json field.
 	 * @param query native query
 	 * @return number of rows affected by modification

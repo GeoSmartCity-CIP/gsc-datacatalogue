@@ -404,6 +404,7 @@ public final class Constants {
 	public static final String GET_MAP = "GetMap";
 	public static final String IMAGE_PNG = "image/png";
 	public static final String MAP_CONFIG_FILE = "mapconfiguration.properties";
-
+	public static final String MAP_VISIBILITY_FUNC_ID = "mapvisibilityfuncid";
+	public static final String MAP_DEFAULT_FUNC_ID = "mapdefaultfuncid";
 
 }
