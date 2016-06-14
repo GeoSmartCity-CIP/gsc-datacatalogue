@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import it.sinergis.datacatalogue.common.Constants;
 import it.sinergis.datacatalogue.exception.DCException;
+import it.sinergis.datacatalogue.persistence.services.util.CronUtils;
 import it.sinergis.datacatalogue.services.ApplicationsService;
 import it.sinergis.datacatalogue.services.DatasetsService;
 import it.sinergis.datacatalogue.services.DatasourcesService;
@@ -45,6 +46,13 @@ public class DataCatalogServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		// Inizializzazione
 		logger = Logger.getLogger(this.getClass());
+		
+		//start the cron scheduler
+		startBackgroundServices();
+	}
+	
+	private void startBackgroundServices() {
+		CronUtils.getInstance().scheduleTask();
 	}
 
 	/**

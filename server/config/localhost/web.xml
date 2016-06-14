@@ -4,7 +4,7 @@
   <servlet>
     <servlet-name>DataCatalogServlet</servlet-name>
     <servlet-class>it.sinergis.datacatalogue.servlet.DataCatalogServlet</servlet-class>
-    
+    <load-on-startup>1</load-on-startup>
   </servlet>  
   <servlet-mapping>
     <servlet-name>DataCatalogServlet</servlet-name>

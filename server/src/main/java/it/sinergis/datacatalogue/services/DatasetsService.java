@@ -1,6 +1,9 @@
 package it.sinergis.datacatalogue.services;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,30 +68,68 @@ public class DatasetsService extends ServiceCommons {
 
 					if (datasourceEntity != null) {
 						Gsc007DatasetEntity dset = new Gsc007DatasetEntity();
+						Gsc007DatasetEntity dsetUpdated = new Gsc007DatasetEntity();
 
 						String datasourceType = getFieldValueFromJsonText(datasourceEntity.getJson(), Constants.TYPE);
 
 						// If the datasource is a SHAPE
 						if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.SHAPE)) {
+							
+							ObjectNode node = (ObjectNode) om.readTree(req);
+							
+							//TODO add code here
 							String datasetFilename = getFieldValueFromJsonText(req, Constants.DSET_REALNAME_FIELD);
+							String URL = getFieldValueFromJsonText(req, Constants.URL);
+							//if the update is needed something special has to be specified as datasourcename
+							if("auto_update".equalsIgnoreCase(datasetFilename)) {
+								//get the datasourcename through the url (if no url specified error is thrown)
+								if(URL == null || URL.isEmpty()) {
+									logger.error("Since the dataset has to be retrieved from a remote location, the URL parameter needs to be specified in the request.");
+									throw new DCException(Constants.ER706, req);
+								}
+								//create the datasetname through the given url
+								int separatorIndex = URL.lastIndexOf("\\") != -1 ? URL.lastIndexOf("\\") +1 : URL.lastIndexOf("/") +1;
+								datasetFilename = URL.substring(separatorIndex);
+								node.put(Constants.DSET_REALNAME_FIELD,datasetFilename);
+								
+								//update the json
+								dset.setJson(node.toString());
+								//call the updateshapeservice update method
+								UpdateShapeService updateShapeService = new UpdateShapeService();
+								dsetUpdated = updateShapeService.updateFile(dset);
+							}
+							
 							String datasourcePath = getFieldValueFromJsonText(datasourceEntity.getJson(),
 									Constants.PATH);
 
-							if (StringUtils.isNotEmpty(datasourcePath) && StringUtils.isNotEmpty(datasetFilename)) {
+							String datasetFilenameSHP = datasetFilename.substring(0, datasetFilename.lastIndexOf(".")).concat(".shp");
+							if (StringUtils.isNotEmpty(datasourcePath) && StringUtils.isNotEmpty(datasetFilenameSHP)) {
 
 								if (!datasourcePath.endsWith("/")) {
 									datasourcePath = datasourcePath.concat("/");
 								}
 								String columnsJson = ServiceUtil
-										.createJSONColumnsFromShapeFile(datasourcePath + datasetFilename);
+										.createJSONColumnsFromShapeFile(datasourcePath + datasetFilenameSHP);
 
-								ObjectNode node = (ObjectNode) om.readTree(req);
+								//add the last updated field
+								DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+								String dateFormatted = formatter.format(System.currentTimeMillis());
+								node.put(Constants.LAST_UPDATE_TS, dateFormatted);
+								
 								node.put(Constants.COLUMNS, om.readTree(columnsJson));
 
+								if(dsetUpdated != null ) {
+									dset = dsetUpdated;
+								}
+								
 								dset.setJson(node.toString());
+
 							} else {
-								dset.setJson(req);
+								logger.error("Path parameter is mandatory for datasources that handle shape files.");
+								throw new DCException(Constants.ER703, req);
 							}
+							
+							gsc007Dao.save(dsetUpdated);
 						}
 						// if the datasource is POSTGIS
 						else if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.POSTGIS)) {
@@ -548,5 +589,12 @@ public class DatasetsService extends ServiceCommons {
 
 		sb.append(")");
 		return sb.toString();
+	}
+	
+	private void forcedUpdate(String newdatasetname,String URL,String datasourceId) {
+		//1) if the update is needed something special has to be specified as datasourcename
+		//2) get the datasourcename through the url (if no url specified error is thrown)
+		//3) save the dataset
+		//4) call the updateshapeservice update method
 	}
 }

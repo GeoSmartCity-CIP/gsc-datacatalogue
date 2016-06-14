@@ -2,6 +2,7 @@ package it.sinergis.datacatalogue.persistence.services.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,21 @@ import it.sinergis.datacatalogue.common.Constants;
 
 public class ServiceUtil {
 
+	public static String createJSONColumnsFromShapeFile(URL url) throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(Constants.URL, url);
+
+		DataStore dataStore = DataStoreFinder.getDataStore(map);
+		String typeName = dataStore.getTypeNames()[0];
+
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
+		Filter filter = Filter.INCLUDE;
+
+		String json = buildJsonColumns(source.getFeatures(filter));
+		dataStore.dispose();
+		return json;
+	}
+	
 	public static String createJSONColumnsFromShapeFile(String path) throws IOException {
 		File file = new File(path);
 
