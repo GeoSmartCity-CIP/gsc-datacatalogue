@@ -68,7 +68,7 @@ public final class Constants {
 	public static final String LAYER_ID_FIELD = "idlayer";
 	public static final String LAYERS = "layers";
 	public static final String BASIC_LAYER = "basic";
-	public static final String OVERVIEW_LAYER = "overviewlayer";
+	public static final String OVERVIEW_LAYER = "overview";
 	
 	/** GROUP Layer field names. */
 	public static final String GROUP_LAYER_NAME_FIELD = "groupname";
@@ -132,7 +132,9 @@ public final class Constants {
 	public static final String ER18 = "ER18";
 	public static final String ER19 = "ER19";
 	public static final String ER20 = "ER20";
-
+	public static final String ER21 = "ER21";
+	public static final String ER22 = "ER22";
+	
 	/** Organization Errors. */
 	public static final String ER101 = "ER101";
 	public static final String ER102 = "ER102";
@@ -187,8 +189,10 @@ public final class Constants {
 
 	/** Dataset Errors. */
 	public static final String ER702 = "ER702";
+	public static final String ER703 = "ER703";
 	public static final String ER704 = "ER704";
 	public static final String ER705 = "ER705";
+	public static final String ER706 = "ER706";
 	public static final String ER708 = "ER708";
 
 	/** Layers errors. */
@@ -407,4 +411,7 @@ public final class Constants {
 	public static final String MAP_VISIBILITY_FUNC_ID = "mapvisibilityfuncid";
 	public static final String MAP_DEFAULT_FUNC_ID = "mapdefaultfuncid";
 
+	//UPLOAD related constants
+	public static final String MIN_UPLOAD_INTERVAL = "minimumuploadinterval";
+	public static final String LAST_UPDATE_TS = "lastupdated";
 }
