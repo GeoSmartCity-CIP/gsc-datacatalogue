@@ -1009,7 +1009,8 @@ public class ApplicationsService extends ServiceCommons {
 		layerObject.put(Constants.CLASS_NAME, "MW.Layer.WMS");
 		layerObject.put(Constants.PARAMS, createLayerParams());
 		layerObject.put(Constants.IS_BASE_LAYER, false);
-		layerObject.put(Constants.SINGLE_TILE, true);
+		//TODO when TMS services will be added this value will depend on something (not always false)
+		layerObject.put(Constants.SINGLE_TILE, false);
 		layerObject.put(Constants.VISIBILITY, true);
 		layerObject.put(Constants.DISPLAY_IN_LAYER_SWITCHER, false);
 		
