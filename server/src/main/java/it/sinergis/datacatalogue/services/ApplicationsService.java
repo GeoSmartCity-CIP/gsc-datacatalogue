@@ -1106,8 +1106,16 @@ public class ApplicationsService extends ServiceCommons {
 		for (Map.Entry<String,String> entry : propertyValues.entrySet()) {
 			String propertyName = entry.getKey();
 			String propertyValue = entry.getValue();
-		
-			wmsLayerNode.put(propertyName, propertyValue);
+			
+			//boolean fix
+			if(propertyValue.equalsIgnoreCase("false")) {
+				wmsLayerNode.put(propertyName, false);
+			} else if (propertyValue.equalsIgnoreCase("true")) {
+				wmsLayerNode.put(propertyName, true);
+			} else {
+				wmsLayerNode.put(propertyName, propertyValue);
+			}
+			
 		}
 
 		
