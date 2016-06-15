@@ -1183,6 +1183,7 @@ public class ApplicationsService extends ServiceCommons {
 		ObjectNode sectionNode = om.createObjectNode();
 		ArrayNode section = om.createArrayNode();
 		section.add(createMainParamSection());
+		section.add(createMapsParamSection());
 		sectionNode.put(Constants.SECTION, section);
 		return sectionNode;
 	}
@@ -1206,6 +1207,30 @@ public class ApplicationsService extends ServiceCommons {
 		
 		mainParamSection.put(Constants.PARAM, param);
 		mainParamSection.put(Constants.NAME,Constants.GENERALE);
+
+		return mainParamSection;
+		
+	}
+	
+	private ObjectNode createMapsParamSection() throws DCException {
+		ObjectNode mainParamSection = om.createObjectNode();
+		ArrayNode param = om.createArrayNode();
+		
+		if(mapConfigurationProp.getValue(Constants.COPYRIGHT_TEXT) != null) {
+			ObjectNode copyrightText = om.createObjectNode();
+			copyrightText.put(Constants.NAME,Constants.COPYRIGHT_TEXT);
+			copyrightText.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.COPYRIGHT_TEXT));
+			param.add(copyrightText);
+		}
+		if(mapConfigurationProp.getValue(Constants.COPYRIGHT_URI) != null) {
+			ObjectNode copyrightURI = om.createObjectNode();
+			copyrightURI.put(Constants.NAME,Constants.COPYRIGHT_URI);
+			copyrightURI.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.COPYRIGHT_URI));
+			param.add(copyrightURI);
+		}
+		
+		mainParamSection.put(Constants.PARAM, param);
+		mainParamSection.put(Constants.NAME,Constants.MAPPA);
 
 		return mainParamSection;
 		

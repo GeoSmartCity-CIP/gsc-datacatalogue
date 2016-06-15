@@ -398,6 +398,9 @@ public final class Constants {
 	public static final String FIELDS = "fields";
 	public static final String MAPS = "maps";
 	public static final String GENERALE = "Generale";
+	public static final String MAPPA = "Mappa";
+	public static final String COPYRIGHT_TEXT = "CopyrightText";
+	public static final String COPYRIGHT_URI = "CopyrightURI";
 	public static final String MAX_ROWS = "maxrows";
 	public static final String PAGING_ROW_NUMBER = "pagingrowsnumber";
 	public static final String GEOM = "geom";
