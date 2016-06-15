@@ -412,6 +412,6 @@ public final class Constants {
 	public static final String MAP_DEFAULT_FUNC_ID = "mapdefaultfuncid";
 
 	//UPLOAD related constants
-	public static final String MIN_UPLOAD_INTERVAL = "minimumuploadinterval";
 	public static final String LAST_UPDATE_TS = "lastupdated";
+	public static final String CRON_PATTERN = "cronpattern";
 }

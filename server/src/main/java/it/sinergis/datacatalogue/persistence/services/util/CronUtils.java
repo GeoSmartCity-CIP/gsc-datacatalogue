@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 
 import it.sauronsoftware.cron4j.Scheduler;
 import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
+import it.sinergis.datacatalogue.common.Constants;
+import it.sinergis.datacatalogue.common.PropertyReader;
 import it.sinergis.datacatalogue.exception.DCException;
 import it.sinergis.datacatalogue.services.UpdateShapeService;
 
@@ -27,6 +29,9 @@ public final class CronUtils {
 	/**The scheduler. */
 	private static Scheduler scheduler;
 	
+	/** the prop reader. */
+	private static PropertyReader propertyReader;
+	
 	/**
 	 * private constructor.
 	 */
@@ -42,7 +47,7 @@ public final class CronUtils {
 		if(instance == null) {
 	         instance = new CronUtils();
 	         
-	         //propertyReader = new PropertyReader("configuration.properties");
+	         propertyReader = new PropertyReader("configuration.properties");
 	      }
 	      return instance;
 	}
@@ -82,7 +87,8 @@ public final class CronUtils {
 		//getScheduler().schedule("* * * * *", new Runnable() {
 		
 		//the scheduler starts at :00 each hour ("0 * * * *")
-		getScheduler().schedule("00 * * * *", new Runnable() {
+		String cronPattern = propertyReader.getValue(Constants.CRON_PATTERN);
+		getScheduler().schedule(cronPattern, new Runnable() {
 			public void run() {
 
 				long startExecutionTime = System.currentTimeMillis();
