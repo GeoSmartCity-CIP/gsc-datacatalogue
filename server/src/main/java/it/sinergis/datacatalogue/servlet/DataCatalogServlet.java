@@ -51,6 +51,11 @@ public class DataCatalogServlet extends HttpServlet {
 		startBackgroundServices();
 	}
 	
+	//??
+//	public void destroy() {
+//		CronUtils.getInstance().stopScheduler();
+//	}
+	
 	private void startBackgroundServices() {
 		CronUtils.getInstance().scheduleTask();
 	}
