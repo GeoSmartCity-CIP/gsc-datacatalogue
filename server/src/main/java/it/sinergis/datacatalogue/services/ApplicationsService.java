@@ -1231,7 +1231,7 @@ public class ApplicationsService extends ServiceCommons {
 		if(mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG) != null) {
 			ObjectNode copyrightURI = om.createObjectNode();
 			copyrightURI.put(Constants.NAME,Constants.USE_COPYRIGHT_IMG);
-			copyrightURI.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG));
+			copyrightURI.put(Constants.VALUE,Boolean.valueOf(mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG)));
 			param.add(copyrightURI);
 		}
 		
