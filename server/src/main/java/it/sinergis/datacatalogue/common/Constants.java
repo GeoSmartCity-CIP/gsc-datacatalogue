@@ -401,6 +401,7 @@ public final class Constants {
 	public static final String MAPPA = "Mappa";
 	public static final String COPYRIGHT_TEXT = "CopyrightText";
 	public static final String COPYRIGHT_URI = "CopyrightURI";
+	public static final String USE_COPYRIGHT_IMG = "UseCopyrightIMG";
 	public static final String MAX_ROWS = "maxrows";
 	public static final String PAGING_ROW_NUMBER = "pagingrowsnumber";
 	public static final String GEOM = "geom";

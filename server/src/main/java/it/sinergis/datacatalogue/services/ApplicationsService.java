@@ -1228,6 +1228,12 @@ public class ApplicationsService extends ServiceCommons {
 			copyrightURI.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.COPYRIGHT_URI));
 			param.add(copyrightURI);
 		}
+		if(mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG) != null) {
+			ObjectNode copyrightURI = om.createObjectNode();
+			copyrightURI.put(Constants.NAME,Constants.USE_COPYRIGHT_IMG);
+			copyrightURI.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG));
+			param.add(copyrightURI);
+		}
 		
 		mainParamSection.put(Constants.PARAM, param);
 		mainParamSection.put(Constants.NAME,Constants.MAPPA);
