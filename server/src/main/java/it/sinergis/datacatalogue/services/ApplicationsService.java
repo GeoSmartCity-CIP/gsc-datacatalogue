@@ -981,6 +981,8 @@ public class ApplicationsService extends ServiceCommons {
 		}
 		
 		firstMapObject.put(Constants.NAMESPACE_PREFIX, workspaceName);
+		firstMapObject.put(Constants.ZOOM,Integer.valueOf(mapConfigurationProp.getValue(Constants.ZOOM)));
+		firstMapObject.put(Constants.NUM_ZOOM_LEVELS,Integer.valueOf(mapConfigurationProp.getValue(Constants.NUM_ZOOM_LEVELS)));
 		firstMapObject.put(Constants.CLASS_NAME, "MW.Map");
 		firstMapObject.put(Constants.NAME,workspaceName);
 		firstMapObject.put(Constants.CENTER, createTileOrigin(685521.993032, 928689.994033, "OpenLayers.LonLat"));
@@ -1233,6 +1235,18 @@ public class ApplicationsService extends ServiceCommons {
 			copyrightURI.put(Constants.NAME,Constants.USE_COPYRIGHT_IMG);
 			copyrightURI.put(Constants.VALUE,Boolean.valueOf(mapConfigurationProp.getValue(Constants.USE_COPYRIGHT_IMG)));
 			param.add(copyrightURI);
+		}
+		if(mapConfigurationProp.getValue(Constants.ZOOM) != null) {
+			ObjectNode zoom = om.createObjectNode();
+			zoom.put(Constants.NAME,Constants.ZOOM_C);
+			zoom.put(Constants.VALUE,Integer.valueOf(mapConfigurationProp.getValue(Constants.ZOOM)));
+			param.add(zoom);
+		}
+		if(mapConfigurationProp.getValue(Constants.NUM_ZOOM_LEVELS) != null) {
+			ObjectNode zoom = om.createObjectNode();
+			zoom.put(Constants.NAME,Constants.NUM_ZOOM_LEVELS_C);
+			zoom.put(Constants.VALUE,Integer.valueOf(mapConfigurationProp.getValue(Constants.NUM_ZOOM_LEVELS)));
+			param.add(zoom);
 		}
 		
 		mainParamSection.put(Constants.PARAM, param);

@@ -362,6 +362,7 @@ public final class Constants {
 	public static final String SINGLE_TILE = "singleTile";
 	public static final String IS_BASE_LAYER = "isBaseLayer";
 	public static final String NUM_ZOOM_LEVELS = "numZoomLevels";
+	public static final String NUM_ZOOM_LEVELS_C = "NumZoomLevels";
 	public static final String OPTIONS = "options";
 	public static final String DISPLAY_IN_LAYER_SWITCHER = "displayInLayerSwitcher";
 	public static final String NAMESPACE_URI = "namespaceUri";
@@ -371,6 +372,7 @@ public final class Constants {
 	public static final String CENTER = "center";
 	public static final String DEFAULT_MAP = "defaultMap";
 	public static final String ZOOM = "zoom";
+	public static final String ZOOM_C = "Zoom";
 	public static final String UNITS = "units";
 	public static final String NAMESPACE_PREFIX = "namespacePrefix";
 	public static final String PROJ = "proj";
