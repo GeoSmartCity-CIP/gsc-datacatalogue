@@ -406,6 +406,7 @@ public final class Constants {
 	public static final String USE_COPYRIGHT_IMG = "UseCopyrightIMG";
 	public static final String MAX_ROWS = "maxrows";
 	public static final String PAGING_ROW_NUMBER = "pagingrowsnumber";
+	public static final String SPLIT_REQUEST_FOR_LAYERS = "splitRequestForLayers";
 	public static final String GEOM = "geom";
 	public static final String WMS_LAYER_FIELD = "MW.WMSLayerField";
 	public static final String MULTIPOLYGON = "Multipolygon";

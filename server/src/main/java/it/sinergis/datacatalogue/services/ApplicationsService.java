@@ -1207,6 +1207,11 @@ public class ApplicationsService extends ServiceCommons {
 		pagingRowsNumber.put(Constants.VALUE,mapConfigurationProp.getValue(Constants.PAGING_ROW_NUMBER));
 		param.add(pagingRowsNumber);
 		
+		ObjectNode splitRequestForLayers = om.createObjectNode();
+		splitRequestForLayers.put(Constants.NAME,Constants.SPLIT_REQUEST_FOR_LAYERS);
+		splitRequestForLayers.put(Constants.VALUE,Boolean.valueOf(mapConfigurationProp.getValue(Constants.SPLIT_REQUEST_FOR_LAYERS)));
+		param.add(splitRequestForLayers);
+		
 		mainParamSection.put(Constants.PARAM, param);
 		mainParamSection.put(Constants.NAME,Constants.GENERALE);
 
