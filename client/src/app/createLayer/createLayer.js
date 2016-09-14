@@ -48,7 +48,7 @@ controller('createLayerCtrl', [
 
                     if (gsc.util.isArrayWithContent(res.layers)) {
                         gsc.util.clearExtendArray($scope.layers, res.layers);
-                        $scope.$apply();
+                        //$scope.$apply();
                         $rootScope.console.log('(Re)loaded layers');
                     }
 
@@ -65,7 +65,7 @@ controller('createLayerCtrl', [
 
                     if (gsc.util.isArrayWithContent(res.layers)) {
                         gsc.util.clearExtendObject($scope.layer, res.layers[0]);
-                        $scope.$apply();
+                        //$scope.$apply();
                         $rootScope.console.log('Loaded layer for editing');
                     }
                     $rootScope.console.log(res);
@@ -90,7 +90,7 @@ controller('createLayerCtrl', [
                         $scope.dataSets.length = 0;
                         jQuery.extend($scope.dataSets, res.dataset);
                     }
-                    $scope.$apply();
+                    //$scope.$apply();
                     $rootScope.console.log('Loaded data sets');
                     $rootScope.console.log(res);
                 });

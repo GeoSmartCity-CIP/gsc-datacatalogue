@@ -1,15 +1,15 @@
 <script type="text/ng-template" id="group-template.html">
     <div class="list-group">
-        <a href tabindex="0" class="list-group-item active accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading">
-            <span ng-class="{'text-muted': isDisabled}">
-            {{heading}}
-                <span class='caret'></span>
-            </span>
-            </a>
-        <div uib-collapse="!isOpen">
-            <div ng-transclude>
-            </div>
-        </div>
+    <a href tabindex="0" class="list-group-item active accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading">
+    <span ng-class="{'text-muted': isDisabled}">
+    {{heading}}
+    <span class='caret'></span>
+    </span>
+    </a>
+    <div uib-collapse="!isOpen">
+    <div ng-transclude>
+    </div>
+    </div>
     </div>
 </script>
 
@@ -33,9 +33,9 @@
             <a class="navbar-brand home" href="#/app/dbrdOverallStatistics/">Home</a>
         </div>
 
-        <div ng-if="$root.data.authUser !== null">
-            <span class="navbar-brand username">Logged in as {{$root.data.authUser}} |
-                <a ng-click="$root.doLogout()">Logout</a>
+        <div ng-if="authSvc.isAuth().success === true">
+            <span class="navbar-brand username">Logged in as {{authSvc.authUsr.username}} |
+                <a ng-click="authSvc.logout()">Logout</a>
             </span>
         </div>
     </div><!-- /.container-fluid -->
@@ -47,20 +47,20 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3" ng-if="$root.data.authUser !== null">
-<!--             <form class="form" role="search">
-                <label for=''>Search</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder='dataset name or id' ng-model="$root.data.query">
-                    <span class="input-group-btn">
-                        <button class='btn btn-primary' ui-sref='app.searchDatasets({query: $root.data.query})'>
-                            <span class='glyphicon glyphicon-search'></span>
-                        </button>
-                    </span>
-                </div>
-            </form>
-            <hr>
- -->            <label>Menu</label>
+        <div class="col-md-3" ng-if="authSvc.isAuth().success === true">
+            <!--             <form class="form" role="search">
+                            <label for=''>Search</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder='dataset name or id' ng-model="$root.data.query">
+                                <span class="input-group-btn">
+                                    <button class='btn btn-primary' ui-sref='app.searchDatasets({query: $root.data.query})'>
+                                        <span class='glyphicon glyphicon-search'></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                        <hr>
+            -->            <label>Menu</label>
             <uib-accordion close-others="false">
                 <uib-accordion-group heading="Data management" is-open="true" template-url="group-template.html">
                     <a ui-sref="app.createDataSource" class="list-group-item">
@@ -75,37 +75,37 @@
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage layers
                     </a>
-     <!--                <a ui-sref="app.createGroupLayer" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage group layers
-                    </a>
-      -->           </uib-accordion-group>
+                    <!--                <a ui-sref="app.createGroupLayer" class="list-group-item">
+                                       <span class='glyphicon glyphicon-plus-sign'></span>
+                                       Manage group layers
+                                   </a>
+                    -->           </uib-accordion-group>
                 <uib-accordion-group heading="Administration" is-open="true" template-url="group-template.html">
                     <a ui-sref="app.createUser" class="list-group-item">
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage users
                     </a>
-<!--                     <a ui-sref="app.createRole" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage roles
-                    </a>
- -->                    <a ui-sref="app.createOrganization" class="list-group-item">
+                    <!--                     <a ui-sref="app.createRole" class="list-group-item">
+                                            <span class='glyphicon glyphicon-plus-sign'></span>
+                                            Manage roles
+                                        </a>
+                    -->                    <a ui-sref="app.createOrganization" class="list-group-item">
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage organizations
                     </a>
-<!--                     <a ui-sref="app.createFunction" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage functions
-                    </a>
-                    <a ui-sref="app.createPermissions" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage permissions
-                    </a>
-                    <a ui-sref="app.createApplication" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage applications
-                    </a>
- -->                </uib-accordion-group>
+                    <!--                     <a ui-sref="app.createFunction" class="list-group-item">
+                                            <span class='glyphicon glyphicon-plus-sign'></span>
+                                            Manage functions
+                                        </a>
+                                        <a ui-sref="app.createPermissions" class="list-group-item">
+                                            <span class='glyphicon glyphicon-plus-sign'></span>
+                                            Manage permissions
+                                        </a>
+                                        <a ui-sref="app.createApplication" class="list-group-item">
+                                            <span class='glyphicon glyphicon-plus-sign'></span>
+                                            Manage applications
+                                        </a>
+                    -->                </uib-accordion-group>
             </uib-accordion>
         </div>
         <div class="col-md-9">

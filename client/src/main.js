@@ -17,7 +17,7 @@ angular.module('gscDatacat', [
         .config([
             '$stateProvider',
             '$urlRouterProvider',
-            function($stateProvider, $urlRouterProvider) {
+            function ($stateProvider, $urlRouterProvider) {
 
                 // Setup states
                 $stateProvider

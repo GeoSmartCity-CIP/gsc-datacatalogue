@@ -7,10 +7,12 @@ controller('createUserCtrl', [
     '$window',
     '$scope',
     '$rootScope',
+    'authSvc',
     function(
         $window,
         $scope,
-        $rootScope) {
+        $rootScope,
+        authSvc) {
 
         $scope.user = {};
 
@@ -50,12 +52,12 @@ controller('createUserCtrl', [
                         jQuery.extend($scope.organizations, res.organizations);
 
                         for (var i = 0; i < res.organizations.length; i++) {
-                            if (res.organizations[i].id === $rootScope.data.loginData.organizationId) {
+                            if (res.organizations[i].id === authSvc.authUsr.organizationId) {
                                 $rootScope.console.log(res.organizations[i]);
                             }
                         }
 
-                        $scope.$apply();
+                        //$scope.$apply();
                         $rootScope.console.log('Reloaded organizations');
                     }
                     $rootScope.console.log(res);

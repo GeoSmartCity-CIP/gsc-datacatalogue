@@ -47,7 +47,7 @@ controller('createOrganizationCtrl', [
                 if (res.organizations !== undefined && jQuery.isArray(res.organizations)) {
                     $scope.organizations.length = 0;
                     jQuery.extend($scope.organizations, res.organizations);
-                    $scope.$apply();
+                    //$scope.$apply();
                 } else {
                     $rootScope.console.log('organizations is not an array or is undefined');
                 }
@@ -75,7 +75,7 @@ controller('createOrganizationCtrl', [
                 .then(function(res) {
                     if (jQuery.isArray(res.organizations) && res.organizations.length > 0) {
                         jQuery.extend($scope.organization, res.organizations[0]);
-                        $scope.$apply();
+                        //$scope.$apply();
                         $rootScope.console.log('Loaded organization for editing');
                     }
                     $rootScope.console.log(res);

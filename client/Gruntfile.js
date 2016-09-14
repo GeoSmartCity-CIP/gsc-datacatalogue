@@ -18,8 +18,8 @@ module.exports = function(grunt) {
             dist: {
                 nonull: true,
                 src: [
-                    'src/main.js',
                     'src/types/*.js',
+                    'src/main.js',
                     'src/directives/*.js',
                     'src/services/*.js',
                     'src/app/**/*.js',
@@ -108,28 +108,40 @@ module.exports = function(grunt) {
         watch: {
             lib: {
                 files: [
-                    'src/main.js',
-                    'src/types/*.js',
-                    'src/directives/*.js',
-                    'src/services/*.js',
-                    'src/app/**/*.js',
-                    'src/app/**/*.html',
-                    '!src/app/**/*test.js'
+                    "src/types/*.js",
+                    "src/main.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
                 ],
-                tasks: ['default']
+                tasks: ["default"]
+            },
+            "work": {
+                files: [
+                    "src/types/*.js",
+                    "src/main.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
+                ],
+                tasks: ["default-work"]
             },
             withdocs: {
                 files: [
-                    'README.md',
-                    'src/main.js',
-                    'src/types/*.js',
-                    'src/directives/*.js',
-                    'src/services/*.js',
-                    'src/app/**/*.js',
-                    'src/app/**/*.html',
-                    '!src/app/**/*test.js'
+                    "README.md",
+                    "src/main.js",
+                    "src/types/*.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
                 ],
-                tasks: ['build']
+                tasks: ["build"]
             },
             gruntfile: {
                 files: 'Gruntfile.js',
@@ -149,6 +161,7 @@ module.exports = function(grunt) {
 
     // Default task.
     grunt.registerTask('default', ['copy', 'jscs', 'jshint', 'concat', 'uglify']);
+    grunt.registerTask('default-work', ['copy', 'jshint', 'concat']);
     grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'update-docs']);
     grunt.registerTask('update-docs', ['concat', 'jsdoc']);
 };
