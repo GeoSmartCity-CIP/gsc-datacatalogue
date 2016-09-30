@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         jsdoc: {
             dist: {
                 src: [
-                    'dist/*.js',
+                    'dist/<%= pkg.name %>.js',
                     'README.md'
                 ],
                 options: {
@@ -106,7 +106,7 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            lib: {
+            "deploy": {
                 files: [
                     "src/types/*.js",
                     "src/main.js",
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
                 ],
                 tasks: ["default"]
             },
-            "work": {
+            "develop": {
                 files: [
                     "src/types/*.js",
                     "src/main.js",
@@ -130,7 +130,7 @@ module.exports = function(grunt) {
                 ],
                 tasks: ["default-work"]
             },
-            withdocs: {
+            "docs": {
                 files: [
                     "README.md",
                     "src/main.js",
@@ -162,6 +162,6 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('default', ['copy', 'jscs', 'jshint', 'concat', 'uglify']);
     grunt.registerTask('default-work', ['copy', 'jshint', 'concat']);
-    grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'update-docs']);
-    grunt.registerTask('update-docs', ['concat', 'jsdoc']);
+    grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'docs']);
+    grunt.registerTask('docs', ['concat', 'jsdoc']);
 };

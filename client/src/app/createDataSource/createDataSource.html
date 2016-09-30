@@ -1,5 +1,5 @@
 <h2>Manage data sources</h2>
-<uib-tabset active="active">
+<uib-tabset active="active" ng-init="init()">
     <uib-tab index="0" heading="Data source list" active="tabs[0].active">
         <table class="table table-striped">
             <tr>
@@ -8,7 +8,7 @@
                 <th>Type of data source</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="ds in dataSources">
+            <tr ng-repeat="ds in data.dataSources">
                 <td>{{ds.id}}</td>
                 <td>{{ds.datasourcename}}</td>
                 <td>{{ds.type}}</td>
@@ -25,7 +25,7 @@
                 <div class="col-md-12">
                     <div class="form-group required">
                         <label for="type" class="control-label">Data source name</label>
-                        <input type="text" class="form-control" id="type" ng-model="dataSource.datasourcename" required>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentDataSource.datasourcename" required>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 <div class="col-md-12">
                     <div class="form-group required">
                         <label for="type" class="control-label">Data source description</label>
-                        <textarea class="form-control" id="type" ng-model="dataSource.description"></textarea>
+                        <textarea class="form-control" id="type" ng-model="data.currentDataSource.description"></textarea>
                     </div>
                 </div>
             </div>
@@ -41,35 +41,35 @@
                 <div class="col-md-6">
                     <div class="form-group required">
                         <label for="type" class="control-label">Organization</label>
-                        <select type="text" class="form-control" id="type" ng-model="dataSource.organization" required>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentDataSource.organization" required>
                             <option value="">Please select</option>
-                            <option ng-repeat="or in organizations" value="{{or.id}}">{{or.organizationname}}</option>
+                            <option ng-repeat="or in data.organizations" value="{{or.id}}">{{or.organizationname}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group required">
                         <label for="type" class="control-label">Type of data source</label>
-                        <select type="text" class="form-control" id="type" ng-model="dataSource.type" required>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentDataSource.type" required>
                             <option value="">Please select</option>
                             <option ng-repeat="t in $root.data.dataSourceTypes" value="{{t.type}}">{{t.name}}</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="row" ng-if="dataSource.type === 'Shape'">
+            <div class="row" ng-if="data.currentDataSource.type === 'Shape'">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="path" class="control-label">Path to folder with Shapefiles (include trailing slash)</label>
-                        <input type="text" class="form-control" id="path" ng-model="dataSource.path">
+                        <input type="text" class="form-control" id="path" ng-model="data.currentDataSource.path">
                     </div>
                 </div>
             </div>
-            <div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'KML' || dataSource.type === 'GeoJSON'">
+            <div class="row" ng-if="data.currentDataSource.type === 'WMS' || data.currentDataSource.type === 'WFS' || data.currentDataSource.type === 'KML' || data.currentDataSource.type === 'GeoJSON'">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="url" class="control-label">URL</label>
-                        <input type="text" class="form-control" id="url" ng-model="dataSource.url">
+                        <input type="text" class="form-control" id="url" ng-model="data.currentDataSource.url">
                     </div>
                 </div>
             </div>
@@ -77,33 +77,33 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="ipandport" class="control-label">Database host</label>
-                        <input type="text" class="form-control" id="url" ng-model="dataSource.url">
+                        <input type="text" class="form-control" id="url" ng-model="data.currentDataSource.url">
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
                         <label for="portnumber" class="control-label">Port number</label>
-                        <input type="text" class="form-control" id="portnumber" ng-model="dataSource.port">
+                        <input type="text" class="form-control" id="portnumber" ng-model="data.currentDataSource.port">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="schema" class="control-label">Database name</label>
-                        <input type="text" class="form-control" id="schema" ng-model="dataSource.schema">
+                        <input type="text" class="form-control" id="schema" ng-model="data.currentDataSource.schema">
                     </div>
                 </div>
             </div>
-            <div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'PostGIS'">
+            <div class="row" ng-if="data.currentDataSource.type === 'WMS' || data.currentDataSource.type === 'WFS' || data.currentDataSource.type === 'PostGIS'">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="user">Username</label>
-                        <input type="text" class="form-control" id="user" ng-model="dataSource.username">
+                        <input type="text" class="form-control" id="user" ng-model="data.currentDataSource.username">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" ng-model="dataSource.password">
+                        <input type="password" class="form-control" id="password" ng-model="data.currentDataSource.password">
                     </div>
                 </div>
             </div>
