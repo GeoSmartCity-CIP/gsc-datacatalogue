@@ -42,6 +42,7 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.init = function() {
+
                 dataSvc.loadRoles()
                     .then(function(roles) {
                         $scope.data.roles = roles;
@@ -58,28 +59,27 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.delete = function(roleId) {
-                if ($window.confirm('Are you sure you want to delete the data source?')) {
+                if ($window.confirm('Are you sure you want to delete the role?')) {
                     gsc.role.delete(roleId)
                         .then(function(res) {
-                            $rootScope.console.log('Deleted data source');
-                            $rootScope.console.log(res);
-                            $scope.init();
+                            if (res.status !== 'error') {
+                                $rootScope.console.log('Deleted role');
+                                $rootScope.console.log(res);
+                                $scope.init();
+                            } else {
+                                $rootScope.console.log('An error occurred deleting role');
+                                $rootScope.console.log(res);
+                            }
+                        }, function(err) {
+                            $rootScope.console.log('An error occurred deleting role');
+                            $rootScope.console.log(err);
                         });
                 }
             };
 
-            $scope.edit = function(organizationId) {
-
-                gsc.role.listrole(organizationId, true, true)
-                    .then(function(res) {
-                        $rootScope.console.log(res);
-                        if (res.datasources !== undefined &&
-                            jQuery.isArray(res.datasources)) {
-                            jQuery.extend($scope.data.currentRole, res.roles[0]);
-                            $rootScope.console.log('Loaded data source for editing');
-                            _activateTab(1);
-                        }
-                    });
+            $scope.edit = function(roleData) {
+                jQuery.extend($scope.data.currentRole, roleData);
+                _activateTab(1);
             };
 
             $scope.isUpdate = function() {
@@ -90,7 +90,7 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
-            $scope.resetRole = function() {
+            $scope.resetCurrent = function() {
                 jQuery.each($scope.data.currentRole, function(key, val) {
                     $scope.data.currentRole[key] = undefined;
                 });
@@ -102,16 +102,23 @@ angular.module('gscDatacat.controllers')
                     $scope.data.currentRole.organization,
                     $scope.data.currentRole.description
                     ).then(function(res) {
-                    dataSvc.loadDataSources();
-                    $rootScope.console.log('Inserted new datasource');
-                    $rootScope.console.log(res);
-                    $scope.init();
+                    if (res.status !== 'error') {
+                        $rootScope.console.log('Created role');
+                        dataSvc.loadDataSources();
+                        $scope.init();
+                    } else {
+                        $rootScope.console.log('An error occurred creating role');
+                        $rootScope.console.log(res);
+                    }
                 }, function(err) {
-                    $rootScope.console.log(err.statusText);
+                    $rootScope.console.log('An error occurred creating role');
+                    $rootScope.console.log(err);
                 });
             };
 
             var _update = function() {
+                $rootScope.console.todo(
+                    'There is no update function for roles in the server-side API');
             };
 
             $scope.save = function() {

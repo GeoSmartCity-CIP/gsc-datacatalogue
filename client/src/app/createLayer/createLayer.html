@@ -8,7 +8,7 @@
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="ly in layers">
+            <tr ng-repeat="ly in layers| orderBy : 'layername'">
                 <td>{{ly.id}}</td>
                 <td>{{ly.layername}}</td>
                 <td>{{ly.description}}</td>
@@ -19,7 +19,7 @@
             </tr>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="Create/edit layer" active="tabs[1].active" select="resetLayer() ">
+    <uib-tab index="1" heading="Create/edit layer" active="tabs[1].active">
         <form ng-submit="save()">
             <div class="row">
                 <div class="col-md-12">
@@ -43,29 +43,45 @@
                         <label for="type" class="control-label">Based on data set</label>
                         <select type="text" class="form-control" id="type" ng-model="layer.iddataset" required>
                             <option>Please select a data set</option>
-                            <option ng-repeat='ds in dataSets' value='{{ds.iddataset}}'>{{ds.datasetname}}</option>
+                            <option ng-repeat='ds in dataSets' value='{{+ds.iddataset}}'>{{ds.datasetname}}</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8">
                     <div class="form-group">
                         <label for="type" class="control-label">Metadata file</label>
                         <textarea class="form-control" id="type" ng-model="layer.metadatafile"></textarea>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="uploadMetadataFile">Upload metadata file...</label>
+                        <input type="file" id="uploadMetadataFile" ng-model="data.metadataFile" on-file-change="readMetadataFile">
+                        <p class="help-block">Select a metadata file from your computer...</p>
+                        <p>{{data.metadataFile | json }}</p>
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8">
                     <div class="form-group">
                         <label for="type" class="control-label">Styled Layer Descriptor file</label>
                         <textarea class="form-control" id="type" ng-model="layer.sld"></textarea>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="uploadSldFile">Upload styled layer descriptor file</label>
+                        <input type="file" id="uploadSldFile" ng-model="data.sld" on-file-change="readSldFile">
+                        <p class="help-block">Select a styled layer descriptor file from your computer...</p>
+                    </div>            
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="reset()">
                     <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
                     <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
                 </div>

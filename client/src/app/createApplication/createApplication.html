@@ -1,82 +1,203 @@
-<h1>Add new application</h1>
-<div class="row">
-    <div class="col-md-4">
-        <div class="form-group required">
-            <label for="type" class="control-label">Data source type</label>
-            <select type="text" class="form-control" id="type" ng-model="dataSource.type" required>
-                <option value="">Please select</option>
-                <option ng-repeat='t in $root.data.dataSourceTypes' value='{{t.type}}'>{{t.name}}</option>
-            </select>
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'KML' || dataSource.type === 'GeoJSON'">
-    <div class="col-md-8">
-        <div class="form-group">
-            <label for="url" class="control-label">URL</label>
-            <input type="url" class="form-control" id="url" ng-model="dataSource.url">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'DB'">
-    <div class="col-md-8">
-        <div class="form-group">
-            <label for="ipandport" class="control-label">IP-address / port number</label>
-            <input type="ipandport" class="form-control" id="ipandport" ng-model="dataSource.ipandport">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'KML' || dataSource.type === 'GeoJSON' || dataSource.type === 'DB'">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="protocol" class="control-label">Protocol</label>
-            <select class="form-control" id="protocol" ng-model="dataSource.protocol" required>
-                <option value="">Please select</option>
-                <option value="HTTP">HTTP</option>
-                <option value="HTTPS">HTTPS</option>
-                <option value="TCP/IP">TCP/IP</option>
-            </select>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="testConnection" class="control-label"></label>
-            <input type="button" class="form-control btn btn-primary" id="testConnection" value="Test connection">
-        </div>
-    </div>
-</div>    
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'DB'">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="user">User</label>
-            <input type="text" class="form-control" id="user" ng-model="dataSource.user">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" ng-model="dataSource.password">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'Shape'">
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.shp file <input type="file">
-        </span>
-    </div>
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.shx file <input type="file">
-        </span>
-    </div>
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.dbf file <input type="file">
-        </span>
-    </div>
-</div>
-<h4>Debug: Show JSON created by form entry</h4>
-<p>
-    {{dataSource|json}}    
-</p>
+<h2>Manage applications</h2>
+<uib-tabset active="active" ng-init="init()">
+    <uib-tab index="0" heading="Application list" active="tabs[0].active">
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Layer name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="a in data.applications| orderBy : 'applicationname'">
+                <td>{{a.idapplication}}</td>
+                <td>{{a.applicationname}}</td>
+                <td>{{a.description}}</td>
+                <td>
+                    <button class="btn" ng-click="publishToGeoServer(a)">Publish</button>                    
+                    <button class="btn" ng-click="edit(a)">Edit</button>
+                    <button class="btn" ng-click="delete(a.idapplication)">Delete</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Create/edit application" active="tabs[1].active">
+        <form ng-submit="save()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Application name</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.applicationname" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="org" class="control-label">Organization</label>
+                        <select type="text" class="form-control" id="org" ng-model="data.currentApplication.organization" required>
+                            <option value="">Please select</option>
+                            <option ng-repeat="or in data.organizations" value="{{+or.id}}">{{or.organizationname}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="desc" class="control-label">Description</label>
+                        <textarea class="form-control" id="desc" ng-model="data.currentApplication.description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="uri" class="control-label">URI</label>
+                        <input type="text" class="form-control" id="uri" ng-model="data.currentApplication.uri">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="srs" class="control-label">Spatial reference system</label>
+                        <input type="text" class="form-control" id="srs" ng-model="data.currentApplication.srs">
+                    </div>
+                </div>
+            </div>            
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Geoserver parameters</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">URL</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.geoserver.url" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Username</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.geoserver.username" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Password</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.geoserver.password" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Extent</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Left</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.extent.left">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Bottom</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.extent.bottom">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Right</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.extent.right">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Top</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentApplication.extent.top">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Available layers</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>ID#</th>
+                            <th>Layer name</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="lyr in data.layers| orderBy : 'layername'">
+                            <td>{{lyr.id}}</td>
+                            <td>{{lyr.layername}}</td>
+                            <td>
+                                <button type="button" class="btn" ng-click="addLayer(lyr)">Add</button>
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
+                <div class="col-md-6">
+                    <h4>Layers in application</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>ID#</th>
+                            <th>Group name</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="lyr in data.currentApplication.layers| orderBy : 'layernane'">
+                            <td>{{lyr.idlayer}}</td>
+                            <td>{{lyr.layername}}</td>
+                            <td>
+                                <button class="btn" ng-click="removeLayer($index)">Remove</button>
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Available group layers</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>ID#</th>
+                            <th>Layer name</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="gl in data.groupLayers| orderBy : 'layername'">
+                            <td>{{gl.id}}</td>
+                            <td>{{gl.groupname}}</td>
+                            <td>
+                                <button type="button" class="btn" ng-click="addGroupLayer(gl)">Add</button>
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
+                <div class="col-md-6">
+                    <h4>Group layers in application</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>ID#</th>
+                            <th>Group name</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="gl in data.currentApplication.groups| orderBy : 'groupname'">
+                            <td>{{gl.idgroup}}</td>
+                            <td>{{gl.groupname}}</td>
+                            <td>
+                                <button type="button" class="btn" ng-click="removeGroupLayer($index)">Remove</button>
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-right">                    
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="resetCurrent()">
+                    <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
+                    <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

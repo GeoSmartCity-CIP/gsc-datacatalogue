@@ -48,19 +48,6 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3" ng-if="authSvc.isAuth().success === true">
-            <!--             <form class="form" role="search">
-                            <label for=''>Search</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder='dataset name or id' ng-model="$root.data.query">
-                                <span class="input-group-btn">
-                                    <button class='btn btn-primary' ui-sref='app.searchDatasets({query: $root.data.query})'>
-                                        <span class='glyphicon glyphicon-search'></span>
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
-                        <hr>
-            -->
             <label>Menu</label>
             <uib-accordion close-others="false">
                 <uib-accordion-group heading="Data management" is-open="true" template-url="group-template.html">
@@ -80,6 +67,10 @@
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage group layers
                     </a>
+<!--                    <a ui-sref="app.uploadGml" class="list-group-item">
+                        <span class='glyphicon glyphicon-plus-sign'></span>
+                        Upload GML files
+                    </a>-->
                 </uib-accordion-group>
                 <uib-accordion-group heading="Administration" is-open="true" template-url="group-template.html">
                     <a ui-sref="app.createUser" class="list-group-item">
@@ -98,7 +89,7 @@
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage functions
                     </a>
-                    <a ui-sref="app.createPermissions" class="list-group-item">
+                    <a ui-sref="app.createPermission" class="list-group-item">
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage permissions
                     </a>
@@ -116,6 +107,8 @@
     </div>
     <hr>
     <footer>
-        <p>&copy; 2015, 2016 SINERGIS and AVINET on behalf of GeoSmartCity Partners. Project co-funded by the European Commission</p>
+        <div class="text-center">
+            <p>&copy; 2015, 2016 SINERGIS and AVINET on behalf of GeoSmartCity Partners. Project co-funded by the European Commission</p>            
+        </div>
     </footer>
 </div>

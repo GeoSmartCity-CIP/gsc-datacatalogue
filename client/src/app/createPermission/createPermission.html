@@ -1,82 +1,74 @@
-<h1>Add new datasource</h1>
-<div class="row">
-    <div class="col-md-4">
-        <div class="form-group required">
-            <label for="type" class="control-label">Data source type</label>
-            <select type="text" class="form-control" id="type" ng-model="dataSource.type" required>
-                <option value="">Please select</option>
-                <option ng-repeat='t in $root.data.dataSourceTypes' value='{{t.type}}'>{{t.name}}</option>
-            </select>
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'KML' || dataSource.type === 'GeoJSON'">
-    <div class="col-md-8">
-        <div class="form-group">
-            <label for="url" class="control-label">URL</label>
-            <input type="url" class="form-control" id="url" ng-model="dataSource.url">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'DB'">
-    <div class="col-md-8">
-        <div class="form-group">
-            <label for="ipandport" class="control-label">IP-address / port number</label>
-            <input type="ipandport" class="form-control" id="ipandport" ng-model="dataSource.ipandport">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'KML' || dataSource.type === 'GeoJSON' || dataSource.type === 'DB'">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="protocol" class="control-label">Protocol</label>
-            <select class="form-control" id="protocol" ng-model="dataSource.protocol" required>
-                <option value="">Please select</option>
-                <option value="HTTP">HTTP</option>
-                <option value="HTTPS">HTTPS</option>
-                <option value="TCP/IP">TCP/IP</option>
-            </select>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="testConnection" class="control-label"></label>
-            <input type="button" class="form-control btn btn-primary" id="testConnection" value="Test connection">
-        </div>
-    </div>
-</div>    
-<div class="row" ng-if="dataSource.type === 'WMS' || dataSource.type === 'WFS' || dataSource.type === 'DB'">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="user">User</label>
-            <input type="text" class="form-control" id="user" ng-model="dataSource.user">
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" ng-model="dataSource.password">
-        </div>
-    </div>
-</div>
-<div class="row" ng-if="dataSource.type === 'Shape'">
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.shp file <input type="file">
-        </span>
-    </div>
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.shx file <input type="file">
-        </span>
-    </div>
-    <div class="col-md-4">
-        <span class="btn btn-default btn-file">
-            Browse for *.dbf file <input type="file">
-        </span>
-    </div>
-</div>
-<h4>Debug: Show JSON created by form entry</h4>
-<p>
-    {{dataSource|json}}    
-</p>
+<h2>Manage permissions</h2>
+<uib-tabset ng-init="init()">
+    <uib-tab index="0" heading="Role list" active="tabs[0].active">
+        <table class="table tab-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Role</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="r in data.roles| orderBy : 'rolename'" show="data.roles.length > 0">
+                <td>{{r.id}}</td>
+                <td>{{r.rolename}}</td>
+                <td>{{r.description}}</td>
+                <td>
+                    <button type="button" class="btn" ng-click="assignPermissions(r)">Assign permissions</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Add permissions to role" active="tabs[1].active">
+        <form ng-submit="save()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Role name</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentRole.rolename" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Function</label>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentPermission.idfunction" required>
+                            <option value="">Please select</option>
+                            <option ng-repeat="f in data.functions| orderBy : 'functionname'" value="{{f.idfunctino}}">{{f.functionname}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Layer</label>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentPermission.idlayer" required>
+                            <option value="">Please select</option>
+                            <option ng-repeat="l in data.layers" value="{{l.idlayer}}">{{l.layername}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Application</label>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentPermission.idapplication" required>
+                            <option value="">Please select</option>
+                            <option ng-repeat="a in data.applications" value="{{a.idapplication}}">{{a.applicationname}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <input type="button" class="btn btn-primary" value="Assign permission">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="resetCurrent()">
+                    <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
+                    <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

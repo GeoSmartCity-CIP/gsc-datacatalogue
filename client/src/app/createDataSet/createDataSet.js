@@ -73,10 +73,12 @@ angular.module('gscDatacat.controllers')
             };
 
             var _loadColList = function() {
+
+                gsc.util.clearExtendArray($scope.columns, []);
+
                 dataSvc.listDataSetColumns($scope.dataSet.iddataset)
                     .then(function(columns) {
-                        $scope.columns.length = 0;
-                        jQuery.extend($scope.columns, columns);
+                        gsc.util.clearExtendArray($scope.columns, columns);
                         $rootScope.console.log('Loaded columns');
                         $rootScope.console.log(columns);
                     }, function(errorMessage) {
@@ -84,7 +86,7 @@ angular.module('gscDatacat.controllers')
                     });
             };
 
-            var _updateDataset = function() {
+            var _update = function() {
                 return gsc.dataset.update(
                     $scope.dataSet.iddataset,
                     $scope.dataSet.datasetname,
@@ -104,7 +106,7 @@ angular.module('gscDatacat.controllers')
                     });
             };
 
-            var _createDataset = function() {
+            var _create = function() {
                 return gsc.dataset.create(
                     $scope.dataSet.datasetname,
                     $scope.dataSet.realname,
@@ -174,9 +176,10 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
-            $scope.edit = function(dataSetId) {
+            $scope.edit = function(dataSet) {
+                gsc.util.clearExtendObject($scope.dataSet, dataSet);
                 _activateTab(1);
-                _loadDataSet(dataSetId);
+                _loadDataOrigin();
             };
 
             $scope.columnTabDisabled = function() {
@@ -195,7 +198,7 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
-            $scope.resetDataSet = function() {
+            $scope.reset = function() {
                 jQuery.each($scope.dataSet, function(key, val) {
                     $scope.dataSet[key] = undefined;
                 });
@@ -221,9 +224,9 @@ angular.module('gscDatacat.controllers')
             $scope.save = function() {
                 _activateTab(0);
                 if ($scope.isUpdate()) {
-                    _updateDataset();
+                    _update();
                 } else {
-                    _createDataset();
+                    _create();
                 }
             };
 

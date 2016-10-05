@@ -42,13 +42,44 @@ angular.module('gscDatacat.controllers')
             $scope.init = function() {
 
                 dataSvc.loadOrganizations()
-                    .then(function(res) {
-                        gsc.util.clearExtendArray($scope.data.organizations, res);
+                    .then(function(organizations) {
+                        gsc.util.clearExtendArray($scope.data.organizations, organizations);
+                    }, function(errMsg) {
+                        $rootScope.console.log(errMsg);
                     });
-                    
+
                 dataSvc.loadDataSources()
+                    .then(function(dataSources) {
+                        gsc.util.clearExtendArray($scope.data.dataSources, dataSources);
+                    }, function(errMsg) {
+                        $rootScope.console.log(errMsg);
+                    });
+            };
+
+            $scope.publishToCkan = function(dataSource) {
+                $rootScope.console.todo('Web service does not return JSON');
+                gsc.datasource.publishToCkan(dataSource.iddatasource,
+                    dataSource.type,
+                    dataSource.description,
+                    dataSource.updated,
+                    dataSource.url,
+                    dataSource.username,
+                    dataSource.password,
+                    dataSource.ipaddress,
+                    dataSource.schema,
+                    dataSource.port,
+                    dataSource.path)
                     .then(function(res) {
-                        gsc.util.clearExtendArray($scope.data.dataSources, res);
+                        if (res.status !== 'error') {
+                            $rootScope.console.log('Published to CKAN');
+                        } else {
+                            $rootScope.console.log(
+                                'Failed to publish to CKAN');
+                            $rootScope.console.log(res);
+                        }
+                    }, function(err) {
+                        $rootScope.console.log('Failed to publish to CKAN');
+                        $rootScope.console.log(err);
                     });
             };
 
@@ -59,6 +90,8 @@ angular.module('gscDatacat.controllers')
                             $rootScope.console.log('Deleted data source');
                             $rootScope.console.log(res);
                             $scope.init();
+                        }, function(errMsg) {
+                            $rootScope.console.log(errMsg);
                         });
                 }
             };

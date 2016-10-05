@@ -8,18 +8,19 @@
                 <th>Type of data source</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="ds in data.dataSources">
+            <tr ng-repeat="ds in data.dataSources| orderBy : 'datasourcename'">
                 <td>{{ds.id}}</td>
                 <td>{{ds.datasourcename}}</td>
                 <td>{{ds.type}}</td>
                 <td>
+                    <button class="btn" ng-click="publishToCkan(ds)">Publish</button>                    
                     <button class="btn" ng-click="edit(ds.id)">Edit</button>
                     <button class="btn" ng-click="delete(ds.id)">Delete</button>
                 </td>
             </tr>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="Create/edit data source" active="tabs[1].active" select="resetDataSource()">
+    <uib-tab index="1" heading="Create/edit data source" active="tabs[1].active">
         <form ng-submit="save()">
             <div class="row">
                 <div class="col-md-12">
@@ -108,7 +109,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12">                    
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="resetDataSource()">
                     <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
                     <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
                 </div>

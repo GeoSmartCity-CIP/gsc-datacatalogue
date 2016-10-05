@@ -13,13 +13,13 @@
                 <td>{{role.rolename}}</td>
                 <td>{{role.description}}</td>
                 <td>
-                    <button class="btn" ng-click="edit(role.rolename)">Edit</button>
+                    <button class="btn" ng-click="edit(role)">Edit</button>
                     <button class="btn" ng-click="delete(role.id)">Delete</button>
                 </td>
             </tr>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="Create/edit role" active="tabs[1].active" select="resetRole()">
+    <uib-tab index="1" heading="Create/edit role" active="tabs[1].active">
         <form ng-submit="save()">
             <div class="row">
                 <div class="col-md-12">
@@ -37,22 +37,24 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group required">
-                    <label for="type" class="control-label">Organization</label>
-                    <select type="text" class="form-control" id="type" ng-model="data.currentRole.organization" required>
-                        <option value="">Please select</option>
-                        <option ng-repeat="o in data.organizations" value="{{o.id}}">{{o.organizationname}}</option>
-                    </select>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="type" class="control-label">Organization</label>
+                        <select type="text" class="form-control" id="type" ng-model="data.currentRole.organization" required>
+                            <option value="">Please select</option>
+                            <option ng-repeat="o in data.organizations" value="{{o.id}}">{{o.organizationname}}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="resetCurrent()">
                     <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
                     <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
                 </div>
             </div>
         </form>
-        {{ data.currentRole | json }}
     </uib-tab>
 </uib-tabset>

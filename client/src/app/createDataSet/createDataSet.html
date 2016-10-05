@@ -19,18 +19,18 @@
                 <th>Based on data source</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="ds in dataSets">
+            <tr ng-repeat="ds in dataSets| orderBy : 'datasetname'">
                 <td>{{ds.iddataset}}</td>
                 <td>{{ds.datasetname}}</td>
                 <td>{{ds.datasourcename}}</td>
                 <td>
-                    <button class="btn" ng-click="edit(ds.iddataset)">Edit</button>
+                    <button class="btn" ng-click="edit(ds)">Edit</button>
                     <button class="btn" ng-click="delete(ds.iddataset)">Delete</button>
                 </td>
             </tr>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="Create/edit data set" active="tabs[1].active" select="resetDataSet() ">
+    <uib-tab index="1" heading="Create/edit data set" active="tabs[1].active">
         <form ng-submit="save()">
             <div class="row">
                 <div class="col-md-12">
@@ -99,6 +99,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <input type="button" class="btn btn-primary" value="Clear" ng-click="reset()">
                     <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
                     <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">
                 </div>

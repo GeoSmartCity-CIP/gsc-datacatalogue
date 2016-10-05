@@ -49,6 +49,20 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
+            $rootScope.console.info = function(message) {
+                if (message !== undefined) {
+                    console.info(message);
+                    $rootScope.truncateLog();
+                    $rootScope.log.push('Log: ' + message.toString());
+                } else {
+                    console.info('Console info invoked with undefined object');
+                }
+            };
+
+            $rootScope.console.todo = function(msg) {
+                $rootScope.console.info('*** To Do: ' + msg + ' ***');
+            };
+
             $rootScope.console.debug = function(debugMessage) {
                 $rootScope.truncateLog();
                 $rootScope.log.push('Debug: ' + debugMessage.toString());
