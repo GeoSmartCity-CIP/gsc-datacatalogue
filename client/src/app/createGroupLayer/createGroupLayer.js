@@ -97,7 +97,6 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.removeLayer = function(index) {
-                console.log(index);
                 if ($scope.data.currentGroupLayer.layers === undefined) {
                     $scope.data.currentGroupLayer.layers = [];
                 }

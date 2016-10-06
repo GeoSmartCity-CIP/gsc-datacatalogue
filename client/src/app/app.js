@@ -1,5 +1,4 @@
 'use strict';
-
 angular.module('gscDatacat.controllers')
     .
     controller('appCtrl', [
@@ -7,10 +6,12 @@ angular.module('gscDatacat.controllers')
         '$rootScope',
         '$state',
         'authSvc',
+        '$timeout',
         function($scope,
             $rootScope,
             $state,
-            authSvc) {
+            authSvc,
+            $timeout) {
 
             $scope.$on('$stateChangeSuccess', function() {
                 if (authSvc.isAuth().success !== true &&
@@ -18,61 +19,11 @@ angular.module('gscDatacat.controllers')
                     $state.go('app.loginForm');
                 }
             });
-
             $scope.authSvc = authSvc;
 
-            $rootScope.log = [];
-
-            $rootScope.console = {};
-
-            $rootScope.console.lastError = '';
-
-            $scope.errorMessage = $rootScope.console.lastError;
-
-            $rootScope.console.clear = function() {
-                $rootScope.log.length = 0;
-            };
-
-            $rootScope.truncateLog = function() {
-                if ($rootScope.log.length > 10) {
-                    $rootScope.console.clear();
-                }
-            };
-
-            $rootScope.console.log = function(message) {
-                if (message !== undefined) {
-                    console.log(message);
-                    $rootScope.truncateLog();
-                    $rootScope.log.push('Log: ' + message.toString());
-                } else {
-                    console.log('Console log invoked with undefined object');
-                }
-            };
-
-            $rootScope.console.info = function(message) {
-                if (message !== undefined) {
-                    console.info(message);
-                    $rootScope.truncateLog();
-                    $rootScope.log.push('Log: ' + message.toString());
-                } else {
-                    console.info('Console info invoked with undefined object');
-                }
-            };
-
-            $rootScope.console.todo = function(msg) {
-                $rootScope.console.info('*** To Do: ' + msg + ' ***');
-            };
-
-            $rootScope.console.debug = function(debugMessage) {
-                $rootScope.truncateLog();
-                $rootScope.log.push('Debug: ' + debugMessage.toString());
-            };
-
-            $rootScope.console.error = function(errorMessage) {
-                $rootScope.truncateLog();
-                $rootScope.log.push('Error: ' + errorMessage.toString());
-                $rootScope.console.lastError = errorMessage;
-                console.log(errorMessage);
+            $rootScope.data.messages = {
+                warning: '',
+                info: ''
             };
 
             $rootScope.data.dataSourceTypes = [{
@@ -95,5 +46,97 @@ angular.module('gscDatacat.controllers')
                     type: 'GeoJSON'
                 }];
 
+            $rootScope.log = [];
+
+            $rootScope.console = {
+                clear: function() {
+                    $rootScope.log.length = 0;
+                },
+                truncateLog: function() {
+                    if ($rootScope.log.length > 50) {
+                        $rootScope.console.clear();
+                    }
+                },
+                writeLine: function(msg, typ) {
+                    var logFunc;
+                    if (typ === 'error') {
+                        logFunc = console.error;
+                    } else if (typ === 'debug') {
+                        logFunc = console.debug;
+                    } else if (typ === 'info') {
+                        logFunc = console.info;
+                    } else {
+                        logFunc = console.log;
+                    }
+
+                    if (msg !== undefined) {
+                        logFunc(msg);
+                        $rootScope.console.truncateLog();
+                        $rootScope.log.push(msg.toString());
+                    } else {
+                        logFunc('Log function invoked with undefined object');
+                    }
+                },
+                log: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Log: ' + msg.toString());
+                },
+                info: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Info: ' + msg.toString(), 'info');
+                },
+                todo: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('To do:  *** ' + msg.toString() + ' ***', 'info');
+                },
+                debug: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    if (typeof msg !== 'string' &&
+                        typeof msg !== 'number' &&
+                        typeof msg !== 'boolean') {
+                        msg = JSON.stringify(msg);
+                    }
+
+                    $rootScope.console.writeLine('Debug: !!! ' + msg + ' !!!', 'debug');
+                },
+                error: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Error: !!!' + msg.toString() + ' !!!', 'error');
+                },
+                usrWarn: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.data.messages.warning = msg.toString();
+                    if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                    $timeout(function() {
+                        $rootScope.data.messages.warning = '';
+                    }, 5000);
+                },
+                usrInfo: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }                    
+                    $rootScope.data.messages.info = msg.toString();
+                    if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                    $timeout(function() {
+                        $rootScope.data.messages.info = '';
+                    }, 5000);
+                }
+            };
         }
     ]);

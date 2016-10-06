@@ -209,17 +209,21 @@ angular.module('gscDatacat.services')
 
                 gsc.user.list(+authSvc.authUsr.organizationId)
                     .then(function(users) {
-                        $rootScope.console.log('Loaded users for organization');
+                        $rootScope.console.info('Loaded users');
                         if (gsc.util.isArrayWithContent(
                             users)) {
                             dfd.resolve(users);
                         } else if (users.status === 'error') {
+                            $rootScope.console.error('An error occurred loading users');
                             dfd.reject(users.description);
+                            $rootScope.console.debug(users);
                         } else {
+                            $rootScope.console.info('No users returned');
                             dfd.reject('No users returned');
-                            $rootScope.console.log(users);
                         }
                     }, function(err) {
+                        $rootScope.console.error('An error occurred loading users');
+                        $rootScope.console.debug(err);
                         dfd.reject(err.statusText);
                     });
 
@@ -231,14 +235,15 @@ angular.module('gscDatacat.services')
                 gsc.role.listrole(authSvc.authUsr.organizationId, null, true)
                     .then(function(res) {
                         if (res.status !== 'error' && gsc.util.isArrayWithContent(res.roles)) {
-                            $rootScope.console.log('Loaded roles');
+                            $rootScope.console.info('Loaded roles');
                             dfd.resolve(res.roles);
                         } else {
-                            $rootScope.console.log('An error occurred loading roles');
+                            $rootScope.console.error('An error occurred loading roles');
                             dfd.reject(res.description);
                         }
                     }, function(err) {
-                        $rootScope.console.log('An error occurred loading roles');
+                        $rootScope.console.error('An error occurred loading roles');
+                        $rootScope.console.debug(err);
                         dfd.reject(err.statusText);
                     });
                 return dfd.promise;
@@ -248,20 +253,22 @@ angular.module('gscDatacat.services')
                 var dfd = $q.defer();
                 gsc.permission.list(roleId)
                     .then(function(res) {
-                        if (res.status !== 'error' && gsc.util.isArrayWithContent(res.roles)) {
-                            $rootScope.console.log('Loaded permissions');
-                            dfd.resolve(res.roles);
-                        } else if (res.description === 'No results found.') {
-                            $rootScope.console.log('No permissions found for role');
+                        if (res.description === undefined &&
+                            gsc.util.isArrayWithContent(res)) {
+                            $rootScope.console.info('Loaded permissions');
+                            dfd.resolve(res);
+                        } else if (res.description !== undefined &&
+                            res.description === 'No results found.') {
+                            $rootScope.console.info('No permissions found for role');
                             dfd.resolve([]);
                         } else {
-                            $rootScope.console.log('An error occurred loading permissions');
-                            $rootScope.console.log(res);
+                            $rootScope.console.error('An error occurred loading permissions');
+                            $rootScope.console.debug(res);
                             dfd.reject(res.description);
                         }
                     }, function(err) {
-                        $rootScope.console.log('An error occurred loading permissions');
-                        $rootScope.console.log(err);
+                        $rootScope.console.error('An error occurred loading permissions');
+                        $rootScope.console.debug(err);
                         dfd.reject(err.statusText);
                     });
                 return dfd.promise;
@@ -319,10 +326,14 @@ angular.module('gscDatacat.services')
                             dfd.resolve(res.applications);
                         } else {
                             $rootScope.console.log(
-                                'An error occurred while loading applications');
+                                'An error occurred loading applications');
+                            $rootScope.console.log(res.description);
+                            $rootScope.console.log(res);
                             dfd.reject(res.description);
                         }
                     }, function(err) {
+                        $rootScope.console.log(
+                            'An error occurred loading applications');
                         $rootScope.console.log(err);
                         dfd.reject(err.statusText);
                     });

@@ -45,13 +45,14 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.init = function() {
-                dataSvc.loadRoles()
-                    .then(function(roles) {
-                        gsc.util.clearExtendArray($scope.data.roles, roles);
-                    }, function(errMsg) {
-                        $rootScope.console.log(errMsg);
-                    });
 
+                _loadFunctions();
+                _loadRoles();
+                _loadLayers();
+                _loadApplications();
+            };
+
+            var _loadFunctions = function() {
                 dataSvc.loadFunctions()
                     .then(function(functions) {
                         gsc.util.clearExtendArray($scope.data.functions, functions);
@@ -59,35 +60,84 @@ angular.module('gscDatacat.controllers')
                         $rootScope.console.log(errMsg);
                     });
 
+            };
+
+            var _loadRoles = function() {
+                dataSvc.loadRoles()
+                    .then(function(roles) {
+                        gsc.util.clearExtendArray($scope.data.roles, roles);
+                    }, function(errMsg) {
+                        $rootScope.console.log(errMsg);
+                    });
+            };
+
+            var _loadLayers = function() {
                 dataSvc.loadLayers()
                     .then(function(layers) {
                         gsc.util.clearExtendArray($scope.data.layers, layers);
                     }, function(errMsg) {
                         $rootScope.console.log(errMsg);
                     });
+
             };
 
-            $scope.delete = function(roleId) {
-                if ($window.confirm('Are you sure you want to delete the data source?')) {
-                    gsc.role.delete(roleId)
-                        .then(function(res) {
-                            $rootScope.console.log('Deleted data source');
-                            $rootScope.console.log(res);
-                            $scope.init();
-                        });
-                }
-            };
-
-            $scope.assignPermissions = function(roleData) {
-                dataSvc.loadPermissions(roleData.id)
-                    .then(function(roles) {
-                        gsc.util.clearExtendArray($scope.data.roles, roles);
-                        jQuery.extend($scope.data.currentRole, roleData);
-                        _activateTab(1);
+            var _loadApplications = function() {
+                dataSvc.loadApplications()
+                    .then(function(applications) {
+                        gsc.util.clearExtendArray($scope.data.applications, applications);
                     }, function(errMsg) {
                         $rootScope.console.log(errMsg);
                     });
+            };
 
+            var _loadPermissions = function(roleId) {
+                return dataSvc.loadPermissions(roleId)
+                    .then(function(permissions) {
+                        $scope.data.currentRole.functions = $scope.data.currentRole.functions || [
+                        ];
+                        gsc.util.clearExtendArray($scope.data.currentRole.functions, permissions);
+                    }, function(errMsg) {
+                        $rootScope.console.debug(errMsg);
+                    });
+            };
+
+            $scope.assignPermissions = function(roleData) {
+                gsc.util.clearExtendObject($scope.data.currentRole, roleData);
+                _loadPermissions(roleData.id).then(function(res) {
+                    _activateTab(1);
+                });
+            };
+
+            $scope.addPermission = function() {
+                $scope.data.currentRole.functions = $scope.data.currentRole.functions || [];
+
+                var permission = {};
+
+                if (!gsc.util.isNull($scope.data.currentPermission.function)) {
+                    permission.idfunction = +$scope.data.currentPermission.function.idfunction;
+                    permission.functionname = $scope.data.currentPermission.function.functionname;
+                }
+                if (!gsc.util.isNull($scope.data.currentPermission.layer)) {
+                    permission.idlayer = +$scope.data.currentPermission.layer.id;
+                    permission.layername = $scope.data.currentPermission.layer.layername;
+                }
+                if (!gsc.util.isNull($scope.data.currentPermission.application)) {
+                    permission.idapplication = +$scope.data.currentPermission.application.idapplication;
+                    permission.applicationname = $scope.data.currentPermission.application.applicationname;
+                }
+
+                if (gsc.util.isNumber(permission.idfunction) && (
+                    gsc.util.isNumber(permission.idlayer) ||
+                    gsc.util.isNumber(permission.idapplication))) {
+                    $scope.data.currentRole.functions.push(permission);
+                } else {
+                    $rootScope.console.usrWarn(
+                        'You must specify a function and either a layer or an application to add a new permission');
+                }
+            };
+
+            $scope.removePermission = function(index) {
+                $scope.data.currentRole.functions.splice(index, 1);
             };
 
             $scope.isUpdate = function() {
@@ -102,36 +152,28 @@ angular.module('gscDatacat.controllers')
                 gsc.util.clearExtendObject($scope.data.currentRole, {});
             };
 
-            var _create = function() {
-                return gsc.role.register(
-                    $scope.data.currentRole.rolename,
-                    $scope.data.currentRole.organization,
-                    $scope.data.currentRole.description
-                    ).then(function(res) {
-                    if (res.status !== 'error') {
-                        dataSvc.loadDataSources();
-                        $rootScope.console.log('Created new permission');
-                        $scope.init();
-                    } else {
-                        $rootScope.console.log('An error occurred while creating permission');
-                        $rootScope.console.log(res);
-                    }
-                }, function(err) {
-                    $rootScope.console.log('An error occurred while creating permission');
-                    $rootScope.console.log(err);
-                });
-            };
-
             var _update = function() {
-                $rootScope.console.todo(
-                    'There is no update function for roles in the server-side API');
+                gsc.permission.assign(
+                    $scope.data.currentRole.id,
+                    $scope.data.currentRole.functions)
+                    .then(function(res) {
+                        if (res.status !== 'error') {
+                            $rootScope.console.usrInfo('Successfully assigned permissions');
+                            _loadRoles();
+                        } else {
+                            $rootScope.console.error("An error occurred assigning permissions");
+                            $rootScope.console.debug(res);
+                            $rootScope.console.usrWarn(res.description);
+                        }
+                    }, function(err) {
+                        $rootScope.console.error("An error occurred assigning permissions");
+                        $rootScope.console.debug(err);
+                    });
             };
 
             $scope.save = function() {
                 if ($scope.isUpdate()) {
                     _update();
-                } else {
-                    _create();
                 }
             };
         }

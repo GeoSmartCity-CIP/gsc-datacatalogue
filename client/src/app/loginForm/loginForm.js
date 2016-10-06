@@ -32,10 +32,10 @@ angular.module('gscDatacat.controllers')
                 var res = authSvc.login($scope.loginData.username,
                     $scope.loginData.password)
                     .then(function(userData) {
-                        $rootScope.console.log('Authenticated');
+                        $rootScope.console.info('Authenticated');
                         $scope.redirect();
                     }, function(errMsg) {
-                        $rootScope.console.log('Not authenticated');
+                        $rootScope.console.error('Not authenticated');
                         $rootScope.console.log(errMsg);
                     });
             };
@@ -44,14 +44,13 @@ angular.module('gscDatacat.controllers')
                 gsc.user.remindPassword($scope.loginData.username, null)
                     .then(function(res) {
                         if (res.status !== 'error') {
-                            $rootScope.console.log('Authentication succeded');
+                            $rootScope.console.info('Authentication succeded');
                         } else {
-                            $rootScope.console.log('Authentication failed');
-                            $rootScope.console.log(res.description);
+                            $rootScope.console.usrWarn(res.description);
                         }
-                    }, function(errMsg) {
-                        $rootScope.console.log('Authentication failed');
-                        $rootScope.console.log(errMsg);
+                    }, function(err) {
+                        $rootScope.console.usrWarn('Authentication failed');
+                        $rootScope.console.error(err);
                     });
             };
 

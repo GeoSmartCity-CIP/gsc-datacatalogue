@@ -32,7 +32,6 @@
             </button>
             <a class="navbar-brand home" href="#/app/dbrdOverallStatistics/">Home</a>
         </div>
-
         <div ng-if="authSvc.isAuth().success === true">
             <span class="navbar-brand username">Logged in as {{authSvc.authUsr.username}} |
                 <a ng-click="authSvc.logout()">Logout</a>
@@ -46,6 +45,22 @@
 <![endif]-->
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <div class="alert alert-warning alert-dismissible" role="alert" ng-if="$root.data.messages.warning !== ''">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Warning!</strong> {{$root.data.messages.warning}}
+            </div>
+            <div class="alert alert-success alert-dismissible" role="alert" ng-if="$root.data.messages.info !== ''">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>Info: </strong> {{$root.data.messages.info}}
+            </div>
+        </div>
+        <div class="col-md-2">
+        </div>        
+    </div>
     <div class="row">
         <div class="col-md-3" ng-if="authSvc.isAuth().success === true">
             <label>Menu</label>
@@ -67,10 +82,10 @@
                         <span class='glyphicon glyphicon-plus-sign'></span>
                         Manage group layers
                     </a>
-<!--                    <a ui-sref="app.uploadGml" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Upload GML files
-                    </a>-->
+                    <!--                    <a ui-sref="app.uploadGml" class="list-group-item">
+                                            <span class='glyphicon glyphicon-plus-sign'></span>
+                                            Upload GML files
+                                        </a>-->
                 </uib-accordion-group>
                 <uib-accordion-group heading="Administration" is-open="true" template-url="group-template.html">
                     <a ui-sref="app.createUser" class="list-group-item">
@@ -101,14 +116,13 @@
             </uib-accordion>
         </div>
         <div class="col-md-9">
-            <div ng-if="errorMessage !== ''" class="well">{{errorMessage}}</div>
             <div ui-view="content" class="adm-form-bg"></div>
         </div>
     </div>
     <hr>
     <footer>
         <div class="text-center">
-            <p>&copy; 2015, 2016 SINERGIS and AVINET on behalf of GeoSmartCity Partners. Project co-funded by the European Commission</p>            
+            <p>&copy; 2015-2016 SINERGIS and AVINET on behalf of GeoSmartCity Partners. Project co-funded by the European Commission</p>            
         </div>
     </footer>
 </div>

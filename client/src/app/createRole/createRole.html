@@ -1,14 +1,14 @@
 <h2>Manage roles</h2>
 <uib-tabset ng-init="init()">
     <uib-tab index="0" heading="Role list" active="tabs[0].active">
-        <table class="table tab-striped">
+        <table class="table table-striped">
             <tr>
                 <th>ID#</th>
                 <th>Role</th>
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
-            <tr ng-repeat="role in data.roles" show="data.roles.length > 0">
+            <tr ng-repeat="role in data.roles | orderBy : 'rolename'" show="data.roles.length > 0">
                 <td>{{role.id}}</td>
                 <td>{{role.rolename}}</td>
                 <td>{{role.description}}</td>
