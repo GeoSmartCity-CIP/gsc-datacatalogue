@@ -1,0 +1,30 @@
+{
+  "name": "gsc-datacatalogue",
+  "description": "GeoSmartCity Project Data Catalogue",
+  "main": "index.html",
+  "authors": [
+    "SINERGIS",
+    "AVINET"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "GIS",
+    "management",
+    "dashboard",
+    "OGC"
+  ],
+  "homepage": "https://github.com/GeoSmartCity-CIP/gsc-datacatalogue",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ngDraggable": "^0.1.11"
+  }
+}

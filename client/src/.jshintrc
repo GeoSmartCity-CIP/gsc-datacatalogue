@@ -29,6 +29,7 @@
         "crossfilter": false,
         "d3": false,
         "dc": false,
-        "gsc": false
+        "gsc": false,
+        "FileReader": false
     }
 }

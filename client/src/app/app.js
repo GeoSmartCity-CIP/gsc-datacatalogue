@@ -1,94 +1,142 @@
 'use strict';
-
 angular.module('gscDatacat.controllers')
     .
-controller('appCtrl', [
-    '$scope',
-    '$rootScope',
-    '$state',
-    function($scope,
-        $rootScope,
-        $state) {
+    controller('appCtrl', [
+        '$scope',
+        '$rootScope',
+        '$state',
+        'authSvc',
+        '$timeout',
+        function($scope,
+            $rootScope,
+            $state,
+            authSvc,
+            $timeout) {
 
-        $rootScope.data = {};
+            $scope.$on('$stateChangeSuccess', function() {
+                if (authSvc.isAuth().success !== true &&
+                    $state.current.name !== 'app.loginForm') {
+                    $state.go('app.loginForm');
+                }
+            });
+            $scope.authSvc = authSvc;
 
-        $rootScope.data.authUser = 'admin@geosmartcity.eu';
+            $rootScope.data.messages = {
+                warning: '',
+                info: ''
+            };
 
-        $rootScope.data.loginData = {
-            userName: 'admin@geosmartcity.eu',
-            password: 'geosmartcity',
-            organizationId: 666
-        };
+            $rootScope.data.dataSourceTypes = [{
+                    name: 'ESRI Shapefile',
+                    type: 'Shape'
+                }, {
+                    name: 'PostgreSQL/PostGIS database',
+                    type: 'PostGIS'
+                }, {
+                    name: 'Web Map Service',
+                    type: 'WMS'
+                }, {
+                    name: 'Web Feature Service',
+                    type: 'WFS'
+                }, {
+                    name: 'KML file',
+                    type: 'KML'
+                }, {
+                    name: 'GeoJSON file',
+                    type: 'GeoJSON'
+                }];
 
-        $rootScope.log = [];
+            $rootScope.log = [];
 
-        $rootScope.console = {};
+            $rootScope.console = {
+                clear: function() {
+                    $rootScope.log.length = 0;
+                },
+                truncateLog: function() {
+                    if ($rootScope.log.length > 50) {
+                        $rootScope.console.clear();
+                    }
+                },
+                writeLine: function(msg, typ) {
+                    var logFunc;
+                    if (typ === 'error') {
+                        logFunc = console.error;
+                    } else if (typ === 'debug') {
+                        logFunc = console.debug;
+                    } else if (typ === 'info') {
+                        logFunc = console.info;
+                    } else {
+                        logFunc = console.log;
+                    }
 
-        $rootScope.console.lastError = '';
+                    if (msg !== undefined) {
+                        logFunc(msg);
+                        $rootScope.console.truncateLog();
+                        $rootScope.log.push(msg.toString());
+                    } else {
+                        logFunc('Log function invoked with undefined object');
+                    }
+                },
+                log: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Log: ' + msg.toString());
+                },
+                info: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Info: ' + msg.toString(), 'info');
+                },
+                todo: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('To do:  *** ' + msg.toString() + ' ***', 'info');
+                },
+                debug: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    if (typeof msg !== 'string' &&
+                        typeof msg !== 'number' &&
+                        typeof msg !== 'boolean') {
+                        msg = JSON.stringify(msg);
+                    }
 
-        $scope.errorMessage = $rootScope.console.lastError;
-
-        $rootScope.console.clear = function() {
-            $rootScope.log.length = 0;
-        };
-
-        $rootScope.truncateLog = function() {
-            if ($rootScope.log.length > 10) {
-                $rootScope.console.clear();
-            }
-        };
-
-        $rootScope.console.log = function(message) {
-            $rootScope.truncateLog();
-            $rootScope.log.push('Log: ' + message.toString());
-        };
-
-        $rootScope.console.debug = function(debugMessage) {
-            $rootScope.truncateLog();
-            $rootScope.log.push('Debug: ' + debugMessage.toString());
-        };
-
-        $rootScope.console.error = function(errorMessage) {
-            $rootScope.truncateLog();
-            $rootScope.log.push('Error: ' + errorMessage.toString());
-            $rootScope.console.lastError = errorMessage;
-        };
-
-        $rootScope.doLogin = function() {
-
-            if ($rootScope.data.loginData.userName === 'admin@geosmartcity.eu' &&
-                $rootScope.data.loginData.password === 'geosmartcity') {
-                $rootScope.data.authUser = $rootScope.data.loginData.userName;
-                $state.go('app.createDataSource');
-            } else {
-                $rootScope.console.log('Authentication failed');
-            }
-
-        };
-
-        $rootScope.doLogout = function() {
-            $rootScope.data.authUser = null;
-        };
-
-        $rootScope.data.dataSourceTypes = [{
-            name: 'ESRI Shapefile',
-            type: 'Shape'
-        }, {
-            name: 'PostgreSQL/PostGIS database',
-            type: 'PostGIS'
-        }, {
-            name: 'Web Map Service',
-            type: 'WMS'
-        }, {
-            name: 'Web Feature Service',
-            type: 'WFS'
-        }, {
-            name: 'KML file',
-            type: 'KML'
-        }, {
-            name: 'GeoJSON file',
-            type: 'GeoJSON'
-        }];
-
-    }
-]);
+                    $rootScope.console.writeLine('Debug: !!! ' + msg + ' !!!', 'debug');
+                },
+                error: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.console.writeLine('Error: !!!' + msg.toString() + ' !!!', 'error');
+                },
+                usrWarn: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }
+                    $rootScope.data.messages.warning = msg.toString();
+                    if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                    $timeout(function() {
+                        $rootScope.data.messages.warning = '';
+                    }, 5000);
+                },
+                usrInfo: function(msg) {
+                    if (msg === undefined) {
+                        msg = '<no message specified>';
+                    }                    
+                    $rootScope.data.messages.info = msg.toString();
+                    if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                    $timeout(function() {
+                        $rootScope.data.messages.info = '';
+                    }, 5000);
+                }
+            };
+        }
+    ]);
