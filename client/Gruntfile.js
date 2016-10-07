@@ -18,8 +18,8 @@ module.exports = function(grunt) {
             dist: {
                 nonull: true,
                 src: [
-                    'src/main.js',
                     'src/types/*.js',
+                    'src/main.js',
                     'src/directives/*.js',
                     'src/services/*.js',
                     'src/app/**/*.js',
@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         jsdoc: {
             dist: {
                 src: [
-                    'dist/*.js',
+                    'dist/<%= pkg.name %>.js',
                     'README.md'
                 ],
                 options: {
@@ -106,30 +106,42 @@ module.exports = function(grunt) {
             }
         },
         watch: {
-            lib: {
+            "deploy": {
                 files: [
-                    'src/main.js',
-                    'src/types/*.js',
-                    'src/directives/*.js',
-                    'src/services/*.js',
-                    'src/app/**/*.js',
-                    'src/app/**/*.html',
-                    '!src/app/**/*test.js'
+                    "src/types/*.js",
+                    "src/main.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
                 ],
-                tasks: ['default']
+                tasks: ["default"]
             },
-            withdocs: {
+            "develop": {
                 files: [
-                    'README.md',
-                    'src/main.js',
-                    'src/types/*.js',
-                    'src/directives/*.js',
-                    'src/services/*.js',
-                    'src/app/**/*.js',
-                    'src/app/**/*.html',
-                    '!src/app/**/*test.js'
+                    "src/types/*.js",
+                    "src/main.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
                 ],
-                tasks: ['build']
+                tasks: ["default-work"]
+            },
+            "docs": {
+                files: [
+                    "README.md",
+                    "src/main.js",
+                    "src/types/*.js",
+                    "src/directives/*.js",
+                    "src/services/*.js",
+                    "src/app/**/*.js",
+                    "src/app/**/*.html",
+                    "!src/app/**/*test.js"
+                ],
+                tasks: ["build"]
             },
             gruntfile: {
                 files: 'Gruntfile.js',
@@ -149,6 +161,7 @@ module.exports = function(grunt) {
 
     // Default task.
     grunt.registerTask('default', ['copy', 'jscs', 'jshint', 'concat', 'uglify']);
-    grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'update-docs']);
-    grunt.registerTask('update-docs', ['concat', 'jsdoc']);
+    grunt.registerTask('default-work', ['copy', 'jshint', 'concat']);
+    grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'docs']);
+    grunt.registerTask('docs', ['concat', 'jsdoc']);
 };
