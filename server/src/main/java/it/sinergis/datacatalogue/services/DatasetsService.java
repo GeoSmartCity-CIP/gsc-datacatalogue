@@ -128,7 +128,7 @@ public class DatasetsService extends ServiceCommons {
 								throw new DCException(Constants.ER703, req);
 							}
 							
-							gsc007Dao.save(dsetUpdated);
+							//gsc007Dao.save(dsetUpdated);
 						}
 						// if the datasource is POSTGIS
 						else if (datasourceType != null && datasourceType.equalsIgnoreCase(Constants.POSTGIS)) {
