@@ -57,17 +57,6 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group required">
-                        <label for="type" class="control-label">Organization</label>
-                        <select type="text" class="form-control" id="type" ng-model="data.currentFunction.organization">
-                            <option value="">Please select</option>
-                            <option ng-repeat="or in data.organizations| orderBy : 'organizationname'" value="{{+or.id}}">{{or.organizationname}}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
                     <input type="button" class="btn btn-primary" value="Clear" ng-click="resetCurrent()">
                     <input type="submit" ng-if="isUpdate()" class="btn btn-primary" value="Update">
                     <input type="submit" ng-if="!isUpdate()" class="btn btn-primary" value="Create">

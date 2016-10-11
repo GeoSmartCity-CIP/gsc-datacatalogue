@@ -70,7 +70,7 @@ angular.module('gscDatacat.controllers')
                 if ($scope.isUpdate()) {
                     gsc.function.update($scope.data.currentFunction.idfunction,
                         $scope.data.currentFunction.functionname,
-                        $scope.data.currentFunction.organization,
+                        authSvc.authUsr.organizationId,
                         $scope.data.currentFunction.type,
                         $scope.data.currentFunction.description)
                         .then(function(res) {
@@ -88,7 +88,7 @@ angular.module('gscDatacat.controllers')
                         });
                 } else {
                     gsc.function.create($scope.data.currentFunction.functionname,
-                        $scope.data.currentFunction.organization,
+                        authSvc.authUsr.organizationId,
                         $scope.data.currentFunction.type,
                         $scope.data.currentFunction.description)
                         .then(function(res) {
