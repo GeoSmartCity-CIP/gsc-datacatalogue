@@ -32,8 +32,26 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group required">
-                        <label for="type" class="control-label">Description</label>
-                        <textarea class="form-control" id="type" ng-model="data.currentFunction.description"></textarea>
+                        <label for="description" class="control-label">Description</label>
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            ng-model="data.currentFunction.description">
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group required">
+                        <label for="functionType" class="control-label">Type</label>
+                        <select type="text"
+                                class="form-control"
+                                ng-options= "func as func for func in $root.data.functionTypes"
+                                id="functionType"
+                                ng-model="data.currentFunction.type">
+                            <option value="">Please select</option>
+                        </select>
                     </div>
                 </div>
             </div>

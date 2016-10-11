@@ -46,6 +46,12 @@ angular.module('gscDatacat.controllers')
                     type: 'GeoJSON'
                 }];
 
+            $rootScope.data.functionTypes = [
+                'application',
+                'data catalogue',
+                'layers'
+            ];
+
             $rootScope.log = [];
 
             $rootScope.console = {
@@ -128,7 +134,7 @@ angular.module('gscDatacat.controllers')
                 usrInfo: function(msg) {
                     if (msg === undefined) {
                         msg = '<no message specified>';
-                    }                    
+                    }
                     $rootScope.data.messages.info = msg.toString();
                     if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
                         $scope.$apply();
