@@ -146,7 +146,7 @@ angular.module('gscDatacat.controllers')
                         $scope.data.user.id,
                         $scope.data.user.email,
                         $scope.data.user.username,
-                        $scope.data.user.organizations)
+                        gsc.util.cleanJsonObjects($scope.data.user.organizations))
                         .then(function(res) {
                             if (res.status !== 'error') {
                                 _activateTab(0);
@@ -165,7 +165,7 @@ angular.module('gscDatacat.controllers')
                         $scope.data.user.username,
                         $scope.data.user.password,
                         $scope.data.user.confirmpassword,
-                        $scope.data.user.organizations)
+                        gsc.util.cleanJsonObjects($scope.data.user.organizations))
                         .then(function(res) {
                             if (res.status !== 'error') {
                                 _activateTab(0);
