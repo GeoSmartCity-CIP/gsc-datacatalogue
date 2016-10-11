@@ -1,0 +1,71 @@
+<h2>Manage role membership</h2>
+<uib-tabset ng-init="init()">
+    <uib-tab index="0" heading="Role list" active="tabs[0].active">
+        <table class="table table-striped">
+            <tr>
+                <th>ID#</th>
+                <th>Role</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            <tr ng-repeat="user in data.roles| orderBy : 'rolename'" show="data.roles.length > 0">
+                <td>{{user.id}}</td>
+                <td>{{user.rolename}}</td>
+                <td>{{user.description}}</td>
+                <td>
+                    <button type="button" class="btn" ng-click="addMembersToRole(user)">Add members to role</button>
+                </td>
+            </tr>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Add members to role" active="tabs[1].active">
+        <form ng-submit="save()">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="type" class="control-label">Role name</label>
+                        <input type="text" class="form-control" id="type" ng-model="data.currentRole.rolename" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Available users</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th colspan="2">User</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="user in data.users| orderBy : 'username'">
+                            <td>{{user.id}}</td>
+                            <td>{{user.username}}</td>
+                            <td>
+                                <button type="button" class="btn" ng-click="addMember(user)">Add</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4>Members of role</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th colspan="2">User</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr ng-repeat="user in data.currentRole.users | orderBy : 'username'">
+                            <td>{{user.iduser}}</td>
+                            <td>{{user.username}}</td>
+                            <td>
+                                <button type="button" class="btn" ng-click="removeMember(user)">Remove</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" class="btn btn-primary" value="Save role members">
+                    </div>
+                </div>
+        </form>
+    </uib-tab>
+</uib-tabset>

@@ -128,6 +128,15 @@ angular.module('gscDatacat', [
                         }
                     }
                 })
+                .state('app.createRoleMembership', {
+                    url: '/createRoleMembership',
+                    views: {
+                        'content': {
+                            templateUrl: 'templates/createRoleMembership/createRoleMembership.html',
+                            controller: 'createRoleMembershipCtrl'
+                        }
+                    }
+                })
                 .state('app.createRole', {
                     url: '/createRole',
                     views: {
