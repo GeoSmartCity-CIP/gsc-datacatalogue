@@ -19,7 +19,11 @@ angular.module('gscDatacat.services')
                 var _sampleUser = {
                     username: 'admin@geosmartcity.eu',
                     password: 'geosmartcity',
-                    organizationId: 666
+                    organizationId: 666,
+                    organizations: [{
+                            id: 666,
+                            organizationname: 'Asplan Viak Internet as'
+                        }]
                 };
 
                 var _login = function(username, password) {
