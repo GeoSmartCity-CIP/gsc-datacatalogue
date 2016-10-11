@@ -21,6 +21,13 @@ angular.module('gscDatacat.controllers')
             });
             $scope.authSvc = authSvc;
 
+
+            $scope.redirect = function() {
+                $state.go('app.createDataSource', {}, {
+                    reload: true
+                });
+            };
+
             $rootScope.data.messages = {
                 warning: '',
                 info: ''
