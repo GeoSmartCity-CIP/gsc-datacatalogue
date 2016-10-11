@@ -341,6 +341,32 @@ angular.module('gscDatacat.services')
                 return dfd.promise;
             };
 
+            self.loadApplication = function(applicationId) {
+                var dfd = $q.defer();
+
+                gsc.application.list(null, null, applicationId)
+                    .then(function(res) {
+                        if (res.status !== 'error' && gsc.util.isArrayWithContent(
+                            res.applications)) {
+                            $rootScope.console.log('Loaded application');
+                            dfd.resolve(res.applications[0]);
+                        } else {
+                            $rootScope.console.log(
+                                'An error occurred loading application');
+                            $rootScope.console.log(res.description);
+                            $rootScope.console.log(res);
+                            dfd.reject(res.description);
+                        }
+                    }, function(err) {
+                        $rootScope.console.log(
+                            'An error occurred loading applications');
+                        $rootScope.console.log(err);
+                        dfd.reject(err.statusText);
+                    });
+
+                return dfd.promise;
+            };
+
             return self;
 
         }]);
