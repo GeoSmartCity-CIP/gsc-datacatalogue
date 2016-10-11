@@ -17,7 +17,9 @@ angular.module('gscDatacat.controllers')
             dataSvc) {
 
             $scope.data = {
-                user: {},
+                user: {
+                    organizations: []
+                },
                 users: [],
                 organizations: []
             };
@@ -92,17 +94,59 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
+            $scope.addOrganization = function(organizationData) {
+                if (gsc.util.isNull($scope.data.user.organizations)) {
+                    $scope.data.user.organizations = [];
+                }
+
+                var exists = false;
+
+                for (var i = 0; i < $scope.data.user.organizations.length; i++) {
+                    if ($scope.data.user.organizations[i].id === organizationData.id) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    $scope.data.user.organizations.push({
+                        id: organizationData.id,
+                        organization: organizationData.id,
+                        organizationname: organizationData.organizationname
+                    });
+                } else {
+                    $rootScope.console.usrInfo(
+                        'User is already part of ' + organizationData.organizationname);
+                }
+            };
+
+            $scope.removeOrganization = function(organizationData) {
+                console.log(organizationData.id);
+                console.log($scope.data.user.organizations);
+                if (gsc.util.isNull($scope.data.user.organizations)) {
+                    $scope.data.user.organizations = [];
+                }
+                var indexToRemove = -1;
+                for (var i = 0; i < $scope.data.user.organizations.length; i++) {
+                    if (+$scope.data.user.organizations[i].id === +organizationData.id) {
+                        indexToRemove = i;
+                        break;
+                    }
+                }
+
+                console.log(indexToRemove);
+                if (indexToRemove >= 0) {
+                    $scope.data.user.organizations.splice(indexToRemove, 1);
+                }
+            };
+
             $scope.save = function() {
                 if ($scope.isUpdate()) {
                     gsc.user.update(
                         $scope.data.user.id,
                         $scope.data.user.email,
                         $scope.data.user.username,
-                        $scope.data.user.password,
-                        $scope.data.user.confirmpassword,
-                        [{
-                                id: $scope.data.user.organizationId
-                            }])
+                        gsc.util.cleanJsonObjects($scope.data.user.organizations))
                         .then(function(res) {
                             if (res.status !== 'error') {
                                 _activateTab(0);
@@ -121,9 +165,7 @@ angular.module('gscDatacat.controllers')
                         $scope.data.user.username,
                         $scope.data.user.password,
                         $scope.data.user.confirmpassword,
-                        [{
-                                'organization': $scope.data.user.organizationId
-                            }])
+                        gsc.util.cleanJsonObjects($scope.data.user.organizations))
                         .then(function(res) {
                             if (res.status !== 'error') {
                                 _activateTab(0);

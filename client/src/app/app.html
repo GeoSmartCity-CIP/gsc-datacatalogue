@@ -33,8 +33,8 @@
             <a class="navbar-brand home" href="#/app/dbrdOverallStatistics/">Home</a>
         </div>
         <div ng-if="authSvc.isAuth().success === true">
-            <span class="navbar-brand username">Logged in as {{authSvc.authUsr.username}} |
-                <a ng-click="authSvc.logout()">Logout</a>
+            <span class="navbar-brand username">
+                Logged in as {{authSvc.authUsr.username}} | <a ng-click="authSvc.logout()">Logout</a>
             </span>
         </div>
     </div><!-- /.container-fluid -->
@@ -65,55 +65,71 @@
         <div class="col-md-3" ng-if="authSvc.isAuth().success === true">
             <label>Menu</label>
             <uib-accordion close-others="false">
-                <uib-accordion-group heading="Data management" is-open="true" template-url="group-template.html">
-                    <a ui-sref="app.createDataSource" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage data sources
-                    </a>
-                    <a ui-sref="app.createDataSet" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage data sets
-                    </a>
-                    <a ui-sref="app.createLayer" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage layers
-                    </a>
-                    <a ui-sref="app.createGroupLayer" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage group layers
-                    </a>
-                    <!--                    <a ui-sref="app.uploadGml" class="list-group-item">
-                                            <span class='glyphicon glyphicon-plus-sign'></span>
-                                            Upload GML files
-                                        </a>-->
+                <uib-accordion-group heading="User options" is-open="true" template-url="group-template.html">
+                    <div class="list-group-item">
+                        <div class="form-group">
+                            <label for="currentUserOrganization" class="control-label">Current organization</label>
+                            <select type="text" class="form-control" id="currentPermissionLayer" ng-model="$root.data.authUser.organizationId"
+                                    ng-options="or.id as or.organizationname for or in $root.data.authUser.organizations"
+                                    ng-change="redirect()">
+                            </select>
+                        </div>
+                    </div>                    
                 </uib-accordion-group>
-                <uib-accordion-group heading="Administration" is-open="true" template-url="group-template.html">
-                    <a ui-sref="app.createUser" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage users
-                    </a>
-                    <a ui-sref="app.createRole" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage roles
-                    </a>
-                    <a ui-sref="app.createOrganization" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage organizations
-                    </a>
-                    <a ui-sref="app.createFunction" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage functions
-                    </a>
-                    <a ui-sref="app.createPermission" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage permissions
-                    </a>
-                    <a ui-sref="app.createApplication" class="list-group-item">
-                        <span class='glyphicon glyphicon-plus-sign'></span>
-                        Manage applications
-                    </a>
-                </uib-accordion-group>
-            </uib-accordion>
+                <uib-accordion close-others="false">
+                    <uib-accordion-group heading="Data management" is-open="true" template-url="group-template.html">
+                        <a ui-sref="app.createDataSource" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage data sources
+                        </a>
+                        <a ui-sref="app.createDataSet" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage data sets
+                        </a>
+                        <a ui-sref="app.createLayer" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage layers
+                        </a>
+                        <a ui-sref="app.createGroupLayer" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage group layers
+                        </a>
+                        <!--                    <a ui-sref="app.uploadGml" class="list-group-item">
+                                                <span class='glyphicon glyphicon-plus-sign'></span>
+                                                Upload GML files
+                                            </a>-->
+                    </uib-accordion-group>
+                    <uib-accordion-group heading="Administration" is-open="true" template-url="group-template.html">
+                        <a ui-sref="app.createUser" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage users
+                        </a>
+                        <a ui-sref="app.createRole" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage roles
+                        </a>
+                        <a ui-sref="app.createRoleMembership" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage role membership
+                        </a>
+                        <a ui-sref="app.createOrganization" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage organizations
+                        </a>
+                        <a ui-sref="app.createFunction" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage functions
+                        </a>
+                        <a ui-sref="app.createPermission" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage permissions
+                        </a>
+                        <a ui-sref="app.createApplication" class="list-group-item">
+                            <span class='glyphicon glyphicon-plus-sign'></span>
+                            Manage applications
+                        </a>
+                    </uib-accordion-group>
+                </uib-accordion>
         </div>
         <div class="col-md-9">
             <div ui-view="content" class="adm-form-bg"></div>

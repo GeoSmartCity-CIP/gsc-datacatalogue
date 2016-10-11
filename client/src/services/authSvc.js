@@ -19,7 +19,11 @@ angular.module('gscDatacat.services')
                 var _sampleUser = {
                     username: 'admin@geosmartcity.eu',
                     password: 'geosmartcity',
-                    organizationId: 666
+                    organizationId: 666,
+                    organizations: [{
+                            id: 666,
+                            organizationname: 'Asplan Viak Internet as'
+                        }]
                 };
 
                 var _login = function(username, password) {
@@ -35,8 +39,14 @@ angular.module('gscDatacat.services')
                         gsc.user.login(username, password)
                             .then(function(res) {
                                 $rootScope.console.log(res);
-                                if (res.success === true) {
-                                    gsc.util.clearExtendObject($rootScope.data.authUser, res.user);
+                                if (res.iduser !== undefined && gsc.util.isNumber(res.iduser)) {
+                                    gsc.util.clearExtendObject($rootScope.data.authUser, {});
+                                    $rootScope.data.authUser.username = res.username;
+                                    $rootScope.data.authUser.iduser = +res.iduser;
+                                    if (res.organizations.length > 0) {
+                                        $rootScope.data.authUser.organizationId = +res.organizations[0].organization;
+                                        $rootScope.data.authUser.organizations = res.organizations;
+                                    }
                                     dfd.resolve(gscDatacat.Response.getSuccess(
                                         $rootScope.data.authUser, 'Remote login succeeded'));
                                 } else {
@@ -46,7 +56,7 @@ angular.module('gscDatacat.services')
                                         res.description));
                                 }
                             }, function(errMsg) {
-                                $rootScope.console.log(errMsg);
+                                $rootScope.console.debug(errMsg);
                                 dfd.reject(gscDatacat.Response.getError({
                                     parameters: {
                                         username: username,

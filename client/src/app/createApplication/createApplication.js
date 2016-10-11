@@ -63,6 +63,15 @@ angular.module('gscDatacat.controllers')
                     });
             };
 
+            var _loadApplication = function(applicationId) {
+                return dataSvc.loadApplication(applicationId)
+                    .then(function(application) {
+                        return application;
+                    }, function(errMsg) {
+                        $rootScope.console.error(errMsg);
+                    });
+            };
+
             var _loadLayers = function() {
                 dataSvc.loadLayers()
                     .then(function(layers) {
@@ -123,11 +132,16 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.edit = function(application) {
-                $rootScope.console.todo(
-                    'There is no way to retrieve all details of an application in order to edit it');
-                $rootScope.console.log(application);
-                gsc.util.clearExtendObject($scope.data.currentApplication, application);
-                _activateTab(1);
+                _loadApplication(application.idapplication)
+                    .then(function(res) {
+                        $rootScope.console.todo(
+                            'There is no way to retrieve all details of an application in order to edit it');
+                        $rootScope.console.log(application);
+                        gsc.util.clearExtendObject($scope.data.currentApplication, application);
+                        _activateTab(1);
+                    }, function(err) {
+                        $rootScope.console.debug(err);
+                    });
             };
 
             $scope.delete = function(applicationId) {

@@ -21,6 +21,13 @@ angular.module('gscDatacat.controllers')
             });
             $scope.authSvc = authSvc;
 
+
+            $scope.redirect = function() {
+                $state.go('app.createDataSource', {}, {
+                    reload: true
+                });
+            };
+
             $rootScope.data.messages = {
                 warning: '',
                 info: ''
@@ -45,6 +52,12 @@ angular.module('gscDatacat.controllers')
                     name: 'GeoJSON file',
                     type: 'GeoJSON'
                 }];
+
+            $rootScope.data.functionTypes = [
+                'application',
+                'data catalogue',
+                'layers'
+            ];
 
             $rootScope.log = [];
 
@@ -128,7 +141,7 @@ angular.module('gscDatacat.controllers')
                 usrInfo: function(msg) {
                     if (msg === undefined) {
                         msg = '<no message specified>';
-                    }                    
+                    }
                     $rootScope.data.messages.info = msg.toString();
                     if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {
                         $scope.$apply();
