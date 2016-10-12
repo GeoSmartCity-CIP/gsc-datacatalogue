@@ -23,7 +23,6 @@ angular.module('gscDatacat.controllers')
                 roles: [],
                 functions: [],
                 applications: [],
-                layers: [],
                 currentPermission: {},
                 currentRole: {}
             };
@@ -48,7 +47,6 @@ angular.module('gscDatacat.controllers')
 
                 _loadFunctions();
                 _loadRoles();
-                _loadLayers();
                 _loadApplications();
             };
 
@@ -69,16 +67,6 @@ angular.module('gscDatacat.controllers')
                     }, function(errMsg) {
                         $rootScope.console.log(errMsg);
                     });
-            };
-
-            var _loadLayers = function() {
-                dataSvc.loadLayers()
-                    .then(function(layers) {
-                        gsc.util.clearExtendArray($scope.data.layers, layers);
-                    }, function(errMsg) {
-                        $rootScope.console.log(errMsg);
-                    });
-
             };
 
             var _loadApplications = function() {
@@ -117,22 +105,20 @@ angular.module('gscDatacat.controllers')
                     permission.idfunction = +$scope.data.currentPermission.function.idfunction;
                     permission.functionname = $scope.data.currentPermission.function.functionname;
                 }
-                if (!gsc.util.isNull($scope.data.currentPermission.layer)) {
-                    permission.idlayer = +$scope.data.currentPermission.layer.id;
-                    permission.layername = $scope.data.currentPermission.layer.layername;
-                }
+                
                 if (!gsc.util.isNull($scope.data.currentPermission.application)) {
                     permission.idapplication = +$scope.data.currentPermission.application.idapplication;
                     permission.applicationname = $scope.data.currentPermission.application.applicationname;
                 }
 
-                if (gsc.util.isNumber(permission.idfunction) && (
-                    gsc.util.isNumber(permission.idlayer) ||
-                    gsc.util.isNumber(permission.idapplication))) {
+                if (gsc.util.isNumber(+permission.idfunction) &&
+                    gsc.util.isNumber(+permission.idapplication)) {
                     $scope.data.currentRole.functions.push(permission);
                 } else {
+                    console.log($scope.data.currentPermission);
+                    console.log(permission);
                     $rootScope.console.usrWarn(
-                        'You must specify a function and either a layer or an application to add a new permission');
+                        'You must specify a function and an application to add a new permission');
                 }
             };
 

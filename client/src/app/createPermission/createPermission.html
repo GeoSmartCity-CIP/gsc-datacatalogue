@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="currentPermissionFunction" class="control-label">Function</label>
                         <select type="text" class="form-control" id="currentPermissionFunction" ng-model="data.currentPermission.function"
@@ -38,21 +38,12 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="currentPermissionLayer" class="control-label">Layer</label>
-                        <select type="text" class="form-control" id="currentPermissionLayer" ng-model="data.currentPermission.layer"
-                                ng-options="lyr as lyr.layername for lyr in data.layers">
-                            <option value="">Please select</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="currentPermissionApplication" class="control-label">Application</label>
-                        <select type="text" class="form-control" id="currentPermissionApplication" ng-model="data.currentPermission.idapplication">
+                        <select type="text" class="form-control" id="currentPermissionApplication" ng-model="data.currentPermission.application"
+                                ng-options="app as app.applicationname for app in data.applications">
                             <option value="">Please select</option>
-                            <option ng-repeat="app in data.applications" value="{{+app.idapplication}}">{{app.applicationname}}</option>
                         </select>
                     </div>                                     
                 </div>
@@ -69,15 +60,12 @@
                     <table class="table table-striped">
                         <tr>
                             <th colspan="2">Function</th>
-                            <th colspan="2">Layer</th>
                             <th colspan="2">Application</th>
                             <th>Actions</th>
                         </tr>
                         <tr ng-repeat="rl in data.currentRole.functions| orderBy : 'rolename'" show="data.currentRole.functions.length > 0">
                             <td>{{rl.idfunction}}</td>
                             <td>{{rl.functionname}}</td>
-                            <td>{{rl.idlayer}}</td>
-                            <td>{{rl.layername}}</td>
                             <td>{{rl.idapplication}}</td>
                             <td>{{rl.applicationname}}</td>
                             <td>
