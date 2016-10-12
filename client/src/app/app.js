@@ -71,6 +71,18 @@ angular.module('gscDatacat.controllers')
                 'map'
             ];
 
+            $rootScope.data.systemFunctions = {
+                'LockUser': 1,
+                'DeleteUser': 2,
+                'AssignUserToRole': 3,
+                'AssignPermissionToRole': 4,
+                'CreateOrganization': 5,
+                'UpdateOrganization': 6,
+                'DeleteOrganization': 7,
+                'MapDefault': 188,
+                'MapVisibility': 187
+            };
+
             $rootScope.log = [];
 
             $rootScope.console = {

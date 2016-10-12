@@ -24,6 +24,32 @@ angular.module('gscDatacat.services')
                     organizations: [{
                             id: 666,
                             organizationname: 'Asplan Viak Internet as'
+                        }],
+                    roles: [{
+                            idrole: 1,
+                            functions: [
+                                {
+                                    idfunction: 1
+                                },
+                                {
+                                    idfunction: 2
+                                },
+                                {
+                                    idfunction: 3
+                                },
+                                {
+                                    idfunction: 4
+                                },
+                                {
+                                    idfunction: 5
+                                },
+                                {
+                                    idfunction: 6
+                                },
+                                {
+                                    idfunction: 7
+                                }
+                            ]
                         }]
                 };
 
@@ -32,7 +58,7 @@ angular.module('gscDatacat.services')
                     var dfd = $q.defer();
 
                     if (username === _sampleUser.username &&
-                        password === _sampleUser.password) {                        
+                        password === _sampleUser.password) {
                         gsc.util.clearExtendObject($rootScope.data.authUser, _sampleUser);
                         dfd.resolve(gscDatacat.Response.getSuccess($rootScope.data.authUser,
                             'Local login shim succeeded'));
@@ -92,11 +118,45 @@ angular.module('gscDatacat.services')
                     }
                 };
 
+                /**
+                 * Check if a user is allowed to perform a specific function or not
+                 * 
+                 * @param {Number} functionId - One of the constants specified by $rootScope.data.systemFunctions 
+                 * @returns {Boolean}
+                 */
+                var _userCan = function(functionId) {
+
+                    $rootScope.console.log('Checking permission');
+
+                    var u = $rootScope.data.authUser;
+
+                    $rootScope.console.debug(functionId);
+                    $rootScope.console.debug(u);
+
+                    if (u !== undefined) {
+
+                        if (jQuery.isArray(u.roles)) {
+
+                            for (var i = 0; i < u.roles.length; i++) {
+                                if (u.roles[i].idfunction === functionId) {
+                                    return true;
+                                }
+                            }
+
+                        }
+                    }
+
+                    return false;
+
+                };
+
                 return {
                     login: _login,
                     logout: _logout,
                     isAuth: _isAuth,
                     authUsr: $rootScope.data.authUser,
-                    sampleUsr: _sampleUser
+                    sampleUsr: _sampleUser,
+                    userCan: _userCan
                 };
+
             }]);
