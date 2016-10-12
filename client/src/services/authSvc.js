@@ -17,6 +17,7 @@ angular.module('gscDatacat.services')
                 $rootScope.data.authUser = {};
 
                 var _sampleUser = {
+                    iduser: 1,
                     username: 'admin@geosmartcity.eu',
                     password: 'geosmartcity',
                     organizationId: 666,
@@ -31,7 +32,7 @@ angular.module('gscDatacat.services')
                     var dfd = $q.defer();
 
                     if (username === _sampleUser.username &&
-                        password === _sampleUser.password) {
+                        password === _sampleUser.password) {                        
                         gsc.util.clearExtendObject($rootScope.data.authUser, _sampleUser);
                         dfd.resolve(gscDatacat.Response.getSuccess($rootScope.data.authUser,
                             'Local login shim succeeded'));
