@@ -54,9 +54,8 @@ angular.module('gscDatacat.controllers')
                 }];
 
             $rootScope.data.functionTypes = [
-                'application',
-                'data catalogue',
-                'layers'
+                'datacatalogue',
+                'map'
             ];
 
             $rootScope.log = [];
