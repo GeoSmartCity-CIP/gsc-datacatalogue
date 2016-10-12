@@ -70,7 +70,7 @@
                         <div class="form-group">
                             <label for="currentUserOrganization" class="control-label">Current organization</label>
                             <select type="text" class="form-control" id="currentPermissionLayer" ng-model="$root.data.authUser.organizationId"
-                                    ng-options="or.id as or.organizationname for or in $root.data.authUser.organizations"
+                                    ng-options="or.id as or.organizationname for or in $root.data.authUser.organizations | orderBy : 'organizationname'"
                                     ng-change="redirect()">
                             </select>
                         </div>

@@ -6,21 +6,34 @@ angular.module('gscDatacat.controllers')
         '$rootScope',
         '$state',
         'authSvc',
+        'dataSvc',
         '$timeout',
         function($scope,
             $rootScope,
             $state,
             authSvc,
+            dataSvc,
             $timeout) {
 
             $scope.$on('$stateChangeSuccess', function() {
                 if (authSvc.isAuth().success !== true &&
                     $state.current.name !== 'app.loginForm') {
                     $state.go('app.loginForm');
+                } else {
+                    if (authSvc.authUsr.iduser === 1) {
+                        dataSvc.loadOrganizations()
+                            .then(function(organizations) {
+                                gsc.util.clearExtendObject($rootScope.data.authUser.organizations,
+                                    organizations);
+                            }, function(err) {
+                                $rootScope.console.log(
+                                    'Error loading all organizations');
+                            });
+                    }
                 }
             });
-            $scope.authSvc = authSvc;
 
+            $scope.authSvc = authSvc;
 
             $scope.redirect = function() {
                 $state.go('app.createDataSource', {}, {
@@ -54,9 +67,8 @@ angular.module('gscDatacat.controllers')
                 }];
 
             $rootScope.data.functionTypes = [
-                'application',
-                'data catalogue',
-                'layers'
+                'datacatalogue',
+                'map'
             ];
 
             $rootScope.log = [];
