@@ -226,6 +226,7 @@ public class DatasetsService extends ServiceCommons {
 							JsonNode node = om.readTree(req);
 							((ObjectNode) node).remove(Constants.DSET_ID_FIELD);
 
+							((ObjectNode) node).put(Constants.COLUMNS, om.readTree(getObjectFromJsonText(entityFound.getJson(), Constants.COLUMNS)));
 							entityFound.setJson(node.toString());
 							gsc007Dao.save(entityFound);
 
