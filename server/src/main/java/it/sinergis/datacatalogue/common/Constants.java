@@ -180,6 +180,7 @@ public final class Constants {
 	public static final String ER503 = "ER503";
 	public static final String ER504 = "ER504";
 	public static final String ER505 = "ER505";
+	public static final String ER506 = "ER506";
 	
 	/** Datasource Errors. */
 	public static final String ER601 = "ER601";

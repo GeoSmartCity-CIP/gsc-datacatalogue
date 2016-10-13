@@ -310,7 +310,7 @@ public class PermissionsService extends ServiceCommons{
 			Gsc005PermissionEntity permission = null;
 			if(permissions.size() == 0) {
 				logger.error("No results found..");
-				throw new DCException(Constants.ER13, req);
+				throw new DCException(Constants.ER506, req);
 			} else if(permissions.size() == 1) {
 				permission = permissions.get(0);
 			} else {
