@@ -714,7 +714,10 @@ public class UsersService extends ServiceCommons {
 					}
 				}
 
-				return om.writeValueAsString(resultList);
+				Map<String, Object> appMap = new HashMap<String, Object>();
+				appMap.put(Constants.USERS_FIELD, om.writeValueAsString(resultList));
+				
+				return om.writeValueAsString(appMap);
 			} else {
 				// Organization id has to be numeric
 				throw new DCException(Constants.ER12, req);
