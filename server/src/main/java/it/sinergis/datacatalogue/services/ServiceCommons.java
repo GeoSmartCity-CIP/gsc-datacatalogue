@@ -203,6 +203,24 @@ public class ServiceCommons {
 	}
 	
 	/**
+	 * Returns the specific object from json 
+	 * 
+	 * @param json
+	 * @param fieldName
+	 * @return null if value is null, else the value
+	 * @throws DPException
+	 */
+	protected ObjectNode getNodeFromJson(String json) throws DCException {
+		try {
+			JsonNode rootNode = om.readTree(json);
+			return (ObjectNode) rootNode;
+		} catch (Exception e) {
+			logger.error("unhandled error: ", e);
+			throw new DCException(Constants.ER01);
+		}
+	}	
+	
+	/**
 	 * Returns the specific object inside a json 
 	 * 
 	 * @param json

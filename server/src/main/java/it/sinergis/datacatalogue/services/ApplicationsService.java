@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
@@ -396,17 +397,34 @@ public class ApplicationsService extends ServiceCommons {
 
 			Map<String, List<Map<String, Object>>> appsResult = new HashMap<String, List<Map<String, Object>>>();
 
-			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();			
 
 			for (Gsc010ApplicationEntity entity : appEntities) {
 
 				Map<String, Object> appMap = new HashMap<String, Object>();
 				// ID Application
 				appMap.put(Constants.APPLICATION_ID, entity.getId().toString());
-
-				// Application name
-				String appNameField = getFieldValueFromJsonText(entity.getJson(), Constants.APP_NAME_FIELD);
-				appMap.put(Constants.APP_NAME_FIELD, appNameField);
+				
+				//Iterate all first level of fields
+				if (StringUtils.isNotEmpty(idApplication)) {
+					ObjectNode applicationNode = getNodeFromJson(entity.getJson());
+					if (!applicationNode.getNodeType().equals(JsonNodeType.ARRAY))
+					{
+						Iterator<String> it = applicationNode.fieldNames();
+						while (it.hasNext())
+						{
+							String fieldName = it.next();
+							String fieldValue = getFieldValueFromJsonText(entity.getJson(), fieldName);
+							appMap.put(fieldName, fieldValue);
+						}
+					}
+				}
+				else
+				{
+					// Application name
+					String appNameField = getFieldValueFromJsonText(entity.getJson(), Constants.APP_NAME_FIELD);
+					appMap.put(Constants.APP_NAME_FIELD, appNameField);
+				}
 
 				// List of layers
 				String layers = getObjectFromJsonText(entity.getJson(), Constants.LAYERS);
