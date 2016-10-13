@@ -78,6 +78,7 @@ public final class Constants {
 
 	/** Function field names. */
 	public static final String FUNC_NAME_FIELD = "functionname";
+	public static final String FUNC_TYPE_FIELD = "type";
 	public static final String FUNC_ID_FIELD = "idfunction";
 	public static final String FUNCTIONS_FIELD = "functions";
 

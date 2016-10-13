@@ -231,11 +231,13 @@ public class FunctionsService extends ServiceCommons {
 					ObjectNode funcBase = (ObjectNode) mapper.readTree(function.getJson());
 					String funcBaseId = Long.toString(function.getId());
 					String funcBaseName = funcBase.findValue(Constants.FUNC_NAME_FIELD).asText();
+					String funcBaseType = funcBase.findValue(Constants.FUNC_TYPE_FIELD).asText();
 					String funcBaseDesc = funcBase.findValue(Constants.DESCRIPTION_FIELD).asText();
 					
 					ObjectNode newObj = JsonNodeFactory.instance.objectNode();
 					newObj.put(Constants.FUNC_ID_FIELD, funcBaseId);
 					newObj.put(Constants.FUNC_NAME_FIELD, funcBaseName);
+					newObj.put(Constants.FUNC_TYPE_FIELD, funcBaseType);
 					newObj.put(Constants.DESCRIPTION_FIELD, funcBaseDesc);
 					
 					functions.add(newObj);
