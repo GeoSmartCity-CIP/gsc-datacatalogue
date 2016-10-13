@@ -250,6 +250,7 @@ public final class Constants {
 	public static final String LAYER_DELETED = "LAYER_DELETED";
 	public static final String GROUP_LAYER_CREATED = "GROUP_LAYER_CREATED";
 	public static final String GROUP_LAYER_ASSIGNED = "GROUP_LAYER_ASSIGNED";
+	public static final String GROUP_LAYER_UPDATED = "GROUP_LAYER_UPDATED";
 	public static final String GROUP_LAYER_DELETED = "GROUP_LAYER_DELETED";
 	public static final String APPLICATION_CREATED = "APPLICATION_CREATED";
 	public static final String APPLICATION_LAYER_GROUP_ASSIGNED = "APPLICATION_LAYER_GROUP_ASSIGNED";
@@ -293,6 +294,7 @@ public final class Constants {
 	public static final String LIST_LAYER = "LIST_LAYER";
 	public static final String CREATE_GROUP_LAYER = "CREATE_GROUP_LAYER";
 	public static final String ASSIGN_LAYER_TO_GROUP = "ASSIGN_LAYER_TO_GROUP";
+	public static final String UPDATE_GROUP = "UPDATE_GROUP";
 	public static final String DELETE_GROUP_LAYER = "DELETE_GROUP_LAYER";
 	public static final String LIST_GROUP_LAYER = "LIST_GROUP_LAYER";
 	public static final String CREATE_APP = "CREATE_APP";

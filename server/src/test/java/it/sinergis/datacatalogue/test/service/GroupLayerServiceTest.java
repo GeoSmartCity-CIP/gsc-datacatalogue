@@ -58,6 +58,8 @@ public class GroupLayerServiceTest extends ServiceCommons
 	public static final String CREATE_DST_REQ = "{\"datasetname\": \"datasetSHAPETestForGroupLayer\",\"realname\": \"zone.shp\",\"description\": \"descrizione\",\"iddatasource\":";
 	public static final String CREATE_LYR_REQ = "{\"layername\":\"layerTestForGroupLayer\",\"description\":\"unit test for layer creation\",\"iddataset\":";
 
+	public static final String UPDATE_GRP_REQ = "{\"organizationname\":\"TestOrgForGroupLayer\",\"description\":\"Create org test\"}";
+
 	/** CLEANUP REQUESTS. */
 	public static final String DELETE_ORG_REQ = "{\"idorganization\":";
 	//request end
@@ -70,6 +72,8 @@ public class GroupLayerServiceTest extends ServiceCommons
 	public static final String READ_GRP_REQ_3_PART_1 = "{\"groupname\":\"layer\",\"organization\":";
 	public static final String READ_GRP_REQ_3_PART_2 = ",\"idgroup\":";
 	public static final String READ_GRP_REQ_4 = "{\"groupname\":\"groupT\"}";
+	public static final String READ_GRP_REQ_5_PART_1 = "{\"groupname\":\"layer\",\"description\":\"unit test for group layer creation\",\"organization\":";
+	public static final String READ_GRP_REQ_5_PART_2 = ",\"idgroup\":";
 	public static final String ASSIGN_GRP_REQ_PART_1 = "{\"idgroup\":";
 	public static final String ASSIGN_GRP_REQ_PART_2 = ",\"layers\":[{\"idlayer\":";
 	public static final String ASSIGN_GRP_REQ_END = "}]}";
@@ -253,6 +257,35 @@ public class GroupLayerServiceTest extends ServiceCommons
 			//cleanup (delete the just inserted records)
 			deleteOrgRecord(org_id);
 			System.out.println("TEST ENDED: createGRPTestFail2()");
+		}
+	}
+	
+	@Test
+	public void updateGroupTest() {
+		System.out.println("TEST STARTED: updateGroupTest()");
+		Long create_org_id = null;
+		try {			
+			create_org_id = doSetup();
+			
+			//create the ds linked to the newly created org
+			String create_grp_response = createGRPRecord(buildIdRequest(CREATE_GRP_REQ,create_org_id));
+			System.out.println(create_grp_response);
+			
+			//Update the record
+			String update_grp_response = grp_service.updateGroupLayer(buildIdRequest(READ_GRP_REQ_5_PART_1,READ_GRP_REQ_5_PART_2,create_org_id,getRecordId(create_grp_response)));
+			System.out.println(update_grp_response);
+			//check if response is a well formed json	
+			om.readTree(update_grp_response);
+			//Assert the json response does not have an error field
+			Assert.assertTrue(!update_grp_response.contains("\"status\":\"error\""));
+		} catch (Exception e) {
+			System.out.println(e);
+			Assert.fail();
+		} finally {
+			//cleanup (delete the just inserted records)
+			// later on the delete org should handle the ds deletion as well
+			deleteOrgRecord(create_org_id);
+			System.out.println("TEST ENDED: updateGroupTest()");
 		}
 	}
 	

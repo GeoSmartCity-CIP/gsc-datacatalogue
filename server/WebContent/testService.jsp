@@ -125,6 +125,10 @@
 		    } else if(selected === 'assignlyr'){
 		    	document.getElementById("text").style.display = "table-row";
 		    	document.getElementById("textArea").value = document.getElementById("idAssignLayerExample").value;
+
+		    } else if (selected === 'updategrp'){
+		    	document.getElementById("text").style.display = "table-row";
+		    	document.getElementById("textArea").value = document.getElementById("idUpdateGroupLayerExample").value;
 		    	
 		    } else if (selected === 'deletegrp'){
 		    	document.getElementById("text").style.display = "table-row";
@@ -272,6 +276,7 @@ public String handleEscaping(String jsonExample){
 <input type="hidden" id="idListLayerExample" value="<%out.print(handleEscaping("listLayerExample"));%>"></input>
 <input type="hidden" id="idCreateGroupLayerExample" value="<%out.print(handleEscaping("createGroupLayerExample"));%>"></input>
 <input type="hidden" id="idAssignLayerExample" value="<%out.print(handleEscaping("assignLayerExample"));%>"></input>
+<input type="hidden" id="idUpdateGroupLayerExample" value="<%out.print(handleEscaping("updateGroupLayerExample"));%>"></input>
 <input type="hidden" id="idDeleteGroupLayerExample" value="<%out.print(handleEscaping("deleteGroupLayerExample"));%>"></input>
 <input type="hidden" id="idListGroupLayerExample" value="<%out.print(handleEscaping("listGroupLayerExample"));%>"></input>
 <input type="hidden" id="idCreateAppExample" value="<%out.print(handleEscaping("createAppExample"));%>"></input>
@@ -338,6 +343,7 @@ if (servizio==null) {
             <option value="listlyr" <%= servizio.equals("listlyr") ? "selected=\"selected\"" : ""%>>Layer - List/Search</option>
             <option value="creategrp" <%= servizio.equals("creategrp") ? "selected=\"selected\"" : ""%>>Layer Group - Create</option>
             <option value="assignlyr" <%= servizio.equals("assignlyr") ? "selected=\"selected\"" : ""%>>Layer Group - Assign Layer</option>
+            <option value="updategrp" <%= servizio.equals("updategrp") ? "selected=\"selected\"" : ""%>>Layer Group - Update</option>
             <option value="deletegrp" <%= servizio.equals("deletegrp") ? "selected=\"selected\"" : ""%>>Layer Group - Delete</option>
             <option value="listgrp" <%= servizio.equals("listgrp") ? "selected=\"selected\"" : ""%>>Layer Group - List/Search</option>
             <option value="createapp" <%= servizio.equals("createapp") ? "selected=\"selected\"" : ""%>>Application - Create</option>

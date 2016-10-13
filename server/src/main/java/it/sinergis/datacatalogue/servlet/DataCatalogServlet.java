@@ -266,6 +266,9 @@ public class DataCatalogServlet extends HttpServlet {
 				} else if (action.equalsIgnoreCase("assignlyr")) {
 					GroupLayersService service = new GroupLayersService();
 					serviceResp = service.assignLayerToGroup(requestJson);
+				} else if (action.equalsIgnoreCase("updategrp")) {
+					GroupLayersService service = new GroupLayersService();
+					serviceResp = service.updateGroupLayer(requestJson);
 				} else if (action.equalsIgnoreCase("deletegrp")) {
 					GroupLayersService service = new GroupLayersService();
 					serviceResp = service.deleteGroupLayer(requestJson);

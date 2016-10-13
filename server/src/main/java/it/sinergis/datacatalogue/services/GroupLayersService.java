@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import it.sinergis.datacatalogue.bean.jpa.Gsc006DatasourceEntity;
+import it.sinergis.datacatalogue.bean.jpa.Gsc007DatasetEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc008LayerEntity;
 import it.sinergis.datacatalogue.bean.jpa.Gsc009GrouplayerEntity;
 import it.sinergis.datacatalogue.common.Constants;
@@ -141,6 +143,58 @@ public class GroupLayersService extends ServiceCommons {
 			return rpe.returnErrorString();
 		}
 	}
+	
+	public String updateGroupLayer(String req) {
+		try {
+			checkJsonWellFormed(req);
+			checkMandatoryParameters(Constants.UPDATE_GROUP, req);
+			logger.info(req);
+
+			// Retrieving input parameters
+			String idGroupLayer = getFieldValueFromJsonText(req, Constants.GROUP_LAYER_ID_FIELD);
+
+			Gsc009GrouplayerEntity entityFound = groupLayerPersistence.load(Long.parseLong(idGroupLayer));
+			if (entityFound == null) {
+				throw new DCException(Constants.ER902, req);
+			} else {
+
+				// Before updating we have to be sure that group name
+				// doesn't already exist in another record (not the one
+				// we're updating)
+				Gsc009GrouplayerEntity grouplayerEntity = getGroupLayerObjectFromGroupLayerName(req);
+
+				// if no results found or the result is-> update record
+				if (grouplayerEntity == null || (grouplayerEntity.getId().longValue() == entityFound.getId().longValue())) {
+
+						JsonNode node = om.readTree(req);
+						((ObjectNode) node).remove(Constants.GROUP_LAYER_ID_FIELD);
+
+						String jsonObject = getObjectFromJsonText(entityFound.getJson(), Constants.LAYERS);
+						if (jsonObject != null)
+						{
+							((ObjectNode) node).put(Constants.LAYERS, om.readTree(jsonObject));
+						}
+						entityFound.setJson(node.toString());
+						groupLayerPersistence.save(entityFound);
+
+						logger.info("Group layer succesfully updated");
+						return createJsonStatus(Constants.STATUS_DONE, Constants.GROUP_LAYER_UPDATED,
+								entityFound.getId(), req);
+				} else {
+					// Group layer id has to be numeric
+					throw new DCException(Constants.ER12, req);
+				}
+			}
+		} catch (DCException rpe) {
+			return rpe.returnErrorString();
+		} catch (Exception e) {
+			logger.error("update group layer service error", e);
+			DCException rpe = new DCException(Constants.ER01, req);
+			logger.error("update group layer: unhandled error " + rpe.returnErrorString());
+
+			return rpe.returnErrorString();
+		}
+	}	
 	
 	/**
 	 * finds grouplayers matching the request specifications.
@@ -452,4 +506,44 @@ public class GroupLayersService extends ServiceCommons {
 		return (Gsc009GrouplayerEntity) groupLayerPersistence.load(id);
 	}
 	
+	
+	/**
+	 * Retrieves the dataset given its name.
+	 * 
+	 * @param json
+	 * @return
+	 * @throws RPException
+	 */
+	private Gsc009GrouplayerEntity getGroupLayerObjectFromGroupLayerName(String json) throws DCException {
+
+		String groupLayerName = getFieldValueFromJsonText(json, Constants.GROUP_LAYER_NAME_FIELD);
+
+		try {
+			StringBuilder builderQuery = new StringBuilder();
+			builderQuery.append("'");
+			builderQuery.append(Constants.GROUP_LAYER_NAME_FIELD);
+			builderQuery.append("' = '");
+			builderQuery.append(groupLayerName);
+			builderQuery.append("'");
+
+			String query = createQuery(builderQuery.toString(), Constants.GROUP_LAYER_TABLE_NAME,
+					Constants.JSON_COLUMN_NAME, "select");
+
+			logger.debug("Executing query: " + query);
+			List<Gsc009GrouplayerEntity> entityList = groupLayerPersistence.getGroupLayers(query);
+
+			if (entityList.size() == 1) {
+				return entityList.get(0);
+			} else if (entityList.size() == 0) {
+				return null;
+			} else {
+				logger.error("One result expected from query, results found: " + entityList.size());
+				throw new DCException(Constants.ER01);
+			}
+		} catch (Exception e) {
+			logger.error("Generic exception occurred ", e);
+			throw new DCException(Constants.ER01);
+		}
+
+	}	
 }
