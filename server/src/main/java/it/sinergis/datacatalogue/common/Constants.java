@@ -109,7 +109,12 @@ public final class Constants {
 	public static final String APPLICATION_ID = "idapplication";
 	public static final String APPLICATION_RESULT = "applications";
 	public static final String GEOSERVER_PARAMS = "geoserver";
-
+	
+	/** Application field names. */
+	public static final String PERMISSION_ID = "idpermission";
+	public static final String ROLE_ID = "idrole";
+	public static final String FUNCTIONS = "functions";
+	
 	/** E-mail constants. */
 	public static final String SUB_COMPLETE_REGISTRATION = "Datacatalogue Complete Registration Process";
 	public static final String SUB_CHANGE_PASSWORD = "Password Change Process";

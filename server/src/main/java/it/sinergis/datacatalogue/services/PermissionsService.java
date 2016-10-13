@@ -2,12 +2,15 @@ package it.sinergis.datacatalogue.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -316,6 +319,14 @@ public class PermissionsService extends ServiceCommons{
 				throw new DCException(Constants.ER01, req);
 			}
 			
+			Map<String, Object> appMap = new HashMap<String, Object>();
+			// ID Permission
+			appMap.put(Constants.PERMISSION_ID, permission.getId().toString());
+
+			// ID Role
+			String roleField = getFieldValueFromJsonText(permission.getJson(), Constants.ROLE_ID);
+			appMap.put(Constants.ROLE_ID, roleField);			
+
 			//build the response object
 			ArrayNode functionList = (ArrayNode) (om.readTree(permission.getJson()).path(Constants.FUNCTIONS_FIELD));
 			List<Long> functionIdList = new ArrayList<Long>();
@@ -351,9 +362,12 @@ public class PermissionsService extends ServiceCommons{
 			
 			buildResponseNode(functionList,functions,layers);
 			
+			appMap.put(Constants.FUNCTIONS, functionList);
+			
 			String jsonString;
 			try {
-				jsonString = om.writeValueAsString(functionList);
+				ObjectMapper mapper = new ObjectMapper();
+				jsonString = mapper.writeValueAsString(appMap);
 			} catch (IOException e) {
 				logger.error("IOException during the construction of status response", e);
 				throw new DCException(Constants.ER01, req);
