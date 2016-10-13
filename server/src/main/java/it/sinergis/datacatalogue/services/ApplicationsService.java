@@ -408,15 +408,12 @@ public class ApplicationsService extends ServiceCommons {
 				//Iterate all first level of fields
 				if (StringUtils.isNotEmpty(idApplication)) {
 					ObjectNode applicationNode = getNodeFromJson(entity.getJson());
-					if (!applicationNode.getNodeType().equals(JsonNodeType.ARRAY))
+					Iterator<String> it = applicationNode.fieldNames();
+					while (it.hasNext())
 					{
-						Iterator<String> it = applicationNode.fieldNames();
-						while (it.hasNext())
-						{
-							String fieldName = it.next();
-							String fieldValue = getFieldValueFromJsonText(entity.getJson(), fieldName);
-							appMap.put(fieldName, fieldValue);
-						}
+						String fieldName = it.next();
+						String fieldValue = getObjectFromJsonText(entity.getJson(), fieldName);
+						appMap.put(fieldName, om.readTree(fieldValue));
 					}
 				}
 				else
