@@ -234,6 +234,11 @@ public class GroupLayersService extends ServiceCommons {
 					if (grouplayerFoundById != null) {
 						grouplayers.add(grouplayerFoundById);
 					}
+					else
+					{
+						logger.error("No group layer found.");
+						throw new DCException(Constants.ER905, req);
+					}
 					// otherwise the research is based on the organization
 					// parameter.
 				} else if (organizationIdParameter != null) {
@@ -261,10 +266,10 @@ public class GroupLayersService extends ServiceCommons {
 
 			logger.info("Group Layers found: " + grouplayers.size());
 			logger.info(req);
-			if (grouplayers.size() == 0) {
+			/*if (grouplayers.size() == 0) {
 				logger.error("No results found.");
 				throw new DCException(Constants.ER13, req);
-			}
+			}*/
 
 			ObjectMapper mapper = new ObjectMapper();
 			ObjectNode root = JsonNodeFactory.instance.objectNode();

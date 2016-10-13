@@ -215,8 +215,15 @@ public class OrganizationsService extends ServiceCommons{
 				else if(StringUtils.isNotEmpty(idOrganization)) {
 					Gsc001OrganizationEntity orgEntity = organizationPersistence.load(Long.parseLong(idOrganization));
 					orgs = new ArrayList<Gsc001OrganizationEntity>();
-					orgs.add(orgEntity);
-					
+					if (orgEntity!= null)
+					{
+						orgs.add(orgEntity);
+					}
+					else
+					{
+						logger.error("No organization found.");
+						throw new DCException(Constants.ER102, req);
+					}
 				} else if(StringUtils.isNotEmpty(organizationNameField)) {
 					String queryText = "'" + Constants.ORG_NAME_FIELD + "' ILIKE '%"+getKeyFromJsonText(req,Constants.ORG_NAME_FIELD)+"%'";
 					query = createQuery(queryText, Constants.ORGANIZATION_TABLE_NAME, Constants.JSON_COLUMN_NAME,"select");

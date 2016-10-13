@@ -174,10 +174,10 @@ public class RolesService extends ServiceCommons{
 			logger.info("Roles found: " + roles.size());
 			logger.info(req);
 			
-			if (roles.size() == 0) {
+			/*if (roles.size() == 0) {
 				logger.error("No results found.");
 				throw new DCException(Constants.ER13, req);
-			}
+			}*/
 
 			
 			ObjectNode root = JsonNodeFactory.instance.objectNode();

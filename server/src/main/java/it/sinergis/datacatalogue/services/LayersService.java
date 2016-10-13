@@ -235,6 +235,11 @@ public class LayersService extends ServiceCommons {
 					if (layerFoundById != null) {
 						layers.add(layerFoundById);
 					}
+					else
+					{
+						logger.error("No layer found.");
+						throw new DCException(Constants.ER803, req);						
+					}
 					// otherwise the research is based on the dataset
 					// parameter.
 				} else if (datasetIdParameter != null || orgIdParameter != null) {
@@ -253,10 +258,10 @@ public class LayersService extends ServiceCommons {
 
 			logger.info("Layers found: " + layers.size());
 			logger.info(req);
-			if (layers.size() == 0) {
+			/*if (layers.size() == 0) {
 				logger.error("No results found.");
 				throw new DCException(Constants.ER13, req);
-			}
+			}*/
 
 			ObjectMapper mapper = new ObjectMapper();
 			ObjectNode root = JsonNodeFactory.instance.objectNode();

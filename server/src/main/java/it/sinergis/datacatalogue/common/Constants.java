@@ -215,6 +215,7 @@ public final class Constants {
 	public static final String ER902 = "ER902";
 	public static final String ER903 = "ER903";
 	public static final String ER904 = "ER904";
+	public static final String ER905 = "ER905";	
 	public static final String ER906 = "ER906";
 
 	/** Application errors. */

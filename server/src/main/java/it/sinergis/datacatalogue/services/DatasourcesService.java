@@ -279,10 +279,10 @@ public class DatasourcesService extends ServiceCommons {
 
 			logger.info("Datasources found: " + datasources.size());
 			logger.info(req);
-			if (datasources.size() == 0) {
+			/*if (datasources.size() == 0) {
 				logger.error("No results found.");
 				throw new DCException(Constants.ER13, req);
-			}
+			}*/
 
 			ObjectMapper mapper = new ObjectMapper();
 			ObjectNode root = JsonNodeFactory.instance.objectNode();
