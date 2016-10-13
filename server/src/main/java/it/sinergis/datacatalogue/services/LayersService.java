@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -219,6 +220,7 @@ public class LayersService extends ServiceCommons {
 				String datasetIdParameter = getFieldValueFromJsonText(req, Constants.DSET_ID_FIELD);
 				String layerNameParameter = getFieldValueFromJsonText(req, Constants.LAYER_NAME_FIELD);
 				String layerIdParameter = getFieldValueFromJsonText(req, Constants.LAYER_ID_FIELD);
+				String orgIdParameter = getFieldValueFromJsonText(req, Constants.ORG_ID_FIELD);
 				if (layerIdParameter != null
 						&& (layerNameParameter != null || datasetIdParameter != null)) {
 					logger.error(
@@ -235,14 +237,14 @@ public class LayersService extends ServiceCommons {
 					}
 					// otherwise the research is based on the dataset
 					// parameter.
-				} else if (datasetIdParameter != null) {
+				} else if (datasetIdParameter != null || orgIdParameter != null) {
 					
-					query = createSearchQuery(Constants.LAYER_TABLE_NAME,datasetIdParameter,layerNameParameter);
+					query = createSearchQuery(Constants.LAYER_TABLE_NAME,datasetIdParameter,layerNameParameter,orgIdParameter);
 					layers = layerPersistence.getLayers(query);
 
 				} else {
 					logger.error(
-							"Incorrect parameters: either iddataset or idlayer parameters should be specified.");
+							"Incorrect parameters: either iddataset, idlayer or idorganization parameters should be specified.");
 					throw new DCException(Constants.ER807, req);
 				}
 			} else {
@@ -371,21 +373,43 @@ public class LayersService extends ServiceCommons {
 	/**
 	 * eg:
 	 * 
-	 * select * from gscdatacatalogue.gsc_008_layer gsc008 where cast(gsc008.json->>'iddataset' as integer) = 196 AND json->>'layername' ILIKE '%NUMERI%'
+	 * select * from gscdatacatalogue.gsc_008_layer gsc008 where cast(gsc008.json->>'iddataset' as integer) = 196
+	 * AND cast(layer.json->>'iddataset' as integer) IN (SELECT gsc007.id FROM gscdatacatalogue.gsc_007_dataset gsc007 WHERE gsc007.id IN ("
+					+ "	SELECT gsc007.id FROM gscdatacatalogue.gsc_007_dataset gsc007, gscdatacatalogue.gsc_006_datasource gsc006 WHERE"
+					+ " gsc006.id = cast(gsc007.json->>'iddatasource' as integer) AND gsc006.json->>'organization' = '666' 
+	 * AND json->>'layername' ILIKE '%NUMERI%'
 	 *  
 	 * @param tableNameLayer
 	 * @param layerName
 	 * @param idDataset
 	 * @return
 	 */
-	private String createSearchQuery(String tableNameLayer, String idDataset, String layerName) {
+	private String createSearchQuery(String tableNameLayer, String idDataset, String layerName, String idOrganization) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT * FROM ").append(tableNameLayer).append(" layer where cast(layer.json->>'iddataset' as integer) = ").append(Long.parseLong(idDataset));
+		sb.append("SELECT * FROM ").append(tableNameLayer).append(" layer where ");
+		
+		if (idDataset != null)
+		{
+			sb.append(" cast(layer.json->>'iddataset' as integer) = ").append(Long.parseLong(idDataset));
+		}
+
+		if (idOrganization != null)
+		{
+			if (idDataset != null)
+			{
+				sb.append(" AND ");
+			}
+			
+			sb.append(" cast(layer.json->>'iddataset' as integer) IN (SELECT gsc007.id FROM gscdatacatalogue.gsc_007_dataset gsc007 WHERE gsc007.id IN ("
+					+ "	SELECT gsc007.id FROM gscdatacatalogue.gsc_007_dataset gsc007, gscdatacatalogue.gsc_006_datasource gsc006 WHERE"
+					+ " gsc006.id = cast(gsc007.json->>'iddatasource' as integer) AND gsc006.json->>'organization' = '").append(Long.parseLong(idOrganization)).append("')) ");
+		}
 		
 		if(layerName != null) {
 			sb.append(" AND layer.json->>'layername' ILIKE '%").append(layerName).append("%'");
 		}
+		
 		return sb.toString();
 	}
 }
