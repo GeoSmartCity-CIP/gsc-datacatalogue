@@ -286,7 +286,7 @@ public class RolesService extends ServiceCommons{
 			List<Long> idusers = getUsersIdFromRequest(requestUsers);
 			
 			//create the request
-			String query = createCheckUsersRequest(idusers,Long.parseLong(getFieldValueFromJsonText(role.getJson(),Constants.ORG_FIELD)));
+			String query = createCheckUsersRequest(idusers);
 			//execute the request
 			Long resultNumber = gsc002dao.countInId(query);
 			//if at least one of the specified users does not exist throw error
@@ -383,10 +383,9 @@ public class RolesService extends ServiceCommons{
 	 * Checks that the users to be added exist and belong to the same organization as the role they are being added to
 	 * 
 	 * @param ids
-	 * @param organizationId
 	 * @return
 	 */
-	private String createCheckUsersRequest(List<Long> ids, Long organizationId) {
+	private String createCheckUsersRequest(List<Long> ids) {
 		StringBuilder sb = new StringBuilder();
 		
 		//This condition counts the existing users count matches the count on the users that were passed as arguments
