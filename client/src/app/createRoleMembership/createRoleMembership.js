@@ -43,9 +43,9 @@ angular.module('gscDatacat.controllers')
 
             $scope.init = function() {
                 _loadRoles();
-                _loadUsers();                
+                _loadUsers();
             };
-            
+
             var _loadUsers = function() {
                 dataSvc.loadUsers()
                     .then(function(users) {
@@ -119,12 +119,12 @@ angular.module('gscDatacat.controllers')
                             $rootScope.console.usrInfo('Successfully set members');
                             _loadRoles();
                         } else {
-                            $rootScope.console.error("An error occurred setting members");
+                            $rootScope.console.error('An error occurred setting members');
                             $rootScope.console.debug(res);
                             $rootScope.console.usrWarn(res.description);
                         }
                     }, function(err) {
-                        $rootScope.console.error("An error occurred setting members");
+                        $rootScope.console.error('An error occurred setting members');
                         $rootScope.console.debug(err);
                     });
             };

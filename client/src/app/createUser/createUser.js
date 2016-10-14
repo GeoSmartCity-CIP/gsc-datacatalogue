@@ -48,6 +48,7 @@ angular.module('gscDatacat.controllers')
             var _loadUsers = function() {
                 dataSvc.loadUsers()
                     .then(function(users) {
+                        console.log(users);
                         gsc.util.clearExtendArray($scope.data.users, users);
                     }, function(errMsg) {
                         $rootScope.console.log(errMsg);

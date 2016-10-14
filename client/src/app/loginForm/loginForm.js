@@ -31,7 +31,7 @@ angular.module('gscDatacat.controllers')
             $scope.login = function() {
                 var res = authSvc.login($scope.loginData.username,
                     $scope.loginData.password)
-                    .then(function(userData) {                        
+                    .then(function(userData) {
                         $rootScope.console.info('Authenticated');
                         $scope.redirect();
                     }, function(errMsg) {

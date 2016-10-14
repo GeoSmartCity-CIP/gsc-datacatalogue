@@ -16,6 +16,18 @@ angular.module('gscDatacat.services')
 
                 $rootScope.data.authUser = {};
 
+                $rootScope.data.systemFunctions = {
+                    'LockUser': 1,
+                    'DeleteUser': 2,
+                    'AssignUserToRole': 3,
+                    'AssignPermissionToRole': 4,
+                    'CreateOrganization': 5,
+                    'UpdateOrganization': 6,
+                    'DeleteOrganization': 7,
+                    'MapDefault': 188,
+                    'MapVisibility': 187
+                };
+
                 var _sampleUser = {
                     iduser: 1,
                     username: 'admin@geosmartcity.eu',
@@ -120,18 +132,13 @@ angular.module('gscDatacat.services')
 
                 /**
                  * Check if a user is allowed to perform a specific function or not
-                 * 
-                 * @param {Number} functionId - One of the constants specified by $rootScope.data.systemFunctions 
+                 *
+                 * @param {Number} functionId - One of the constants specified by authSvc.systemFunctions
                  * @returns {Boolean}
                  */
                 var _userCan = function(functionId) {
 
-                    $rootScope.console.log('Checking permission');
-
                     var u = $rootScope.data.authUser;
-
-                    $rootScope.console.debug(functionId);
-                    $rootScope.console.debug(u);
 
                     if (u !== undefined) {
 
@@ -139,12 +146,17 @@ angular.module('gscDatacat.services')
 
                             for (var i = 0; i < u.roles.length; i++) {
                                 if (u.roles[i].idfunction === functionId) {
+                                    console.log('Permitted');
+                                    console.log(functionId);
                                     return true;
                                 }
                             }
 
                         }
                     }
+
+                    console.log(functionId);
+                    console.log(u);
 
                     return false;
 
@@ -156,7 +168,10 @@ angular.module('gscDatacat.services')
                     isAuth: _isAuth,
                     authUsr: $rootScope.data.authUser,
                     sampleUsr: _sampleUser,
-                    userCan: _userCan
+                    can: _userCan,
+                    systemFunctions: $rootScope.data.systemFunctions,
+                    canDeleteUser: _userCan($rootScope.data.systemFunctions.DeleteUser),
+                    canCreateUser: _userCan($rootScope.data.systemFunctions.CreateUser)
                 };
 
             }]);

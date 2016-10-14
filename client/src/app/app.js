@@ -20,7 +20,8 @@ angular.module('gscDatacat.controllers')
                     $state.current.name !== 'app.loginForm') {
                     $state.go('app.loginForm');
                 } else {
-                    if (authSvc.authUsr.iduser === 1) {
+                    if (authSvc.authUsr.iduser === 1 ||
+                        authSvc.can(authSvc.systemFunctions.DeleteUser)) {
                         dataSvc.loadOrganizations()
                             .then(function(organizations) {
                                 gsc.util.clearExtendObject($rootScope.data.authUser.organizations,
@@ -70,18 +71,6 @@ angular.module('gscDatacat.controllers')
                 'datacatalogue',
                 'map'
             ];
-
-            $rootScope.data.systemFunctions = {
-                'LockUser': 1,
-                'DeleteUser': 2,
-                'AssignUserToRole': 3,
-                'AssignPermissionToRole': 4,
-                'CreateOrganization': 5,
-                'UpdateOrganization': 6,
-                'DeleteOrganization': 7,
-                'MapDefault': 188,
-                'MapVisibility': 187
-            };
 
             $rootScope.log = [];
 

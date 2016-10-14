@@ -18,7 +18,7 @@ angular.module('gscDatacat.services')
 
             self.loadLayers = function() {
                 var dfd = $q.defer();
-                gsc.layer.list()
+                gsc.layer.list(null, null, null, authSvc.authUsr.organizationId)
                     .then(function(res) {
                         if (res.status !== 'error' &&
                             gsc.util.isArrayWithContent(res.layers)) {
@@ -186,16 +186,21 @@ angular.module('gscDatacat.services')
                 var dfd = $q.defer();
 
                 gsc.user.list(+authSvc.authUsr.organizationId)
-                    .then(function(users) {
+                    .then(function(res) {
+
+                        if (typeof res.users === 'string') {
+                            res.users = JSON.parse(res.users);
+                        }
+
                         $rootScope.console.log('Loaded users for organization');
                         if (gsc.util.isArrayWithContent(
-                            users)) {
-                            dfd.resolve(users);
-                        } else if (users.status === 'error') {
-                            dfd.reject(users.description);
+                            res.users)) {
+                            dfd.resolve(res.users);
+                        } else if (res.status === 'error') {
+                            dfd.reject(res.description);
                         } else {
                             dfd.reject('No users returned');
-                            $rootScope.console.log(users);
+                            $rootScope.console.log(res);
                         }
                     }, function(err) {
                         dfd.reject(err.statusText);
@@ -254,9 +259,9 @@ angular.module('gscDatacat.services')
                 gsc.permission.list(roleId)
                     .then(function(res) {
                         if (res.description === undefined &&
-                            gsc.util.isArrayWithContent(res)) {
+                            gsc.util.isArrayWithContent(res.functions)) {
                             $rootScope.console.info('Loaded permissions');
-                            dfd.resolve(res);
+                            dfd.resolve(res.functions);
                         } else if (res.description !== undefined &&
                             res.description === 'No results found.') {
                             $rootScope.console.info('No permissions found for role');

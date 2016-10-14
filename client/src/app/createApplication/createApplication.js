@@ -131,12 +131,9 @@ angular.module('gscDatacat.controllers')
                 }
             };
 
-            $scope.edit = function(application) {
-                _loadApplication(application.idapplication)
-                    .then(function(res) {
-                        $rootScope.console.todo(
-                            'There is no way to retrieve all details of an application in order to edit it');
-                        $rootScope.console.log(application);
+            $scope.edit = function(applicationData) {
+                _loadApplication(applicationData.idapplication)
+                    .then(function(application) {
                         gsc.util.clearExtendObject($scope.data.currentApplication, application);
                         _activateTab(1);
                     }, function(err) {
@@ -178,7 +175,7 @@ angular.module('gscDatacat.controllers')
                     $scope.data.currentApplication.description,
                     $scope.data.currentApplication.geoserver,
                     $scope.data.currentApplication.srs,
-                    $scope.data.currentApplication.maxExtent,
+                    $scope.data.currentApplication.maxextent,
                     $scope.data.currentApplication.uri
                     )
                     .then(function(res) {
@@ -198,13 +195,16 @@ angular.module('gscDatacat.controllers')
             };
 
             var _update = function() {
-                gsc.application.create($scope.data.currentApplication.applicationname,
+                gsc.application.updateAssignContent($scope.data.currentApplication.idapplication,
+                    $scope.data.currentApplication.applicationname,
                     $scope.data.currentApplication.organization,
                     $scope.data.currentApplication.description,
                     $scope.data.currentApplication.geoserver,
                     $scope.data.currentApplication.srs,
-                    $scope.data.currentApplication.maxExtent,
-                    $scope.data.currentApplication.uri
+                    $scope.data.currentApplication.maxextent,
+                    $scope.data.currentApplication.uri,
+                    $scope.data.currentApplication.layers,
+                    $scope.data.currentApplication.groups
                     )
                     .then(function(res) {
                         if (res.status !== 'error') {

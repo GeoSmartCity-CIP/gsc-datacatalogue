@@ -105,20 +105,20 @@ angular.module('gscDatacat.controllers')
                     permission.idfunction = +$scope.data.currentPermission.function.idfunction;
                     permission.functionname = $scope.data.currentPermission.function.functionname;
                 }
-                
+
                 if (!gsc.util.isNull($scope.data.currentPermission.application)) {
                     permission.idapplication = +$scope.data.currentPermission.application.idapplication;
                     permission.applicationname = $scope.data.currentPermission.application.applicationname;
                 }
 
-                if (gsc.util.isNumber(+permission.idfunction) &&
-                    gsc.util.isNumber(+permission.idapplication)) {
+                if (gsc.util.isNumber(+permission.idfunction)) {
+
                     $scope.data.currentRole.functions.push(permission);
                 } else {
                     console.log($scope.data.currentPermission);
                     console.log(permission);
                     $rootScope.console.usrWarn(
-                        'You must specify a function and an application to add a new permission');
+                        'You must specify a function (and optinally an application) to add a new permission');
                 }
             };
 
@@ -147,12 +147,12 @@ angular.module('gscDatacat.controllers')
                             $rootScope.console.usrInfo('Successfully assigned permissions');
                             _loadRoles();
                         } else {
-                            $rootScope.console.error("An error occurred assigning permissions");
+                            $rootScope.console.error('An error occurred assigning permissions');
                             $rootScope.console.debug(res);
                             $rootScope.console.usrWarn(res.description);
                         }
                     }, function(err) {
-                        $rootScope.console.error("An error occurred assigning permissions");
+                        $rootScope.console.error('An error occurred assigning permissions');
                         $rootScope.console.debug(err);
                     });
             };

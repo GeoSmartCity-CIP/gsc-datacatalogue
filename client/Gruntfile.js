@@ -164,4 +164,5 @@ module.exports = function(grunt) {
     grunt.registerTask('default-work', ['copy', 'jshint', 'concat']);
     grunt.registerTask('build', ['copy', 'jscs', 'jshint', 'concat', 'uglify', 'docs']);
     grunt.registerTask('docs', ['concat', 'jsdoc']);
+    grunt.registerTask('deploy', ['default']);
 };
