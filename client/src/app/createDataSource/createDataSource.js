@@ -126,6 +126,7 @@ angular.module('gscDatacat.controllers')
                     $scope.data.currentDataSource.password,
                     $scope.data.currentDataSource.ipaddress,
                     $scope.data.currentDataSource.schema,
+                    $scope.data.currentDataSource.database,
                     $scope.data.currentDataSource.port,
                     $scope.data.currentDataSource.path)
                     .then(function(res) {
@@ -151,6 +152,7 @@ angular.module('gscDatacat.controllers')
                     $scope.data.currentDataSource.password,
                     $scope.data.currentDataSource.ipaddress,
                     $scope.data.currentDataSource.schema,
+                    $scope.data.currentDataSource.database,
                     $scope.data.currentDataSource.port,
                     $scope.data.currentDataSource.path)
                     .then(function(res) {
