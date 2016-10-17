@@ -710,12 +710,16 @@ public class UsersService extends ServiceCommons {
 								getFieldValueFromJsonText(user.getJson(), Constants.USERNAME_FIELD));
 						userMap.put(Constants.USER_EMAIL_FIELD,
 								getFieldValueFromJsonText(user.getJson(), Constants.USER_EMAIL_FIELD));
+						if (isParameterInJson(user.getJson(), Constants.ORGANIZATIONS_FIELD)) {
+							ArrayNode organizations = (ArrayNode) om.readTree(user.getJson()).path(Constants.ORGANIZATIONS_FIELD);
+							userMap.put(Constants.ORGANIZATIONS_FIELD, organizations);
+						}						
 						resultList.add(userMap);
 					}
 				}
 
-				Map<String, Object> appMap = new HashMap<String, Object>();
-				appMap.put(Constants.USERS_FIELD, om.writeValueAsString(resultList));
+				Map<String, List<Map<String, Object>>> appMap = new HashMap<String, List<Map<String, Object>>>();
+				appMap.put(Constants.USERS_FIELD, resultList);
 				
 				return om.writeValueAsString(appMap);
 			} else {
