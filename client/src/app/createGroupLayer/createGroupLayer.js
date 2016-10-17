@@ -233,7 +233,7 @@ angular.module('gscDatacat.controllers')
                     .then(function(res) {
                         _activateTab(1);
                     }, function(err) {
-                        
+
                     });
             };
 

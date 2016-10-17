@@ -23,7 +23,7 @@ angular.module('gscDatacat.controllers')
                 users: [],
                 organizations: []
             };
-            
+
             $scope.authSvc = authSvc;
 
             $scope.tabs = [{
