@@ -77,14 +77,17 @@ angular.module('gscDatacat.services')
                     } else {
                         gsc.user.login(username, password)
                             .then(function(res) {
-                                $rootScope.console.log(res);
                                 if (res.iduser !== undefined && gsc.util.isNumber(res.iduser)) {
                                     gsc.util.clearExtendObject($rootScope.data.authUser, {});
                                     $rootScope.data.authUser.username = res.username;
                                     $rootScope.data.authUser.iduser = +res.iduser;
-                                    if (res.organizations.length > 0) {
+                                    if (res.organizations !== undefined && res.organizations.length > 0) {
                                         $rootScope.data.authUser.organizationId = +res.organizations[0].organization;
                                         $rootScope.data.authUser.organizations = res.organizations;
+                                    } else {
+                                        $rootScope.data.authUser.organizationId = null;
+                                        $rootScope.data.authUser.organizations = [
+                                        ];
                                     }
                                     dfd.resolve(gscDatacat.Response.getSuccess(
                                         $rootScope.data.authUser, 'Remote login succeeded'));
@@ -140,19 +143,18 @@ angular.module('gscDatacat.services')
 
                     var u = $rootScope.data.authUser;
 
-                    if (u !== undefined) {
+                    if (u !== undefined &&
+                        u.roles !== undefined &&
+                        jQuery.isArray(u.roles)) {
 
-                        if (jQuery.isArray(u.roles)) {
-
-                            for (var i = 0; i < u.roles.length; i++) {
-                                if (u.roles[i].idfunction === functionId) {
-                                    console.log('Permitted');
-                                    console.log(functionId);
-                                    return true;
-                                }
+                        for (var i = 0; i < u.roles.length; i++) {
+                            if (u.roles[i].idfunction === functionId) {
+                                console.log('Permitted');
+                                console.log(functionId);
+                                return true;
                             }
-
                         }
+
                     }
 
                     console.log(functionId);
