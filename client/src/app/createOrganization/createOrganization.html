@@ -13,8 +13,8 @@
                 <td>{{or.organizationname}}</td>
                 <td>{{or.description}}</td>
                 <td>
-                    <button class="btn" ng-click="edit(or)">Edit</button>
-                    <button class="btn" ng-click="delete(or.id)">Delete</button>
+                    <button class="btn" ng-if="authSvc.canUpdateOrganization()" ng-click="edit(or)">Edit</button>
+                    <button class="btn" ng-if="authSvc.canDeleteOrganization()" ng-click="delete(or.id)">Delete</button>
                 </td>
             </tr>
         </table>

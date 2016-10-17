@@ -213,15 +213,15 @@ angular.module('gscDatacat.services')
                 var dfd = $q.defer();
 
                 gsc.user.list(+authSvc.authUsr.organizationId)
-                    .then(function(users) {
-                        $rootScope.console.info('Loaded users');
+                    .then(function(userListResponse) {
+                        $rootScope.console.info('Loaded user');
                         if (gsc.util.isArrayWithContent(
-                            users)) {
-                            dfd.resolve(users);
-                        } else if (users.status === 'error') {
+                            userListResponse.users)) {
+                            dfd.resolve(userListResponse.users);
+                        } else if (userListResponse.status === 'error') {
                             $rootScope.console.error('An error occurred loading users');
-                            dfd.reject(users.description);
-                            $rootScope.console.debug(users);
+                            dfd.reject(userListResponse.description);
+                            $rootScope.console.debug(userListResponse);
                         } else {
                             $rootScope.console.info('No users returned');
                             dfd.reject('No users returned');
@@ -294,6 +294,27 @@ angular.module('gscDatacat.services')
                         }
                     }, function(err) {
                         $rootScope.console.log('An error occurred loading group layers');
+                        dfd.reject(err.statusText);
+                    });
+
+                return dfd.promise;
+            };
+
+            self.loadGroupLayer = function(groupLayerId) {
+                var dfd = $q.defer();
+                gsc.grouplayer.list(null, null, groupLayerId)
+                    .then(function(res) {
+                        if (res.status !== 'error' &&
+                            gsc.util.isArrayWithContent(res.grouplayers)) {
+                            $rootScope.console.log('Loaded group layer');
+                            dfd.resolve(res.grouplayers[0]);
+                        } else {
+                            $rootScope.console.log('An error occurred loading group layer');
+                            $rootScope.console.log(res);
+                            dfd.reject(res.description);
+                        }
+                    }, function(err) {
+                        $rootScope.console.log('An error occurred loading group layer');
                         dfd.reject(err.statusText);
                     });
 

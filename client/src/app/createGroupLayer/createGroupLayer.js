@@ -52,14 +52,24 @@ angular.module('gscDatacat.controllers')
                     authSvc.authUsr.organizationId,
                     $scope.data.currentGroupLayer.description
                     )
-                    .then(function(res) {
-                        if (res.status !== 'error') {
+                    .then(function(createGroupLayerResponse) {
+                        if (createGroupLayerResponse.status !== 'error') {
                             $rootScope.console.log('Created group layer');
-                            _loadGroupLayers();
-                            _activateTab(0);
+
+                            if (gsc.util.isNumber(createGroupLayerResponse.id)) {
+                                _assignLayers(createGroupLayerResponse.id)
+                                    .then(function() {
+                                        _loadGroupLayers();
+                                        _activateTab(0);
+                                    });
+                            } else {
+                                $rootScope.console.log('Should have been a number...');
+                                _loadGroupLayers();
+                                _activateTab(0);
+                            }
                         } else {
                             $rootScope.console.log('An error occurred while creating group layer');
-                            $rootScope.console.log(res);
+                            $rootScope.console.log(createGroupLayerResponse);
                         }
                     }, function(err) {
                         $rootScope.console.log('An error occurred while creating group layer');
@@ -67,14 +77,41 @@ angular.module('gscDatacat.controllers')
                     });
             };
 
-            var _update = function() {
-                gsc.grouplayer.assignLayers($scope.data.currentGroupLayer.id,
+            var _assignLayers = function(groupLayerId) {
+                return gsc.grouplayer.assignLayers(groupLayerId,
                     $scope.data.currentGroupLayer.layers)
                     .then(function(res) {
                         if (res.status !== 'error') {
+                            $rootScope.console.log('Assigned layers to group layer');
+                        } else {
+                            $rootScope.console.log(
+                                'An error occurred while assigning layers to group layer');
+                            $rootScope.console.log(res);
+                        }
+                    }, function(err) {
+                        $rootScope.console.log(
+                            'An error occurred while assigning layers to group layer');
+                        $rootScope.console.log(err);
+                    });
+            };
+
+            var _update = function() {
+                gsc.grouplayer.update($scope.data.currentGroupLayer.id,
+                    $scope.data.currentGroupLayer.groupname,
+                    authSvc.authUsr.organizationId,
+                    $scope.data.currentGroupLayer.description)
+                    .then(function(res) {
+                        if (res.status !== 'error') {
                             $rootScope.console.log('Updated group layer');
-                            _loadGroupLayers();
-                            _activateTab(0);
+                            _assignLayers($scope.data.currentGroupLayer.id)
+                                .then(function() {
+                                    _loadGroupLayers();
+                                    _activateTab(0);
+                                }, function(err) {
+                                    console.log('Should have been success');
+                                    _loadGroupLayers();
+                                    _activateTab(0);
+                                });
                         } else {
                             $rootScope.console.log('An error occurred while updating group layer');
                             $rootScope.console.log(res);
@@ -139,7 +176,7 @@ angular.module('gscDatacat.controllers')
             };
 
             var _loadGroupLayers = function() {
-                dataSvc.loadGroupLayers()
+                return dataSvc.loadGroupLayers()
                     .then(function(groupLayers) {
                         gsc.util.clearExtendArray($scope.data.groupLayers, groupLayers);
                     }, function(errMsg) {
@@ -147,8 +184,20 @@ angular.module('gscDatacat.controllers')
                     });
             };
 
+            var _loadGroupLayer = function(groupLayerId) {
+                return dataSvc.loadGroupLayer(groupLayerId)
+                    .then(function(groupLayer) {
+                        console.log('This is the group layer');
+                        console.log(groupLayer);
+                        gsc.util.clearExtendArray($scope.data.currentGroupLayer, groupLayer);
+                    }, function(errMsg) {
+                        console.log('error loading group layer');
+                        $rootScope.console.log(errMsg);
+                    });
+            };
+
             var _loadLayers = function() {
-                dataSvc.loadLayers()
+                return dataSvc.loadLayers()
                     .then(function(layers) {
                         gsc.util.clearExtendArray($scope.data.layers, layers);
                     }, function(errMsg) {
@@ -180,8 +229,12 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.edit = function(groupLayerData) {
-                gsc.util.clearExtendObject($scope.data.currentGroupLayer, groupLayerData);
-                _activateTab(1);
+                _loadGroupLayer(groupLayerData.id)
+                    .then(function(res) {
+                        _activateTab(1);
+                    }, function(err) {
+                        
+                    });
             };
 
         }

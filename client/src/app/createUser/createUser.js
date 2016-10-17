@@ -23,6 +23,8 @@ angular.module('gscDatacat.controllers')
                 users: [],
                 organizations: []
             };
+            
+            $scope.authSvc = authSvc;
 
             $scope.tabs = [{
                     active: true
@@ -76,10 +78,9 @@ angular.module('gscDatacat.controllers')
                 gsc.util.clearExtendObject($scope.data.user, {});
             };
 
-            $scope.edit = function(user) {
-                console.log(user);
+            $scope.edit = function(userData) {
+                gsc.util.clearExtendObject($scope.data.user, userData);
                 _activateTab(1);
-                gsc.util.clearExtendObject($scope.data.user, user);
             };
 
             $scope.delete = function(userId) {

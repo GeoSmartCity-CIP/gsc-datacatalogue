@@ -108,11 +108,11 @@
                             <span class='glyphicon glyphicon-plus-sign'></span>
                             Manage roles
                         </a>
-                        <a ui-sref="app.createRoleMembership" class="list-group-item">
+                        <a ng-if="authSvc.canAssignUserToRole()" ui-sref="app.createRoleMembership" class="list-group-item">
                             <span class='glyphicon glyphicon-plus-sign'></span>
                             Manage role membership
                         </a>
-                        <a ui-sref="app.createOrganization" class="list-group-item">
+                        <a ng-if="authSvc.canCreateOrganization()" ui-sref="app.createOrganization" class="list-group-item">
                             <span class='glyphicon glyphicon-plus-sign'></span>
                             Manage organizations
                         </a>
@@ -120,7 +120,7 @@
                             <span class='glyphicon glyphicon-plus-sign'></span>
                             Manage functions
                         </a>
-                        <a ui-sref="app.createPermission" class="list-group-item">
+                        <a ng-if="authSvc.canAssignPermissionToRole()" ui-sref="app.createPermission" class="list-group-item">
                             <span class='glyphicon glyphicon-plus-sign'></span>
                             Manage permissions
                         </a>

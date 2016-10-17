@@ -148,17 +148,17 @@ angular.module('gscDatacat.services')
                         jQuery.isArray(u.roles)) {
 
                         for (var i = 0; i < u.roles.length; i++) {
-                            if (u.roles[i].idfunction === functionId) {
-                                console.log('Permitted');
-                                console.log(functionId);
-                                return true;
+                            var r = u.roles[i];
+                            if (jQuery.isArray(r.functions)) {
+                                for (var f = 0; f < r.functions.length; f++) {
+                                    if (r.functions[f].idfunction === functionId) {
+                                        return true;
+                                    }
+                                }
                             }
                         }
 
                     }
-
-                    console.log(functionId);
-                    console.log(u);
 
                     return false;
 
@@ -172,8 +172,27 @@ angular.module('gscDatacat.services')
                     sampleUsr: _sampleUser,
                     can: _userCan,
                     systemFunctions: $rootScope.data.systemFunctions,
-                    canDeleteUser: _userCan($rootScope.data.systemFunctions.DeleteUser),
-                    canCreateUser: _userCan($rootScope.data.systemFunctions.CreateUser)
+                    canLockUser: function() {
+                        return _userCan($rootScope.data.systemFunctions.LockUser);
+                    },
+                    canDeleteUser: function() {
+                        return _userCan($rootScope.data.systemFunctions.DeleteUser);
+                    },
+                    canAssignUserToRole: function() {
+                        return _userCan($rootScope.data.systemFunctions.AssignUserToRole);
+                    },
+                    canAssignPermissionToRole: function() {
+                        return _userCan($rootScope.data.systemFunctions.AssignPermissionToRole);
+                    },
+                    canCreateOrganization: function() {
+                        return _userCan($rootScope.data.systemFunctions.CreateOrganization);
+                    },
+                    canUpdateOrganization: function() {
+                        return _userCan($rootScope.data.systemFunctions.UpdateOrganization);
+                    },
+                    canDeleteOrganization: function() {
+                        return _userCan($rootScope.data.systemFunctions.DeleteOrganization);
+                    }
                 };
 
             }]);

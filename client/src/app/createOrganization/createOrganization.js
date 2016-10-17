@@ -8,15 +8,19 @@ angular.module('gscDatacat.controllers')
         '$scope',
         '$rootScope',
         'dataSvc',
+        'authSvc',
         function(
             $window,
             $scope,
             $rootScope,
-            dataSvc) {
+            dataSvc,
+            authSvc) {
 
             $scope.organization = {};
 
             $scope.organizations = [];
+
+            $scope.authSvc = authSvc;
 
             $scope.tabs = [{
                     active: true

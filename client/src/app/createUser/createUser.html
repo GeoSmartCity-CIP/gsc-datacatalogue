@@ -14,7 +14,7 @@
                 <td>{{us.email}}</td>
                 <td>
                     <button class="btn" ng-click="edit(us)">Edit</button>
-                    <button class="btn" ng-click="delete(us.username)">Delete</button>
+                    <button class="btn" ng-if="authSvc.canDeleteUser()" ng-click="delete(us.username)">Delete</button>
                 </td>
             </tr>
         </table>
