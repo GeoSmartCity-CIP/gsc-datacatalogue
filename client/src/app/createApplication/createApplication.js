@@ -228,13 +228,19 @@ angular.module('gscDatacat.controllers')
                     .then(function(res) {
                         if (res.status !== 'error') {
                             $rootScope.console.log('Published to GeoServer');
+                            $rootScope.console.usrInfo(
+                                'Successfully published application to Geoserver');
                         } else {
-                            $rootScope.console.log('An erroro occurred publishing to GeoServer');
+                            $rootScope.console.usrWarn(
+                                'Could not publish application to GeoServer - check parameters and try again');
+                            $rootScope.console.log('An error occurred publishing to GeoServer');
                             $rootScope.console.log(res.description);
                             $rootScope.console.log(res);
                         }
                     }, function(err) {
-                        $rootScope.console.log('An erroro occurred publishing to GeoServer');
+                        $rootScope.console.usrWarn(
+                            'Could not publish application to GeoServer - check parameters and try again');
+                        $rootScope.console.log('An error occurred publishing to GeoServer');
                         $rootScope.console.log(err);
                     });
 
