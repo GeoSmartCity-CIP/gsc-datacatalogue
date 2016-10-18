@@ -123,11 +123,15 @@ angular.module('gscDatacat.controllers')
             };
 
             $scope.removeOrganization = function(organizationData) {
-                console.log(organizationData.id);
-                console.log($scope.data.user.organizations);
                 if (gsc.util.isNull($scope.data.user.organizations)) {
                     $scope.data.user.organizations = [];
                 }
+                
+                if ($scope.data.user.organizations.length < 2) {
+                    $rootScope.console.usrInfo('The user must at minimum belong to one organization');
+                    return;
+                }
+
                 var indexToRemove = -1;
                 for (var i = 0; i < $scope.data.user.organizations.length; i++) {
                     if (+$scope.data.user.organizations[i].id === +organizationData.id) {
