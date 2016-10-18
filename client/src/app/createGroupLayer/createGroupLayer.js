@@ -189,7 +189,7 @@ angular.module('gscDatacat.controllers')
                     .then(function(groupLayer) {
                         console.log('This is the group layer');
                         console.log(groupLayer);
-                        gsc.util.clearExtendArray($scope.data.currentGroupLayer, groupLayer);
+                        gsc.util.clearExtendObject($scope.data.currentGroupLayer, groupLayer);
                     }, function(errMsg) {
                         console.log('error loading group layer');
                         $rootScope.console.log(errMsg);
@@ -230,7 +230,7 @@ angular.module('gscDatacat.controllers')
 
             $scope.edit = function(groupLayerData) {
                 _loadGroupLayer(groupLayerData.id)
-                    .then(function(res) {
+                    .then(function(groupLayer) {
                         _activateTab(1);
                     }, function(err) {
 

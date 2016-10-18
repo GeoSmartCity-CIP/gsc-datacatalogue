@@ -66,6 +66,7 @@
                             <label for="type" class="control-label">Data origin</label>
                             <select type="text" class="form-control" id="type" ng-model="dataSet.realname" required>
                                 <option value="">Please select a data origin</option>
+                                <option value="auto_update">* Ingest from url *</option>
                                 <option ng-repeat='do in dataOrigin' value='{{do.name}}'>{{do.name}}</option>
                             </select>
                         </div>
