@@ -89,7 +89,8 @@ public class DatasetsService extends ServiceCommons {
 								//create the datasetname through the given url
 								int separatorIndex = URL.lastIndexOf("\\") != -1 ? URL.lastIndexOf("\\") +1 : URL.lastIndexOf("/") +1;
 								datasetFilename = URL.substring(separatorIndex);
-								node.put(Constants.DSET_REALNAME_FIELD,datasetFilename);
+								String fileNameNoExtension = datasetFilename.substring(0, datasetFilename.lastIndexOf("."));
+								node.put(Constants.DSET_REALNAME_FIELD,fileNameNoExtension+".shp");
 								
 								//update the json
 								dset.setJson(node.toString());
@@ -375,6 +376,10 @@ public class DatasetsService extends ServiceCommons {
 				// description
 				String description = getFieldValueFromJsonText(entity.getJson(), Constants.DESCRIPTION_FIELD);
 				dsetsMap.put(Constants.DESCRIPTION_FIELD, description);
+				
+				// url
+				String url = getFieldValueFromJsonText(entity.getJson(), Constants.URL);
+				dsetsMap.put(Constants.URL, url);				
 
 				// tobeingested
 				String tobeingested = getFieldValueFromJsonText(entity.getJson(), Constants.DSET_TOBEINGESTED_FIELD);

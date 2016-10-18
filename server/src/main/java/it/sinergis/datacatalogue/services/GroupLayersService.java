@@ -317,7 +317,7 @@ public class GroupLayersService extends ServiceCommons {
 				}
 				
 				grouplayerBasic.put(Constants.ID, grouoplayer.getId());
-				grouplayerBasic.remove(Constants.DESCRIPTION_FIELD);
+				//grouplayerBasic.remove(Constants.DESCRIPTION_FIELD);
 				grouplayerBasic.remove(Constants.ORG_FIELD);
 				grouplayerNodeList.add(grouplayerBasic);
 			}
