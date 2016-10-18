@@ -117,7 +117,7 @@ angular.module('gscDatacat.controllers')
             };
             var _create = function() {
                 return gsc.datasource.create($scope.data.currentDataSource.datasourcename,
-                    $scope.data.currentDataSource.organization,
+                    authSvc.authUsr.organizationId,
                     $scope.data.currentDataSource.type,
                     $scope.data.currentDataSource.description,
                     new Date(),
@@ -143,7 +143,7 @@ angular.module('gscDatacat.controllers')
             var _update = function() {
                 return gsc.datasource.update($scope.data.currentDataSource.id,
                     $scope.data.currentDataSource.datasourcename,
-                    $scope.data.currentDataSource.organization,
+                    authSvc.authUsr.organizationId,
                     $scope.data.currentDataSource.type,
                     $scope.data.currentDataSource.description,
                     new Date(),
