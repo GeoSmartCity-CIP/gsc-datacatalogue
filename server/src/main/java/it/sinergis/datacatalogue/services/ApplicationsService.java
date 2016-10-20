@@ -558,6 +558,7 @@ public class ApplicationsService extends ServiceCommons {
 			logger.info(req);
 
 			String idApplication = getFieldValueFromJsonText(req, Constants.APPLICATION_ID);
+			
 			Gsc010ApplicationEntity application = gsc010Dao.load(Long.parseLong(idApplication));
 
 			if (application == null) {
@@ -569,6 +570,7 @@ public class ApplicationsService extends ServiceCommons {
 			String urlGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.URL);
 			String userGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.USERNAME_FIELD);
 			String pwdGeoserver = getFieldValueFromJsonText(geoserverProperties, Constants.PASSWORD_FIELD);
+			String org = getFieldValueFromJsonText(application.getJson(), Constants.ORG_FIELD);
 
 			try {
 
@@ -630,9 +632,9 @@ public class ApplicationsService extends ServiceCommons {
 					for (int i = 0; i < nameList.size(); i++) {
 						String elestore = nameList.get(i);
 
-						RESTDataStore datastore = reader.getDatastore(workspace_name, elestore);
+						/*RESTDataStore datastore = reader.getDatastore(workspace_name, elestore);
 
-						/*String storeType = datastore.getStoreType();
+						String storeType = datastore.getStoreType();
 
 						if ((storeType != null && storeType.toUpperCase().indexOf("POSTGIS") == -1
 								&& storeType.toUpperCase().indexOf("SQL SERVER") == -1) || storeType == null) {
@@ -676,6 +678,22 @@ public class ApplicationsService extends ServiceCommons {
 					} else {
 						checkLayerName.put(layerName, Boolean.TRUE);
 					}
+					
+	                String sld = getFieldValueFromJsonText(entityLayer.getJson(), Constants.DSET_SLD);
+
+	                logger.debug("SLD used for layer " + layerName + ": " + sld);
+	              
+                	String stylename = workspace_name + "_" + org + "_" + layerName;
+	                if (sld != null && (!sld.equals(""))) {
+	                	sld = new String(sld.getBytes("UTF-8")); 
+                        publisher.removeStyle(stylename);
+	                    logger.debug("Publish style with the name : " + stylename);
+	                    created = publisher.publishStyle(sld, stylename);
+	                    if (created == false) {
+							logger.error("Publishing error for style : " + stylename);
+							throw new DCException(Constants.ER1009);
+	                    }
+	                }					
 
 					String datasetId = getFieldValueFromJsonText(entityLayer.getJson(), Constants.DSET_ID_FIELD);
 					Gsc007DatasetEntity entityDataset = gsc007Dao.load(Long.parseLong(datasetId));
@@ -702,7 +720,7 @@ public class ApplicationsService extends ServiceCommons {
 								tablePhysicalPath);
 						logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
 						PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
-								srsLayer, workspace_name + "_" + layerName);
+								srsLayer, stylename);
 
 						logger.debug("Publising layer: " + layerName);
 						datastoreShapeCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
@@ -724,7 +742,7 @@ public class ApplicationsService extends ServiceCommons {
 
 						logger.debug("Created datastore: " + nameDatabase + " within workspace " + workspace_name);
 						PropertyLayer pl = new PropertyLayer(layerName, tablephysicalname, tablePhysicalPath, layerName,
-								srsLayer, workspace_name + "_" + layerName);
+								srsLayer, stylename);
 
 						logger.debug("Publising layer: " + layerName);
 						datastorePostgisCreator.publishDBLayer(workspace_name, nameDatabase, pl, publisher);
@@ -734,7 +752,6 @@ public class ApplicationsService extends ServiceCommons {
 						logger.error("Datasource type not supported");
 						throw new DCException(Constants.ER14);
 					}
-
 				}
 
 				return createJsonStatus(Constants.STATUS_DONE, Constants.PUBLISH_ON_GEOSERVER, null, req);

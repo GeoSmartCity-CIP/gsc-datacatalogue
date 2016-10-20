@@ -48,6 +48,7 @@ public final class Constants {
 	public static final String DSET_TOBEINGESTED_FIELD = "tobeingested";
 	public static final String DSET_REFRESHINTERVAL_FIELD = "refreshinterval";
 	public static final String DSET_RESULT = "dataset";
+	public static final String DSET_SLD = "sld";
 
 	/** Datasource field names */
 	public static final String DATASOURCES_NAME_FIELD = "datasources";
@@ -225,6 +226,7 @@ public final class Constants {
 	public static final String ER1006 = "ER1006";
 	public static final String ER1007 = "ER1007";
 	public static final String ER1008 = "ER1008";
+	public static final String ER1009 = "ER1009";
 
 	/** Publish on geoserver errors. */
 	public static final String ER_GEO01 = "ER_GEO01";
