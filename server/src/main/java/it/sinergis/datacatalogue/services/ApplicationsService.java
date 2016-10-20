@@ -950,10 +950,13 @@ public class ApplicationsService extends ServiceCommons {
 	private List<Long> getIdFromRequest(ArrayNode objectList, String field) {
 		List<Long> listId = new ArrayList<Long>();
 
-		for (int i = 0; i < objectList.size(); i++) {
-			JsonNode requestedId = objectList.get(i);
-			JsonNode idNode = requestedId.findValue(field);
-			listId.add(idNode.asLong());
+		if (objectList != null)
+		{
+			for (int i = 0; i < objectList.size(); i++) {
+				JsonNode requestedId = objectList.get(i);
+				JsonNode idNode = requestedId.findValue(field);
+				listId.add(idNode.asLong());
+			}
 		}
 
 		return listId;
