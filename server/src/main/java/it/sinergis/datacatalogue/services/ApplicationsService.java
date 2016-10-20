@@ -632,12 +632,14 @@ public class ApplicationsService extends ServiceCommons {
 
 						RESTDataStore datastore = reader.getDatastore(workspace_name, elestore);
 
-						String storeType = datastore.getStoreType();
+						/*String storeType = datastore.getStoreType();
 
 						if ((storeType != null && storeType.toUpperCase().indexOf("POSTGIS") == -1
 								&& storeType.toUpperCase().indexOf("SQL SERVER") == -1) || storeType == null) {
 							publisher.removeDatastore(workspace_name, elestore, true);
-						}
+						}*/
+						
+						publisher.removeDatastore(workspace_name, elestore, true);
 
 					}
 				}
