@@ -24,8 +24,8 @@ angular.module('gscDatacat.controllers')
             $scope.authSvc = authSvc;
 
             $scope.loginData = {
-                username: '' + authSvc.sampleUsr.username,
-                password: '' + authSvc.sampleUsr.password
+                username: '',
+                password: ''
             };
 
             $scope.login = function() {

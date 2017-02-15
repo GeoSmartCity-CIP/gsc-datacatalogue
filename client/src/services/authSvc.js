@@ -28,54 +28,11 @@ angular.module('gscDatacat.services')
                     'MapVisibility': 187
                 };
 
-                var _sampleUser = {
-                    iduser: 1,
-                    username: 'admin@geosmartcity.eu',
-                    password: 'geosmartcity',
-                    organizationId: 666,
-                    organizations: [{
-                            id: 666,
-                            organizationname: 'Asplan Viak Internet as'
-                        }],
-                    roles: [{
-                            idrole: 1,
-                            functions: [
-                                {
-                                    idfunction: 1
-                                },
-                                {
-                                    idfunction: 2
-                                },
-                                {
-                                    idfunction: 3
-                                },
-                                {
-                                    idfunction: 4
-                                },
-                                {
-                                    idfunction: 5
-                                },
-                                {
-                                    idfunction: 6
-                                },
-                                {
-                                    idfunction: 7
-                                }
-                            ]
-                        }]
-                };
-
                 var _login = function(username, password) {
 
                     var dfd = $q.defer();
 
-                    if (username === _sampleUser.username &&
-                        password === _sampleUser.password) {
-                        gsc.util.clearExtendObject($rootScope.data.authUser, _sampleUser);
-                        dfd.resolve(gscDatacat.Response.getSuccess($rootScope.data.authUser,
-                            'Local login shim succeeded'));
-                    } else {
-                        gsc.user.login(username, password)
+                    gsc.user.login(username, password)
                             .then(function(res) {
                                 if (res.iduser !== undefined && gsc.util.isNumber(res.iduser)) {
                                     gsc.util.clearExtendObject($rootScope.data.authUser, {});
@@ -106,7 +63,6 @@ angular.module('gscDatacat.services')
                                     }
                                 }, 'Could not perform login with supplied details'));
                             });
-                    }
 
                     return dfd.promise;
                 };
@@ -169,7 +125,7 @@ angular.module('gscDatacat.services')
                     logout: _logout,
                     isAuth: _isAuth,
                     authUsr: $rootScope.data.authUser,
-                    sampleUsr: _sampleUser,
+                    //sampleUsr: _sampleUser,
                     can: _userCan,
                     systemFunctions: $rootScope.data.systemFunctions,
                     canLockUser: function() {
