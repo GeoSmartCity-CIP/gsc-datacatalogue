@@ -126,7 +126,7 @@ angular.module('gscDatacat.controllers')
                 if (gsc.util.isNull($scope.data.user.organizations)) {
                     $scope.data.user.organizations = [];
                 }
-                
+
                 if ($scope.data.user.organizations.length < 2) {
                     $rootScope.console.usrInfo('The user must at minimum belong to one organization');
                     return;
